@@ -2,13 +2,16 @@ import './App.css';
 import React from "react";
 import Router from "root/Router/Router";
 import {BrowserRouter} from "react-router-dom";
+import {UserProvider} from "context/UserContext";
 
 const App = () => {
   return (
-    <BrowserRouter>
-      <Router />
-    </BrowserRouter>
+    <UserProvider>
+        <BrowserRouter>
+            <Router />
+        </BrowserRouter>
+    </UserProvider>
   );
-}
+};
 
 export default App;
