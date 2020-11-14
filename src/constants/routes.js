@@ -1,5 +1,3 @@
-import {Comp} from "../Comp";
-
 export const path_list = {
     DASHBOARD: "/",
     REGISTER: "/register",
@@ -12,8 +10,7 @@ export const path_list = {
 export default [
     {
         path: path_list.DASHBOARD,
-        exact: true,
-        component: Comp
+        exact: true
     },
     {
         path: path_list.PROFILE,
