@@ -9,7 +9,7 @@ import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import {makeStyles, useTheme} from '@material-ui/core/styles';
+import {makeStyles} from '@material-ui/core/styles';
 import DrawerList from "./components/DrawerList";
 import Zoom from "@material-ui/core/Zoom";
 import {useScrollTrigger} from "@material-ui/core";
@@ -17,7 +17,7 @@ import Fab from "@material-ui/core/Fab";
 import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
 import SwipeableDrawer from "@material-ui/core/SwipeableDrawer";
 import Slide from "@material-ui/core/Slide";
-import {path_list} from "../../constants/routes";
+import {path_list} from "constants/routes";
 
 const drawerWidth = 240;
 
@@ -100,7 +100,6 @@ const MenuBar = (props) => {
     const history = useHistory();
     const { window } = props;
     const classes = useStyles();
-    const theme = useTheme();
     const [mobileOpen, setMobileOpen] = useState(false);
     const [barName, setBarName] = useState(Object.values(path_list).filter((pathObject) => pathObject.route === history.location.pathname)[0]?.name || "");
 
@@ -153,7 +152,7 @@ const MenuBar = (props) => {
                     <SwipeableDrawer
                         container={window}
                         variant="temporary"
-                        anchor={theme.direction === 'rtl' ? 'right' : 'left'}
+                        anchor="left"
                         open={mobileOpen}
                         onClose={() => setMobileOpen(false)}
                         classes={{
