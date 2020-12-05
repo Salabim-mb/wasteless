@@ -5,14 +5,17 @@ import {BrowserRouter} from "react-router-dom";
 import {UserProvider} from "context";
 import {AlertProvider} from "context";
 import AlertPopup from "context/components/AlertPopup";
+import MenuBar from "Pages";
 
 const App = () => {
   return (
     <AlertProvider>
         <UserProvider>
             <BrowserRouter>
-                <Router />
-                <AlertPopup />
+                <MenuBar>
+                    <Router />
+                    <AlertPopup />
+                </MenuBar>
             </BrowserRouter>
         </UserProvider>
     </AlertProvider>
