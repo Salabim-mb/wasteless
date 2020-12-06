@@ -1,3 +1,5 @@
+import UserPage from "../components/UserPage/UserPage";
+
 export const path_list = {
     DASHBOARD: {
         route: "/",
@@ -27,9 +29,11 @@ export const path_list = {
         route: "/user/fridge/new-product",
         name: "Add product"
     },
-
 }
 
-export default [
-
+export default [{
+    path: path_list.PROFILE.route,
+    exact: true,
+    component: UserPage
+    }
 ];
