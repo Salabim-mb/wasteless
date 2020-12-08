@@ -19,13 +19,13 @@ export const path_list = {
         route: "/settings",
         name: "Settings"
     },
-    FRIDGE: {
-        route: "/user/fridge",
-        name: "My fridge"
-    },
     FRIDGE_NEW_PRODUCT: {
-        route: "/user/fridge/new-product",
+        route: "/user/:fridge_id/new-product",
         name: "Add product"
+    },
+    FRIDGE: {
+        route: "/user/:fridge_id",
+        name: "My fridge"
     },
 
 }
