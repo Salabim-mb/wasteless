@@ -67,20 +67,20 @@ const NewProduct = (props) => {
         }
     }
 
-    const fetchHandleComponent = (
+    const fetchHandleComponent = (handleGoBack) => (
         <div>
-            <Button variant="fill" color="primary" fullWidth onClick={handleSubmit}>
+            <Button variant="contained" color="primary" type="submit" fullWidth>
                 Add product
             </Button>
-            <Button variant="outlined" color="secondary" fullWidth>
-                Cancel
+            <Button color="primary" fullWidth onClick={handleGoBack}>
+                Back
             </Button>
         </div>
     )
 
     return (
         <React.Fragment>
-            <form>
+            <form onSubmit={handleSubmit} noValidate>
                 <HorizontalStepper
                     onDoneComponent={fetchHandleComponent}
                     steps={steps}

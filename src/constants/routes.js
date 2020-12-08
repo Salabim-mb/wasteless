@@ -1,3 +1,5 @@
+import NewProduct from "../Pages/NewProduct";
+
 export const path_list = {
     DASHBOARD: {
         route: "/",
@@ -31,5 +33,9 @@ export const path_list = {
 }
 
 export default [
-
+    {
+        path: path_list.FRIDGE_NEW_PRODUCT.route,
+        component: NewProduct,
+        exact: true
+    }
 ];

@@ -4,6 +4,7 @@ import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
 import Button from '@material-ui/core/Button';
+import {Paper} from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -16,11 +17,19 @@ const useStyles = makeStyles((theme) => ({
         marginTop: theme.spacing(1),
         marginBottom: theme.spacing(1),
     },
+    buttonToolbar: {
+        marginTop: theme.spacing(1)
+    },
+    paper: {
+        padding: theme.spacing(2)
+    }
 }));
 
 const HorizontalStepper = ({steps, onDoneComponent}) => {
     const classes = useStyles();
     const [activeStep, setActiveStep] = useState(0);
+
+    const pathLength = Object.keys(steps).length - 1;
 
     const handleNext = () => {
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -44,14 +53,18 @@ const HorizontalStepper = ({steps, onDoneComponent}) => {
                 ))}
             </Stepper>
             <div>
-                {activeStep === steps.length ? (
-                    {onDoneComponent}
+                {activeStep === pathLength ? (
+                    <div className={classes.buttonToolbar}>
+                        {onDoneComponent(handleBack)}
+                    </div>
                 ) : (
                     <div>
-                        {
-                            Object.values(steps)[activeStep]
-                        }
-                        <div>
+                        <Paper className={classes.paper}>
+                            {
+                                Object.values(steps)[activeStep]
+                            }
+                        </Paper>
+                        <div className={classes.buttonToolbar}>
                             <Button
                                 disabled={activeStep === 0}
                                 onClick={handleBack}
@@ -60,7 +73,7 @@ const HorizontalStepper = ({steps, onDoneComponent}) => {
                                 Back
                             </Button>
                             <Button variant="contained" color="primary" onClick={handleNext}>
-                                {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
+                                Next
                             </Button>
                         </div>
                     </div>

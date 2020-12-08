@@ -1,7 +1,15 @@
 import {useContext, useEffect, useRef, useState} from "react";
 import {AlertContext} from "context";
 import {off_API} from "constants/backendSetup";
-import {useParams} from "react-router-dom";
+import {Backdrop, CircularProgress} from "@material-ui/core";
+import {makeStyles} from "@material-ui/core/styles";
+
+const useStyles = makeStyles((theme) => ({
+    backdrop: {
+        zIndex: theme.zIndex.drawer + 1,
+        color: '#fff',
+    },
+}));
 
 const fetchProductData = async (barcodeNumber) => {
     const url = `${off_API}${barcodeNumber}`;
@@ -21,24 +29,6 @@ const fetchProductData = async (barcodeNumber) => {
     }
 };
 
-const metoda = async(token, fridgeId) => {
-    const url = `https://wasteless-backend.herokuapp.com/fridges/${fridgeId}/`;
-    const headers = {
-        Authorization: token,
-    }
-
-    const res = await fetch(url, {
-        headers,
-        method: "GET"
-    });
-
-    if (res.status === 200) {
-        return await res.json();
-    } else {
-        throw res.status;
-    }
-};
-
 const mapProductData = (data) => ({
 
 });
@@ -46,6 +36,7 @@ const mapProductData = (data) => ({
 const ProductDataForm = ({data, setData, barcode}) => {
     const alertC = useRef(useContext(AlertContext));
     const [loading, setLoading] = useState(false);
+    const classes = useStyles();
 
     useEffect(() => {
         const loadProductData = async() => {
@@ -60,10 +51,12 @@ const ProductDataForm = ({data, setData, barcode}) => {
             }
         };
         loadProductData();
-    });
+    }, [barcode]);
 
     return loading ? (
-        <div/>
+        <Backdrop className={classes.backdrop} open={loading}>
+            <CircularProgress color="inherit" />
+        </Backdrop>
     ) : (
         <div/>
     )
