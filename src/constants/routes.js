@@ -1,4 +1,4 @@
-import UserPage from "../components/UserPage/UserPage";
+import UserPage from "../Pages/UserPage/UserPage";
 
 export const path_list = {
     DASHBOARD: {
