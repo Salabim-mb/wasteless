@@ -1,3 +1,5 @@
+import LoginPage from "../components/LoginPage/LoginPage";
+
 export const path_list = {
     DASHBOARD: {
         route: "/",
@@ -31,5 +33,9 @@ export const path_list = {
 }
 
 export default [
-
-];
+    {
+        path: path_list.LOGIN.route,
+        exact: true,
+        component: LoginPage
+    }
+]
