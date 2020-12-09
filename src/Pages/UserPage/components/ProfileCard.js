@@ -1,4 +1,4 @@
-import {Avatar, Button, Container, Paper, TextField} from "@material-ui/core";
+import {Avatar, Container, Paper, TextField} from "@material-ui/core";
 import React from "react";
 import {makeStyles} from "@material-ui/core/styles";
 
@@ -12,6 +12,7 @@ const useStyles = makeStyles((theme) => ({
         margin: theme.spacing(3),
         display: "flex",
         flexFlow: "row wrap",
+        marginBottom: theme.spacing(8),
     },
     avatarDiv: {
         display: "grid",
@@ -37,18 +38,19 @@ export default function ProfileCard({user}) {
         <Paper>
             <div className={classes.profileDiv}>
                 <div className={classes.avatarDiv}>
-                    {user.avatarImg === "" ? <Avatar className={classes.avatar}>{user.name.charAt(0).toUpperCase()}</Avatar> : <Avatar className={classes.avatar} src={user.avatarImg}/>}
-
+                    {user.avatarImg === "" ?
+                        <Avatar className={classes.avatar}>{user.name.charAt(0).toUpperCase()}</Avatar> :
+                        <Avatar className={classes.avatar} src={user.avatarImg}/>}
                 </div>
                 <div className={classes.detailsDiv}>
+                    <TextField className={classes.textField} label="Username"
+                               defaultValue={user.username}
+                               disabled/>
                     <TextField className={classes.textField} label="Name" defaultValue={user.name}
                                disabled/>
                     <TextField className={classes.textField} label="Surname" defaultValue={user.surname}
                                disabled/>
                     <TextField className={classes.textField} label="Email" defaultValue={user.email}
-                               disabled/>
-                    <TextField className={classes.textField} label="Username"
-                               defaultValue={user.username}
                                disabled/>
                 </div>
             </div>

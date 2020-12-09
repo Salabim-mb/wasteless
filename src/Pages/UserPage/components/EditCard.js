@@ -5,7 +5,6 @@ import EditIcon from "@material-ui/icons/Edit";
 
 const useStyles = makeStyles((theme) => ({
     mainDiv: {
-        display: "grid",
         margin: theme.spacing(3),
         marginBottom: theme.spacing(8),
     },
@@ -22,9 +21,10 @@ const useStyles = makeStyles((theme) => ({
     avatarDiv: {
         display: "grid",
         flex: 1,
+        // marginTop: theme.spacing(5),
         margin: theme.spacing(5),
         justifyContent: "center",
-        height: "40%"
+        height: "40%",
     },
     detailsDiv: {
         display: "grid",
@@ -43,10 +43,10 @@ const useStyles = makeStyles((theme) => ({
         margin: theme.spacing(1)
     },
     editBtn: {
-        display: "grid",
+        display: "flex",
         alignContent: "center",
         justifyContent: "center",
-        margin: theme.spacing(5)
+        margin: theme.spacing(2),
     },
     submitBtn: {
         display: "grid",
@@ -54,24 +54,27 @@ const useStyles = makeStyles((theme) => ({
         justifyContent: "right",
         marginTop: theme.spacing(2),
         width: "80%"
-    }
+    },
 }))
 
 export default function EditCard({user}) {
     const classes = useStyles();
+
     return (
         <Container fixed>
             <Paper>
                 <div className={classes.mainDiv}>
                     <div className={classes.profileDiv}>
                         <div className={classes.avatarDiv}>
-                            <Avatar className={classes.avatar}>{user.name.charAt(0).toUpperCase()}</Avatar>
+                            <div>
+                                <Avatar className={classes.avatar}>{user.name.charAt(0).toUpperCase()}</Avatar>
+                            </div>
                             <div className={classes.editBtn}>
-                                <Button size="small" className={classes.margin} variant="contained"
-                                        endIcon={<EditIcon/>}>
+                                <Button size="small" variant="contained" endIcon={<EditIcon/>}>
                                     Edit
                                 </Button>
                             </div>
+
                         </div>
                         <div className={classes.detailsDiv}>
                             <TextField className={classes.textField} label="Name" defaultValue={user.name}
@@ -86,7 +89,7 @@ export default function EditCard({user}) {
                             <div className={classes.submitBtn}>
                                 <Button variant="contained" color="primary" endIcon={<Icon>send</Icon>}>Submit</Button>
                             </div>
-                            <h1>CHANGE PASSWORD</h1>
+                            <h2>CHANGE PASSWORD</h2>
                             <TextField className={classes.textField} label="Recent password" type="password"/>
                             <TextField className={classes.textField} label="New password" type="password"/>
                             <TextField className={classes.textField} label="Repeat password" type="password"/>
