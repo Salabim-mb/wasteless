@@ -12,39 +12,19 @@ import {
 import PersonIcon from '@material-ui/icons/Person';
 import EditIcon from '@material-ui/icons/Edit';
 import MenuBookIcon from '@material-ui/icons/MenuBook';
+import ProfileCard from "./components/ProfileCard";
+import EditCard from "./components/EditCard";
+import ConsentCard from "./components/ConsentCard";
 
 const user = {
     name: "Piotr",
     surname: "Kowalski",
     email: "piotrkowalski@gmail.com",
-    username: "piotrk"
+    username: "piotrk",
+    avatarImg: ""
 }
 
 const useStyles = makeStyles((theme) => ({
-    avatar: {
-        width: theme.spacing(20),
-        height: theme.spacing(20),
-    },
-    profileDiv: {
-        margin: theme.spacing(3),
-        display: "flex",
-        flexFlow: "row wrap",
-    },
-    avatarDiv: {
-        display: "flex",
-        flex: 1,
-        margin: theme.spacing(5),
-        justifyContent: "center"
-    },
-    detailsDiv: {
-        display: "grid",
-        margin: theme.spacing(5),
-        flex: 2
-    },
-    textField: {
-        width: "80%",
-        margin: theme.spacing(1)
-    },
     bottomNav: {
         display: "flex",
         position: "fixed",
@@ -56,56 +36,36 @@ const useStyles = makeStyles((theme) => ({
 
 export default function UserPage() {
     const classes = useStyles();
-    const [value, setValue] = React.useState(0);
+    const [bottomCardValue, setValue] = React.useState(0);
 
-    function chooseRigthPaper() {
-        switch (value) {
+    function chooseCard() {
+        switch (bottomCardValue) {
             case 0 :
                 return (
-                    <Container fixed>
-                        <Paper>
-                            <div className={classes.profileDiv}>
-                                <div className={classes.avatarDiv}>
-                                    <Avatar className={classes.avatar}>{user.name.charAt(0).toUpperCase()}</Avatar>
-                                </div>
-                                <div className={classes.detailsDiv}>
-                                    <TextField className={classes.textField} label="Name" defaultValue={user.name}
-                                               disabled/>
-                                    <TextField className={classes.textField} label="Surname" defaultValue={user.surname}
-                                               disabled/>
-                                    <TextField className={classes.textField} label="Email" defaultValue={user.email}
-                                               disabled/>
-                                    <TextField className={classes.textField} label="Username"
-                                               defaultValue={user.username}
-                                               disabled/>
-                                </div>
-                            </div>
-                        </Paper>
-                    </Container>
+                    <ProfileCard user={user}/>
                 )
             case 1:
                 return (
-                    <Container fixed>
-                        <Paper>
-
-                        </Paper>
-                    </Container>
-
+                    <EditCard user={user}/>
                 )
+            case 2:
+                return (<ConsentCard user={user}/>)
             default :
                 return null
         }
     }
 
+    function handleChangeBottomNavCard(event, newValue) {
+        setValue(newValue);
+    }
+
     return (
         <React.Fragment>
             <CssBaseline/>
-            {chooseRigthPaper()}
+            {chooseCard()}
             <BottomNavigation
-                value={value}
-                onChange={(event, newValue) => {
-                    setValue(newValue);
-                }}
+                value={bottomCardValue}
+                onChange={handleChangeBottomNavCard}
                 className={classes.bottomNav}
             >
                 <BottomNavigationAction label="Profile" icon={<PersonIcon/>}/>
