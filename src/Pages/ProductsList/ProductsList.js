@@ -7,12 +7,13 @@ import Typography from '@material-ui/core/Typography';
 import {makeStyles} from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import IconButton from '@material-ui/core/IconButton';
-import {CardHeader} from "@material-ui/core";
+import {CardHeader, CircularProgress} from "@material-ui/core";
 import Avatar from '@material-ui/core/Avatar';
 import Delete from '@material-ui/icons/Delete';
-import {AlertContext, UserContext} from "../../context";
+import {AlertContext, UserContext} from "context";
 import {useParams} from "react-router-dom";
 import {ErrorOutlineTwoTone} from "@material-ui/icons";
+import DetailsModal from "./components/DetailsModal";
 
 const useStyles = makeStyles((theme) => ({
     icon: {
@@ -145,6 +146,7 @@ export default function Album() {
     const user = useContext(UserContext);
     const [loading, setLoading] = useState(false);
     const [productsList, setProductsList] = useState([]);
+    const [openModal, setOpenModal] = useState(false);
     const {fridgeId} = useParams();
 
     for(let i = 0; i < products.length; i++) {
@@ -205,38 +207,45 @@ export default function Album() {
             <CssBaseline/>
             <main>
                 <Container className={classes.cardGrid} maxWidth="md">
-                    <Grid container spacing={4}>
-                        {productsList.map((product, idxProduct) => (
-                            <Grid item key={idxProduct} xs={12} sm={6} md={4}>
-                                <Card className={classes.card}>
-                                    <CardHeader
-                                        avatar={
-                                            <Avatar aria-label="recipe" className={classes.avatar} style={{backgroundColor: product.backgroundColor}}>
-                                                {product.dateToCompare < (new Date()).getTime() ? <ErrorOutlineTwoTone /> : product.productName.charAt(0)}
-                                            </Avatar>
-                                        }
-                                        action={
-                                            <IconButton aria-label="delete" onClick={(e) => handleDeleteClick(e, product.id)}>
-                                                <Delete/>
-                                            </IconButton>
-                                        }
-                                    />
-                                    <CardContent className={classes.cardContent} style={{color: product.color}}>
-                                        <Typography gutterBottom variant="h5" component="h2">
-                                            {product.productName}
-                                        </Typography>
-                                        <Typography>
-                                            Quantity: {product.quantity}
-                                        </Typography>
-                                        <Typography>
-                                            Expiration date: {product.expDate}
-                                        </Typography>
-                                    </CardContent>
-                                </Card>
+                    {
+                        loading ? (
+                            <CircularProgress />
+                        ) : (
+                            <Grid container spacing={4}>
+                                {productsList.map((product, idxProduct) => (
+                                    <Grid item key={idxProduct} xs={12} sm={6} md={4}>
+                                        <Card className={classes.card} onClick={() => setOpenModal(product.id)}>
+                                            <CardHeader
+                                                avatar={
+                                                    <Avatar aria-label="recipe" className={classes.avatar} style={{backgroundColor: product.backgroundColor}}>
+                                                        {product.dateToCompare < (new Date()).getTime() ? <ErrorOutlineTwoTone /> : product.productName.charAt(0)}
+                                                    </Avatar>
+                                                }
+                                                action={
+                                                    <IconButton aria-label="delete" onClick={(e) => handleDeleteClick(e, product.id)}>
+                                                        <Delete/>
+                                                    </IconButton>
+                                                }
+                                            />
+                                            <CardContent className={classes.cardContent} style={{color: product.color}}>
+                                                <Typography gutterBottom variant="h5" component="h2">
+                                                    {product.productName}
+                                                </Typography>
+                                                <Typography>
+                                                    Quantity: {product.quantity}
+                                                </Typography>
+                                                <Typography>
+                                                    Expiration date: {product.expDate}
+                                                </Typography>
+                                            </CardContent>
+                                        </Card>
+                                    </Grid>
+                                ))}
                             </Grid>
-                        ))}
-                    </Grid>
+                        )
+                    }
                 </Container>
+                {openModal && <DetailsModal setOpen={setOpenModal} open={!!openModal} product_id={openModal} />}
             </main>
         </React.Fragment>
     );

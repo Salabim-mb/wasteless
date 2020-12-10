@@ -4,7 +4,7 @@ import UniversalModal from "../../../components/UniversalModal";
 import {CircularProgress, Typography} from "@material-ui/core";
 
 const getProductData = async(token, product_id) => {
-    const url = be.PRODUCTS + product_id + "/";
+    const url = "https://wasteless-backend.herokuapp.com/products/" + product_id + "/";
     const headers = {
         "Authorization": token
     };
