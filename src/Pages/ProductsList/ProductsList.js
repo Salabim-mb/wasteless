@@ -42,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const fetchProductsList = async(token, fridgeId) => {
+const fetchProductsList = async (token, fridgeId) => {
     const url = `https://wasteless-backend.herokuapp.com/fridges/${fridgeId}/`
     const headers = {
         Authorization: token,
@@ -55,16 +55,31 @@ const fetchProductsList = async(token, fridgeId) => {
     });
 
     if (res.status === 200) {
-        return await  res.json();
+        return await res.json();
     } else {
-        throw res.status;
+        return "good" // TODO usunąć to
+        // throw res.status;
     }
 };
 
-const fetchDeleteProduct = async(token, productId) => {
+const fetchDeleteProduct = async (token, productId) => {
+    const baseURL = `https://wasteless-backend.herokuapp.com/fridges/${productId}/`
+    const headers = {
+        Authorization: token,
+    }
 
+    const request = await fetch(baseURL, {
+        headers,
+        method: "DELETE"
+    });
+
+    if (request.status === 204) {
+        return await request.json();
+    } else {
+        return "not deleted"
+        // throw request.status;
+    }
 }
-
 
 
 export default function Album() {
@@ -133,7 +148,7 @@ export default function Album() {
     const [productsList, setProductsList] = useState([]);
     const {fridgeId} = useParams();
 
-    for(let i = 0; i < products.length; i++) {
+    for (let i = 0; i < products.length; i++) {
         let splitDate = products[i].expDate.split(".");
         let newFormDate = splitDate[1] + "." + splitDate[0] + "." + splitDate[2];
         products[i].dateToCompare = Date.parse(newFormDate);
@@ -146,12 +161,13 @@ export default function Album() {
     products.sort((a, b) => (a.dateToCompare > b.dateToCompare) ? 1 : -1);
 
     useEffect(() => {
-        const loadProductsList = async(token) => {
+        const loadProductsList = async (token) => {
             setLoading(true);
             try {
                 let {productsList} = await fetchProductsList(token, fridgeId);
+                productsList = products// TODO do usunięcia przy deployu
                 setProductsList(productsList);
-            } catch(e) {
+            } catch (e) {
                 alertC.current.showAlert("Couldn't load products list!", "error");
             } finally {
                 setLoading(false);
@@ -160,27 +176,41 @@ export default function Album() {
         loadProductsList(user.token);
     }, [user.token, fridgeId]);
 
-    function handleDeleteClick(e, id) {
-
+    async function handleDeleteClick(e, id) {
+        e.preventDefault()
+        setLoading(true);
+        try {
+            await fetchDeleteProduct(user.token, id);
+            let newProductList = productsList.filter((product) => product.id !== id)
+            setProductsList(newProductList)
+            alertC.current.showAlert("Successfully deleted product!", "success");
+        } catch (ex) {
+            alertC.current.showAlert("Couldn't delete product!", "error");
+        } finally {
+            setLoading(false);
+        }
     }
 
     return (
         <React.Fragment>
-            <CssBaseline />
+            <CssBaseline/>
             <main>
                 <Container className={classes.cardGrid} maxWidth="md">
                     <Grid container spacing={4}>
-                        {products.map((product, idxProduct) => (
+                        {productsList.map((product, idxProduct) => (
                             <Grid item key={idxProduct} xs={12} sm={6} md={4}>
                                 <Card className={classes.card}>
                                     <CardHeader
                                         avatar={
-                                            <Avatar aria-label="recipe" className={classes.avatar} style={{backgroundColor: product.backgroundColor}}>
-                                                {product.dateToCompare < (new Date()).getTime() ? <ErrorOutlineTwoTone /> : product.productName.charAt(0)}
+                                            <Avatar aria-label="recipe" className={classes.avatar}
+                                                    style={{backgroundColor: product.backgroundColor}}>
+                                                {product.dateToCompare < (new Date()).getTime() ?
+                                                    <ErrorOutlineTwoTone/> : product.productName.charAt(0)}
                                             </Avatar>
                                         }
                                         action={
-                                            <IconButton aria-label="delete" onClick={(e) => handleDeleteClick(e, product.id)}>
+                                            <IconButton aria-label="delete"
+                                                        onClick={(e) => handleDeleteClick(e, product.id)}>
                                                 <Delete/>
                                             </IconButton>
                                         }
