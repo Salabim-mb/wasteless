@@ -61,50 +61,64 @@ const fetchProductsList = async(token, fridgeId) => {
     }
 };
 
+const fetchDeleteProduct = async(token, productId) => {
+
+}
+
+
 
 export default function Album() {
     const products = [
         {
+            id: '1',
             productName: 'Milk',
             quantity: '1',
             expDate: '12.12.2020'
         },
         {
+            id: '2',
             productName: 'Orange Juice',
             quantity: '1',
             expDate: '13.12.2020'
         },
         {
+            id: '3',
             productName: 'Eggs',
             quantity: '5',
             expDate: '19.12.2020'
         },
         {
+            id: '4',
             productName: 'Yoghurt',
             quantity: '5',
             expDate: '22.12.2020'
         },
         {
+            id: '5',
             productName: 'Tenderloin',
             quantity: '10',
             expDate: '12.12.2020'
         },
         {
+            id: '6',
             productName: 'Ham',
             quantity: '1',
             expDate: '07.12.2020'
         },
         {
+            id: '7',
             productName: 'Cottage Cheese',
             quantity: '2',
             expDate: '12.01.2021'
         },
         {
+            id: '8',
             productName: 'Lemon',
             quantity: '2',
             expDate: '01.02.2021'
         },
         {
+            id: '9',
             productName: 'Lemon',
             quantity: '3',
             expDate: '01.04.2021'
@@ -146,7 +160,9 @@ export default function Album() {
         loadProductsList(user.token);
     }, [user.token, fridgeId]);
 
+    function handleDeleteClick(e, id) {
 
+    }
 
     return (
         <React.Fragment>
@@ -164,7 +180,7 @@ export default function Album() {
                                             </Avatar>
                                         }
                                         action={
-                                            <IconButton aria-label="delete">
+                                            <IconButton aria-label="delete" onClick={(e) => handleDeleteClick(e, product.id)}>
                                                 <Delete/>
                                             </IconButton>
                                         }
