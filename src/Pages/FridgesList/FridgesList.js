@@ -10,12 +10,15 @@ import {path_list} from "../../constants/routes";
 
 const fridgesTest = [
     {
+        id: 1,
         fridge_name: 'Fridge one',
     },
     {
+        id: 2,
         fridge_name: 'Fridge two',
     },
     {
+        id: 3,
         fridge_name: 'Fridge three',
     },
 ];
@@ -150,36 +153,35 @@ export default function FridgesList() {
                     <CircularProgress/>
                 ) : (
                     fridges.map((image) => (
-                        <div onClick={() => setRedirect(image.id)}>
-                            <ButtonBase
-                                focusRipple
-                                key={image.fridge_name}
-                                className={classes.image}
-                                focusVisibleClassName={classes.focusVisible}
-                                style={{
-                                    width: image.width,
-                                }}
+                        <ButtonBase
+                            onClick={() => setRedirect(image.id)}
+                            focusRipple
+                            key={image.fridge_name}
+                            className={classes.image}
+                            focusVisibleClassName={classes.focusVisible}
+                            style={{
+                                width: image.width,
+                            }}
+                        >
+                          <span
+                              className={classes.imageSrc}
+                              style={{
+                                  backgroundImage: `url(${fridgeImage})`,
+                              }}
+                          />
+                                            <span className={classes.imageBackdrop}/>
+                                            <span className={classes.imageButton}>
+                            <Typography
+                                component="span"
+                                variant="subtitle1"
+                                color="inherit"
+                                className={classes.imageTitle}
                             >
-                              <span
-                                  className={classes.imageSrc}
-                                  style={{
-                                      backgroundImage: `url(${fridgeImage})`,
-                                  }}
-                              />
-                                                <span className={classes.imageBackdrop}/>
-                                                <span className={classes.imageButton}>
-                                <Typography
-                                    component="span"
-                                    variant="subtitle1"
-                                    color="inherit"
-                                    className={classes.imageTitle}
-                                >
-                                  {image.fridge_name}
-                                    <span className={classes.imageMarked}/>
-                                </Typography>
-                              </span>
-                            </ButtonBase>
-                        </div>
+                              {image.fridge_name}
+                                <span className={classes.imageMarked}/>
+                            </Typography>
+                          </span>
+                        </ButtonBase>
                     ))
                 )
             }
