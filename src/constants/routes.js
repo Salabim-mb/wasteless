@@ -22,8 +22,13 @@ export const path_list = {
         name: "Settings"
     },
     FRIDGE: {
-        route: "/user/fridge",
+        route: "/user/:fridge_id",
+        redirect: (fridge_id) => `/user/${fridge_id}`,
         name: "My fridge"
+    },
+    FRIDGE_LIST: {
+        route: "/user/fridge",
+        name: "My fridge list"
     },
     FRIDGE_NEW_PRODUCT: {
         route: "/user/fridge/new-product",
@@ -34,7 +39,7 @@ export const path_list = {
 
 export default [
     {
-        path: path_list.FRIDGE.route,
+        path: path_list.FRIDGE_LIST.route,
         exact: true,
         component: FridgesList
     }

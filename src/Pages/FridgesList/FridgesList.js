@@ -1,26 +1,44 @@
-import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import React, {useContext, useEffect, useRef, useState} from 'react';
+import {makeStyles} from '@material-ui/core/styles';
 import ButtonBase from '@material-ui/core/ButtonBase';
 import Typography from '@material-ui/core/Typography';
+import {AlertContext, UserContext} from "../../context";
 import fridgeImage from 'fridge.svg'
+import CircularProgress from '@material-ui/core/CircularProgress';
+import {Redirect} from 'react-router-dom';
+import {path_list} from "../../constants/routes";
 
-const images = [
+const fridgesTest = [
     {
-        url: fridgeImage,
-        title: 'Fridge one',
-        width: '30%',
+        fridge_name: 'Fridge one',
     },
     {
-        url: fridgeImage,
-        title: 'Fridge two',
-        width: '30%',
+        fridge_name: 'Fridge two',
     },
     {
-        url: fridgeImage,
-        title: 'Fridge three',
-        width: '30%',
+        fridge_name: 'Fridge three',
     },
 ];
+
+const fetchFridgesList = async (token) => {
+    const url = 'https://wasteless-backend.herokuapp.com/profile/'
+    const headers = {
+        Authorization: token,
+        "Content-Type": "application/json",
+    }
+
+    const res = await fetch(url, {
+        headers,
+        method: "GET"
+    });
+
+    if (res.status === 200) {
+        return await res.json();
+    } else {
+        return "good"
+        // throw res.status
+    }
+};
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -36,6 +54,7 @@ const useStyles = makeStyles((theme) => ({
         position: 'relative',
         margin: '1%',
         height: 500,
+        width: '30%',
         [theme.breakpoints.down('xs')]: {
             width: '65% !important', // Overrides inline-style
             height: 300,
@@ -102,38 +121,69 @@ const useStyles = makeStyles((theme) => ({
 export default function FridgesList() {
     const classes = useStyles();
 
+    const alertC = useRef(useContext(AlertContext));
+    const user = useContext(UserContext);
+    const [loading, setLoading] = useState(false);
+    const [fridges, setFridges] = useState([]);
+    const [redirect, setRedirect] = useState(undefined);
+
+    useEffect(() => {
+        const loadFridges = async (token) => {
+            setLoading(true);
+            try {
+                let {fridges} = await fetchFridgesList(token);
+                fridges = fridgesTest //delete when login is working
+                setFridges(fridges);
+            } catch (e) {
+                alertC.current.showAlert("Couldn't load fridges list!", "error")
+            } finally {
+                setLoading(false)
+            }
+        };
+        loadFridges(user.token);
+    }, [user.token]);
+
     return (
         <div className={classes.root}>
-            {images.map((image) => (
-                <ButtonBase
-                    focusRipple
-                    key={image.title}
-                    className={classes.image}
-                    focusVisibleClassName={classes.focusVisible}
-                    style={{
-                        width: image.width,
-                    }}
-                >
-          <span
-              className={classes.imageSrc}
-              style={{
-                  backgroundImage: `url(${image.url})`,
-              }}
-          />
-                    <span className={classes.imageBackdrop} />
-                    <span className={classes.imageButton}>
-            <Typography
-                component="span"
-                variant="subtitle1"
-                color="inherit"
-                className={classes.imageTitle}
-            >
-              {image.title}
-                <span className={classes.imageMarked} />
-            </Typography>
-          </span>
-                </ButtonBase>
-            ))}
+            {
+                loading ? (
+                    <CircularProgress/>
+                ) : (
+                    fridges.map((image) => (
+                        <div onClick={() => setRedirect(image.id)}>
+                            <ButtonBase
+                                focusRipple
+                                key={image.fridge_name}
+                                className={classes.image}
+                                focusVisibleClassName={classes.focusVisible}
+                                style={{
+                                    width: image.width,
+                                }}
+                            >
+                              <span
+                                  className={classes.imageSrc}
+                                  style={{
+                                      backgroundImage: `url(${fridgeImage})`,
+                                  }}
+                              />
+                                                <span className={classes.imageBackdrop}/>
+                                                <span className={classes.imageButton}>
+                                <Typography
+                                    component="span"
+                                    variant="subtitle1"
+                                    color="inherit"
+                                    className={classes.imageTitle}
+                                >
+                                  {image.fridge_name}
+                                    <span className={classes.imageMarked}/>
+                                </Typography>
+                              </span>
+                            </ButtonBase>
+                        </div>
+                    ))
+                )
+            }
+            {redirect && <Redirect to={path_list.FRIDGE.redirect(redirect)}/> }
         </div>
     );
 }
