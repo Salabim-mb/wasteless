@@ -1,4 +1,4 @@
-import ProductsList from "../components/ProductsList/ProductsList"
+import ProductsList from "Pages/ProductsList/ProductsList"
 export const path_list = {
     DASHBOARD: {
         route: "/",
