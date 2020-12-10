@@ -1,4 +1,5 @@
 import ProductsList from "Pages/ProductsList/ProductsList"
+
 export const path_list = {
     DASHBOARD: {
         route: "/",
@@ -27,16 +28,13 @@ export const path_list = {
     FRIDGE_NEW_PRODUCT: {
         route: "/user/fridge/new-product",
         name: "Add product"
-    },
-    PRODUCTS: {
-        route: "/user/fridge/:fridgeId",
-        name: "My products list"
     }
 }
 
 export default [
     {
-        path: path_list.PRODUCTS.route,
-        component: ProductsList
+        path: path_list.FRIDGE.route,
+        component: ProductsList,
+        exact: true
     }
 ];
