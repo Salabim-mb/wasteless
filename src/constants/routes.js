@@ -33,6 +33,7 @@ export const path_list = {
 export default [
     {
         path: path_list.FRIDGE.route,
-        component: ProductsList
+        component: ProductsList,
+        exact: true
     }
 ];
