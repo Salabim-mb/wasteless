@@ -1,3 +1,5 @@
+import FridgesList from "../Pages/FridgesList/FridgesList";
+
 export const path_list = {
     DASHBOARD: {
         route: "/",
@@ -31,5 +33,9 @@ export const path_list = {
 }
 
 export default [
-
+    {
+        path: path_list.FRIDGE.route,
+        exact: true,
+        component: FridgesList
+    }
 ];
