@@ -3,7 +3,7 @@ import {makeStyles} from '@material-ui/core/styles';
 import ButtonBase from '@material-ui/core/ButtonBase';
 import Typography from '@material-ui/core/Typography';
 import {AlertContext, UserContext} from "../../context";
-import fridgeImage from 'fridge.svg'
+import fridgeImage from '../../assets/fridge.svg'
 import CircularProgress from '@material-ui/core/CircularProgress';
 import {Redirect} from 'react-router-dom';
 import {path_list} from "../../constants/routes";
