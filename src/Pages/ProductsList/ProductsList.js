@@ -110,6 +110,7 @@ export default function Album() {
             expDate: '01.04.2021'
         }
     ];
+    console.log(products);
 
     const classes = useStyles();
 
@@ -122,11 +123,21 @@ export default function Album() {
     for(let i = 0; i < products.length; i++) {
         let splitDate = products[i].expDate.split(".");
         let newFormDate = splitDate[1] + "." + splitDate[0] + "." + splitDate[2];
-        products[i].dateToCompare = Date.parse(newFormDate);
+        let now = new Date().getTime();
+        let dateOffset = (24*60*60*1000) * 3;
         let c1 = (products[i].productName.toUpperCase().charCodeAt(0) * 5) % 256;
         let c2 = (products[i].productName.toUpperCase().charCodeAt(1) * 5) % 256;
         let c3 = (products[i].productName.toUpperCase().charCodeAt(2) * 5) % 256;
+        products[i].dateToCompare = Date.parse(newFormDate);
         products[i].backgroundColor = "rgb(" + c1 + "," + c2 + "," + c3 + ")";
+
+        if (now > products[i].dateToCompare){
+            products[i].color = "red";
+        } else if (now + dateOffset > products[i].dateToCompare) {
+            products[i].color = "orange";
+        } else {
+            products[i].color = "black";
+        }
     }
 
     products.sort((a, b) => (a.dateToCompare > b.dateToCompare) ? 1 : -1);
@@ -135,6 +146,7 @@ export default function Album() {
         const loadProductsList = async(token) => {
             setLoading(true);
             try {
+                console.log(fridgeId);
                 let {productsList} = await fetchProductsList(token, fridgeId);
                 setProductsList(productsList);
             } catch(e) {
