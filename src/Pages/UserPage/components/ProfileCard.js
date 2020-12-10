@@ -1,6 +1,7 @@
 import {Avatar, Container, Paper, TextField} from "@material-ui/core";
-import React from "react";
+import React, {useContext} from "react";
 import {makeStyles} from "@material-ui/core/styles";
+import {UserContext} from "../../../context";
 
 const useStyles = makeStyles((theme) => ({
     avatar: {
@@ -31,28 +32,29 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function ProfileCard({user}) {
+export default function ProfileCard() {
     const classes = useStyles();
+    const user = useContext((UserContext))
 
     return (<Container fixed>
         <Paper>
             <div className={classes.profileDiv}>
                 <div className={classes.avatarDiv}>
                     {user.avatarImg === "" ?
-                        <Avatar className={classes.avatar}>{user.name.charAt(0).toUpperCase()}</Avatar> :
-                        <Avatar className={classes.avatar} src={user.avatarImg}/>}
+                        <Avatar className={classes.avatar}>{user?.data?.name.charAt(0).toUpperCase()}</Avatar> :
+                        <Avatar className={classes.avatar} src={user?.data?.avatarImg}/>}
                 </div>
-                <div className={classes.detailsDiv}>
+                <form className={classes.detailsDiv}>
                     <TextField className={classes.textField} label="Username"
-                               defaultValue={user.username}
+                               defaultValue={user?.data?.username}
                                disabled/>
-                    <TextField className={classes.textField} label="Name" defaultValue={user.name}
+                    <TextField className={classes.textField} label="Name" defaultValue={user?.data?.name}
                                disabled/>
-                    <TextField className={classes.textField} label="Surname" defaultValue={user.surname}
+                    <TextField className={classes.textField} label="Surname" defaultValue={user?.data?.surname}
                                disabled/>
-                    <TextField className={classes.textField} label="Email" defaultValue={user.email}
+                    <TextField className={classes.textField} label="Email" defaultValue={user?.data?.email}
                                disabled/>
-                </div>
+                </form>
             </div>
         </Paper>
     </Container>)
