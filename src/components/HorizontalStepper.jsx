@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const HorizontalStepper = ({steps, onDoneComponent}) => {
+const HorizontalStepper = ({disableNext, steps, onDoneComponent}) => {
     const classes = useStyles();
     const [activeStep, setActiveStep] = useState(0);
 
@@ -53,17 +53,17 @@ const HorizontalStepper = ({steps, onDoneComponent}) => {
                 ))}
             </Stepper>
             <div>
+                <Paper className={classes.paper}>
+                    {
+                        Object.values(steps)[activeStep]
+                    }
+                </Paper>
                 {activeStep === pathLength ? (
                     <div className={classes.buttonToolbar}>
                         {onDoneComponent(handleBack)}
                     </div>
                 ) : (
                     <div>
-                        <Paper className={classes.paper}>
-                            {
-                                Object.values(steps)[activeStep]
-                            }
-                        </Paper>
                         <div className={classes.buttonToolbar}>
                             <Button
                                 disabled={activeStep === 0}
@@ -72,7 +72,12 @@ const HorizontalStepper = ({steps, onDoneComponent}) => {
                             >
                                 Back
                             </Button>
-                            <Button variant="contained" color="primary" onClick={handleNext}>
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={handleNext}
+                                disabled={disableNext}
+                            >
                                 Next
                             </Button>
                         </div>

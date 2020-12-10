@@ -8,6 +8,8 @@ import Button from "@material-ui/core/Button";
 import BarcodeForm from "./components/BarcodeForm";
 import ProductDataForm from "./components/ProductDataForm";
 import AdditionalInfoForm from "./components/AdditionalInfoForm";
+import {path_list} from "constants/routes";
+import {Redirect} from 'react-router-dom';
 
 const addProduct = async (token, data) => {
     const url = be.PRODUCTS;
@@ -34,7 +36,7 @@ const NewProduct = (props) => {
     const [data, setData] = useState({
         product_name: "",
         quantity_g: 0,
-        quantity: 0,
+        quantity: 1,
         carbohydrates: 0,
         energy_kcal: 0,
         fat: 0,
@@ -44,7 +46,7 @@ const NewProduct = (props) => {
         sodium: 0,
         image_url: "",
         date_added: (new Date()).toISOString(),
-        expiration_date: "",
+        expiration_date: new Date().toISOString(),
         fridge_id: fridge_id
     });
     const userC = useContext(UserContext);
@@ -59,8 +61,9 @@ const NewProduct = (props) => {
         e.preventDefault();
         setLoading(true);
         try {
-            await addProduct(userC.token, data)
+            // await addProduct(userC.token, data)
         } catch(ex) {
+            console.log(ex);
             alertC.current.showAlert(ex, "error")
         } finally {
             setLoading(false);
@@ -79,14 +82,18 @@ const NewProduct = (props) => {
     )
 
     return (
-        <React.Fragment>
-            <form onSubmit={handleSubmit} noValidate>
-                <HorizontalStepper
-                    onDoneComponent={fetchHandleComponent}
-                    steps={steps}
-                />
-            </form>
-        </React.Fragment>
+        <>
+            <React.Fragment>
+                <form onSubmit={handleSubmit}>
+                    <HorizontalStepper
+                        onDoneComponent={fetchHandleComponent}
+                        steps={steps}
+                        disableNext={barcode === ""}
+                    />
+                </form>
+            </React.Fragment>
+            {redirect && <Redirect to={path_list.FRIDGE.redirect(fridge_id)} />}
+        </>
     )
 };
 

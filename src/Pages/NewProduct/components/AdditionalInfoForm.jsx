@@ -1,5 +1,8 @@
 import React from "react";
+import 'date-fns';
+import DateFnsUtils from "@date-io/date-fns";
 import {Grid, TextField} from "@material-ui/core";
+import {MuiPickersUtilsProvider, KeyboardDatePicker} from '@material-ui/pickers';
 
 const AdditionalInfoForm = ({data, setData}) => {
 
@@ -11,6 +14,7 @@ const AdditionalInfoForm = ({data, setData}) => {
                     variant="outlined"
                     required
                     fullWidth
+                    type="number"
                     id="quantity"
                     label="Quantity"
                     autoFocus
@@ -19,17 +23,21 @@ const AdditionalInfoForm = ({data, setData}) => {
                 />
             </Grid>
             <Grid item xs={12} sm={6}>
-                {/*change to datepicker!!!!*/}
-                <TextField
-                    variant="outlined"
-                    required
-                    fullWidth
-                    id="expiration_date"
-                    label="Expires at"
-                    autoComplete="expiration_date"
-                    value={data.expiration_date}
-                    onChange={e => setData({...data, expiration_date: e.target.value})}
-                />
+                <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                    <KeyboardDatePicker
+                        margin="normal"
+                        fullWidth
+                        variant="contained"
+                        id="date-picker-dialog"
+                        label="Expires at"
+                        format="dd.MM.yyyy"
+                        value={new Date(data.expiration_date)}
+                        onChange={(e) => setData({...data, expiration_date: e.toISOString()})}
+                        KeyboardButtonProps={{
+                            'aria-label': 'change date',
+                        }}
+                    />
+                </MuiPickersUtilsProvider>
             </Grid>
         </Grid>
     )

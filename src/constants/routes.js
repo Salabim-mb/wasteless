@@ -23,10 +23,12 @@ export const path_list = {
     },
     FRIDGE_NEW_PRODUCT: {
         route: "/user/:fridge_id/new-product",
+        redirect: (fridge_id) => `/user/${fridge_id}/new-product`,
         name: "Add product"
     },
     FRIDGE: {
         route: "/user/:fridge_id",
+        redirect: (fridge_id) => `/user/${fridge_id}`,
         name: "My fridge"
     },
 
