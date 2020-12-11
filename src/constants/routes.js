@@ -1,4 +1,5 @@
 import ProductsList from "../Pages/ProductsList/ProductsList"
+import UserPage from "../Pages/UserPage/UserPage";
 import FuckingLoginPage from "../Pages/LoginPage/FuckingLoginPage";
 
 export const path_list = {
@@ -29,8 +30,9 @@ export const path_list = {
     FRIDGE_NEW_PRODUCT: {
         route: "/user/fridge/new-product",
         name: "Add product"
-    }
+    },
 }
+
 
 export default [
     {
@@ -42,5 +44,10 @@ export default [
         path: path_list.LOGIN.route,
         component: FuckingLoginPage,
         exact: true
+    },
+    {
+        path: path_list.PROFILE.route,
+        exact: true,
+        component: UserPage
     }
 ];
