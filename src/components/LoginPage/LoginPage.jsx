@@ -46,7 +46,6 @@ const loginUser = async (data) => {
             "password": data.password
         })
     });
-    console.log(res.json());
     if (res.status === 200 || res.status === 201) {
         return await res.json();
     } else {
@@ -102,11 +101,12 @@ export default function LoginPage() {
         } else {
             setDisabled(true);
             try {
-                let {userToken, userName, userSurname, userEmail} = await loginUser(data);
-                user.login(userToken, {
-                    name: userName,
-                    surname: userSurname,
-                    email: userEmail
+                let {token, first_name, last_name, email} = await loginUser(data);
+                user.login(token, {
+                    first_name: first_name,
+                    last_name: last_name,
+                    email: email,
+                    username: data.login
                 });
                 setCorrect(true);
                 setTimeout(() => setRedirect(true), 3000);
@@ -164,7 +164,7 @@ export default function LoginPage() {
                         />
                         {error && <Alert severity="error"><AlertTitle>Error</AlertTitle>Something went <strong>wrong</strong> while trying to login user</Alert>}
                         {correct && <Alert severity="success"><AlertTitle>Success</AlertTitle>Login successful. <strong>Redirecting...</strong></Alert>}
-                        {redirect && <Redirect to={paths_list.DASHBOARD.route}/>}
+                        {redirect && <Redirect to={paths_list.PROFILE.route}/>}
                         <Button
                             type="submit"
                             fullWidth
