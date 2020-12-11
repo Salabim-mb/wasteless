@@ -1,4 +1,6 @@
 import NewProduct from "../Pages/NewProduct";
+import UserPage from "../Pages/UserPage/UserPage";
+import FuckingLoginPage from "../Pages/LoginPage/FuckingLoginPage";
 
 export const path_list = {
     DASHBOARD: {
@@ -39,5 +41,15 @@ export default [
         path: path_list.FRIDGE_NEW_PRODUCT.route,
         component: NewProduct,
         exact: true
+    },
+    {
+        path: path_list.LOGIN.route,
+        component: FuckingLoginPage,
+        exact: true
+    },
+    {
+        path: path_list.PROFILE.route,
+        exact: true,
+        component: UserPage
     }
 ];
