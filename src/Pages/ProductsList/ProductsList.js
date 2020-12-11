@@ -88,8 +88,8 @@ export default function Album() {
     const [loading, setLoading] = useState(false);
     const [productsList, setProductsList] = useState([]);
     const [openModal, setOpenModal] = useState(false);
-    const [currentId, setCurrentId] = useState(undefined);
-    const {fridgeId} = useParams();
+    const {fridge_id} = useParams();
+    const fridgeId = fridge_id;
 
     for(let i = 0; i < productsList.length; i++) {
         let splitDate = productsList[i].expiration_date.split(".");
