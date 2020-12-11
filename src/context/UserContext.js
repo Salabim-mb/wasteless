@@ -28,15 +28,19 @@ const encryptCookie = (data) => {
 };
 
 const decryptCookie = (enc) => {
-    try {
-        const stringKey = process.env.REACT_APP_COOKIE_ENCRYPTION_KEY;
-        let key = stringKey.split('');
-        key = key.map((item) => item.charCodeAt(0));
-        let encryptedBytes = aesjs.utils.hex.toBytes(enc);
-        let decryptedBytes = (new aesjs.ModeOfOperation.ctr(new Uint8Array(key), new aesjs.Counter(5))).decrypt(encryptedBytes);
-        return JSON.parse( aesjs.utils.utf8.fromBytes(decryptedBytes) );
-    } catch(e) {
-        alert("Could not properly read cookie, therefore you cannot log in. Please contact application administrator.");
+    if (enc) {
+        try {
+            const stringKey = process.env.REACT_APP_COOKIE_ENCRYPTION_KEY;
+            let key = stringKey.split('');
+            key = key.map((item) => item.charCodeAt(0));
+            let encryptedBytes = aesjs.utils.hex.toBytes(enc);
+            let decryptedBytes = (new aesjs.ModeOfOperation.ctr(new Uint8Array(key), new aesjs.Counter(5))).decrypt(encryptedBytes);
+            return JSON.parse( aesjs.utils.utf8.fromBytes(decryptedBytes) );
+        } catch(e) {
+            alert("Could not properly read cookie, therefore you cannot log in. Please contact application administrator.");
+            return undefined;
+        }
+    } else {
         return undefined;
     }
 };

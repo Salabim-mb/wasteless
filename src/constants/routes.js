@@ -1,3 +1,4 @@
+import NewProduct from "../Pages/NewProduct";
 import FridgesList from "../Pages/FridgesList/FridgesList";
 import ProductsList from "../Pages/ProductsList/ProductsList"
 import UserPage from "../Pages/UserPage/UserPage";
@@ -34,7 +35,8 @@ export const path_list = {
         name: "My fridge"
     },
     FRIDGE_NEW_PRODUCT: {
-        route: "/user/fridge/new-product",
+        route: "/user/fridge/:fridge_id/new-product",
+        redirect: (fridge_id) => `/user/${fridge_id}/new-product`,
         name: "Add product"
     },
 }
@@ -59,5 +61,10 @@ export default [
         path: path_list.FRIDGE_LIST.route,
         exact: true,
         component: FridgesList
+    },
+    {
+        path: path_list.FRIDGE_NEW_PRODUCT.route,
+        component: NewProduct,
+        exact: true
     }
 ];
