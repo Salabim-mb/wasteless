@@ -6,7 +6,7 @@ import {CircularProgress, Typography} from "@material-ui/core";
 const getProductData = async(token, product_id) => {
     const url = "https://wasteless-backend.herokuapp.com/products/" + product_id + "/";
     const headers = {
-        "Authorization": token
+        "Authorization": "Token " + token
     };
     let res = await fetch(url, {
         headers,
@@ -58,7 +58,9 @@ const DetailsModal = ({product_id, open, setOpen}) => {
                 setLoading(false);
             }
         };
-        loadProductDetails();
+        if (product_id) {
+            loadProductDetails();
+        }
     }, [product_id, user.token]);
 
     return (
