@@ -1,4 +1,6 @@
 import FridgesList from "../Pages/FridgesList/FridgesList";
+import UserPage from "../Pages/UserPage/UserPage";
+import FuckingLoginPage from "../Pages/LoginPage/FuckingLoginPage";
 
 export const path_list = {
     DASHBOARD: {
@@ -34,10 +36,19 @@ export const path_list = {
         route: "/user/fridge/new-product",
         name: "Add product"
     },
-
 }
 
 export default [
+    {
+        path: path_list.LOGIN.route,
+        component: FuckingLoginPage,
+        exact: true
+    },
+    {
+        path: path_list.PROFILE.route,
+        exact: true,
+        component: UserPage
+    },
     {
         path: path_list.FRIDGE_LIST.route,
         exact: true,
