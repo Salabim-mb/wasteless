@@ -1,3 +1,5 @@
+import FuckingLoginPage from "../Pages/LoginPage/FuckingLoginPage";
+
 export const path_list = {
     DASHBOARD: {
         route: "/",
@@ -31,5 +33,9 @@ export const path_list = {
 }
 
 export default [
-
+    {
+        path: path_list.LOGIN.route,
+        component: FuckingLoginPage,
+        exact: true
+    }
 ];
