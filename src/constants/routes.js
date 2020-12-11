@@ -1,4 +1,4 @@
-import ProductsList from "Pages/ProductsList/ProductsList"
+import ProductsList from "../Pages/ProductsList/ProductsList"
 import FuckingLoginPage from "../Pages/LoginPage/FuckingLoginPage";
 
 export const path_list = {

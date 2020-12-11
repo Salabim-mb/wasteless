@@ -46,7 +46,7 @@ const useStyles = makeStyles((theme) => ({
 const fetchProductsList = async (token, fridgeId) => {
     const url = `https://wasteless-backend.herokuapp.com/fridges/${fridgeId}/`
     const headers = {
-        Authorization: token,
+        Authorization: "Token " + token,
         "Content-Type": "application/json",
     }
 
