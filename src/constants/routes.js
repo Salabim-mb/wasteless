@@ -1,4 +1,8 @@
+import FridgesList from "../Pages/FridgesList/FridgesList";
+import ProductsList from "../Pages/ProductsList/ProductsList"
+import UserPage from "../Pages/UserPage/UserPage";
 import LoginPage from "../components/LoginPage/LoginPage";
+
 
 export const path_list = {
     DASHBOARD: {
@@ -21,21 +25,41 @@ export const path_list = {
         route: "/settings",
         name: "Settings"
     },
-    FRIDGE: {
+    FRIDGE_LIST: {
         route: "/user/fridge",
+        name: "My fridge list"
+    },
+    FRIDGE: {
+        route: "/user/fridge/:fridge_id",
+        redirect: (fridge_id) => `/user/fridge/${fridge_id}`,
         name: "My fridge"
     },
     FRIDGE_NEW_PRODUCT: {
         route: "/user/fridge/new-product",
         name: "Add product"
     },
-
 }
 
 export default [
     {
+        path: path_list.FRIDGE.route,
+        component: ProductsList,
+        exact: true
+    },
+    {
         path: path_list.LOGIN.route,
+        component: LoginPage,
+        exact: true
+    },
+    {
+        path: path_list.PROFILE.route,
         exact: true,
-        component: LoginPage
+        component: UserPage
+    },
+    {
+        path: path_list.FRIDGE_LIST.route,
+        exact: true,
+        component: FridgesList
     }
-]
+];
+

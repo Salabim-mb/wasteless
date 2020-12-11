@@ -75,7 +75,7 @@ const useStyles = makeStyles((theme) => ({
         margin: theme.spacing(3, 0, 2),
     },
     card: {
-        // boxShadow: '0 1px 1px 1px lightblue'
+         boxShadow: '0 1px 1px 1px lightblue'
     },
 }));
 
