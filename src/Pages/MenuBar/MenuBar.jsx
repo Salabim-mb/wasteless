@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {useHistory} from 'react-router-dom';
 import AppBar from '@material-ui/core/AppBar';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -18,6 +18,10 @@ import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
 import SwipeableDrawer from "@material-ui/core/SwipeableDrawer";
 import Slide from "@material-ui/core/Slide";
 import {path_list} from "constants/routes";
+import {UserContext} from "../../context";
+import {path_list as paths_list} from "../../constants/routes";
+import {backend} from "../../constants/backend";
+import {getHeaders} from "../../utils/CORSHeaders";
 
 const drawerWidth = 240;
 
@@ -102,8 +106,32 @@ const MenuBar = (props) => {
     const classes = useStyles();
     const [mobileOpen, setMobileOpen] = useState(false);
     const [barName, setBarName] = useState(Object.values(path_list).filter((pathObject) => pathObject.route === history.location.pathname)[0]?.name || "");
+    let user = useContext(UserContext);
 
+    const handleLogout = async (e) => {
+        e.preventDefault();
+        try {
+            await logoutUser(user.token);
+        } catch(e) {
+            console.log(e);
+        } finally {
+            user.logout();
+            history.push(paths_list.DASHBOARD.route)
+        }
+    };
+    const logoutUser = async(token) => {
+        let url = `${backend.LOGOUT}`;
+        let res = await fetch(url, {
+            method: "DELETE",
+            headers: getHeaders(token)
+        });
 
+        if (res.status === 200) {
+            return await res.json();
+        } else {
+            throw res.status;
+        }
+    };
     const redirectToPath = (path) => {
         setBarName(path.name);
         setMobileOpen(false);
