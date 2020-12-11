@@ -61,7 +61,8 @@ const NewProduct = (props) => {
         e.preventDefault();
         setLoading(true);
         try {
-            // await addProduct(userC.token, data)
+            await addProduct(userC.token, data);
+            setRedirect(path_list.FRIDGE);
         } catch(ex) {
             console.log(ex);
             alertC.current.showAlert(ex, "error")
@@ -72,7 +73,7 @@ const NewProduct = (props) => {
 
     const fetchHandleComponent = (handleGoBack) => (
         <div>
-            <Button variant="contained" color="primary" type="submit" fullWidth>
+            <Button variant="contained" color="primary" type="submit" fullWidth disabled={loading}>
                 Add product
             </Button>
             <Button color="primary" fullWidth onClick={handleGoBack}>

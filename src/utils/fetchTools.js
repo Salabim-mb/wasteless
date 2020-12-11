@@ -2,5 +2,5 @@ export const getCORSHeaders = (token = null) => {
     let headers = {
         "Content-Type": "application/json"
     };
-    return token ? {...headers, "Authorization": token} : headers;
+    return token ? {...headers, "Authorization": "Token " + token} : headers;
 }
