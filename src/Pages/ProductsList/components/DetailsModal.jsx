@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useRef, useState} from "react";
 import {AlertContext, UserContext} from "context";
 import UniversalModal from "../../../components/UniversalModal";
-import {CircularProgress, Typography} from "@material-ui/core";
+import {CircularProgress, ListItem, Typography} from "@material-ui/core";
 
 const getProductData = async(token, product_id) => {
     const url = "https://wasteless-backend.herokuapp.com/products/" + product_id + "/";
@@ -41,7 +41,7 @@ const mapData = (data) => ({
 });
 
 const DetailsModal = ({product_id, open, setOpen}) => {
-    let data = {};
+    const [data,setData] = useState({});
     const [loading, setLoading] = useState(false);
     const user = useContext(UserContext);
     const alertC = useRef(useContext(AlertContext));
@@ -50,7 +50,8 @@ const DetailsModal = ({product_id, open, setOpen}) => {
         const loadProductDetails = async () => {
             setLoading(true);
             try {
-                data = mapData( await getProductData(user.token, product_id) );
+                let d = mapData( await getProductData(user.token, product_id) );
+                setData(d);
             } catch(ex) {
                 console.log(ex);
                 alertC.current.showAlert("There was an error loading product data", "error");
@@ -70,10 +71,10 @@ const DetailsModal = ({product_id, open, setOpen}) => {
                     <CircularProgress />
                 ) : (
                     Object.keys(data).map((item) => (
-                        <Typography display="block">
-                            <Typography variant="button" gutterBottom>{item}</Typography>
-                            <Typography variant="body2" gutterBottom>{data[item]}</Typography>
-                        </Typography>
+                        <ListItem key={item}>
+                            <Typography variant="button" gutterBottom>{item}: </Typography>
+                            <Typography variant="body2" gutterBottom>{data[item] || "not given"}</Typography>
+                        </ListItem>
                     ))
                 )
             }

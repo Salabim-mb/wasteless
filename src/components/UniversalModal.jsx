@@ -1,6 +1,5 @@
 import React from "react";
-import {Dialog, DialogContent} from "@material-ui/core";
-import MuiDialogTitle from '@material-ui/core/DialogTitle';
+import {Dialog, DialogContent, DialogTitle} from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
@@ -21,21 +20,24 @@ const useStyles = makeStyles((theme) => ({
         margin: 0,
         padding: theme.spacing(1),
     },
+    dialog: {
+        minWidth: "300px"
+    }
 }));
 
-const UniversalModal = ({ setOpen, open, title, ...rest }, props) => {
+const UniversalModal = ({ setOpen, open, title, children, ...rest }) => {
     const classes = useStyles();
 
     return (
-        <Dialog scroll="paper" onClose={() => setOpen(false)} aria-labelledby="simple-dialog-title" open={open}>
-            <MuiDialogTitle disableTypography className={classes.root} {...rest}>
+        <Dialog className={classes.dialog} scroll="paper" onClose={() => setOpen(false)} aria-labelledby="simple-dialog-title" open={open}>
+            <DialogTitle disableTypography className={classes.root} {...rest}>
                 <Typography variant="h6">{title}</Typography>
                 <IconButton aria-label="close" className={classes.closeButton} onClick={() => setOpen(false)}>
                     <CloseIcon />
                 </IconButton>
-            </MuiDialogTitle>
+            </DialogTitle>
             <DialogContent dividers className={classes.content}>
-                {props.children}
+                {children}
             </DialogContent>
         </Dialog>
     );
