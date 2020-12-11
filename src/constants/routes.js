@@ -1,4 +1,6 @@
 import NewProduct from "../Pages/NewProduct";
+import FridgesList from "../Pages/FridgesList/FridgesList";
+import ProductsList from "../Pages/ProductsList/ProductsList"
 import UserPage from "../Pages/UserPage/UserPage";
 import FuckingLoginPage from "../Pages/LoginPage/FuckingLoginPage";
 
@@ -23,23 +25,26 @@ export const path_list = {
         route: "/settings",
         name: "Settings"
     },
+    FRIDGE_LIST: {
+        route: "/user/fridge",
+        name: "My fridge list"
+    },
+    FRIDGE: {
+        route: "/user/fridge/:fridge_id",
+        redirect: (fridge_id) => `/user/fridge/${fridge_id}`,
+        name: "My fridge"
+    },
     FRIDGE_NEW_PRODUCT: {
-        route: "/user/:fridge_id/new-product",
+        route: "/user/fridge/:fridge_id/new-product",
         redirect: (fridge_id) => `/user/${fridge_id}/new-product`,
         name: "Add product"
     },
-    FRIDGE: {
-        route: "/user/:fridge_id",
-        redirect: (fridge_id) => `/user/${fridge_id}`,
-        name: "My fridge"
-    },
-
 }
 
 export default [
     {
-        path: path_list.FRIDGE_NEW_PRODUCT.route,
-        component: NewProduct,
+        path: path_list.FRIDGE.route,
+        component: ProductsList,
         exact: true
     },
     {
@@ -51,5 +56,15 @@ export default [
         path: path_list.PROFILE.route,
         exact: true,
         component: UserPage
+    },
+    {
+        path: path_list.FRIDGE_LIST.route,
+        exact: true,
+        component: FridgesList
+    },
+    {
+        path: path_list.FRIDGE_NEW_PRODUCT.route,
+        component: NewProduct,
+        exact: true
     }
 ];
