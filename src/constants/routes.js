@@ -1,4 +1,5 @@
 import UserPage from "../Pages/UserPage/UserPage";
+import FuckingLoginPage from "../Pages/LoginPage/FuckingLoginPage";
 
 export const path_list = {
     DASHBOARD: {
@@ -31,9 +32,16 @@ export const path_list = {
     },
 }
 
-export default [{
-    path: path_list.PROFILE.route,
-    exact: true,
-    component: UserPage
+
+export default [
+    {
+        path: path_list.LOGIN.route,
+        component: FuckingLoginPage,
+        exact: true
+    },
+    {
+        path: path_list.PROFILE.route,
+        exact: true,
+        component: UserPage
     }
 ];
