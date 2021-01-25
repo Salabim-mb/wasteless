@@ -92,9 +92,7 @@ export default function Album() {
     const fridgeId = fridge_id;
 
     for(let i = 0; i < productsList.length; i++) {
-        let date = productsList[i].expiration_date.split("T");
-        let splitDate = date[0].split("-");
-        let newFormDate = splitDate[2] + "." + splitDate[1] + "." + splitDate[0];
+        let newFormDate = mapDate(productsList[i]);
         let now = new Date().getTime();
         let dateOffset = (24*60*60*1000) * 3;
         let c1 = (productsList[i].product_name.toUpperCase().charCodeAt(0) * 5) % 256;
