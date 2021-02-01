@@ -182,7 +182,7 @@ export default function Album() {
                                                     Quantity: {product.quantity}
                                                 </Typography>
                                                 <Typography>
-                                                    Expiration date: {product.expiration_date}
+                                                    Expiration date: {mapDate(product)}
                                                 </Typography>
                                                 <Button variant="contained" color="primary" onClick={() => setOpenModal(product.id)}>
                                                     Show details
