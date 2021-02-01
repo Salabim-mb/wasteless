@@ -3,40 +3,25 @@ import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
 import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
-import Box from '@material-ui/core/Box';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-//import { mdiFoodForkDrink } from '@mdi/js';
 import Typography from '@material-ui/core/Typography';
 import {makeStyles} from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Card from "@material-ui/core/Card";
-import {backend} from "../../constants/backend";
-import {getHeaders} from "../../utils/CORSHeaders";
-import {UserContext} from "../../context";
-import {Redirect} from "react-router";
+import {be} from "constants/backendSetup.js";
+import {getCORSHeaders} from "utils/fetchTools";
+import {UserContext} from "context";
+import {Redirect} from "react-router-dom";
 import Alert from "@material-ui/lab/Alert";
-import {path_list as paths_list} from "../../constants/routes";
+import {path_list as paths_list} from "constants/routes";
 import AlertTitle from "@material-ui/lab/AlertTitle";
 
-function Copyright() {
-    return (
-        <Typography variant="body2" color="textSecondary" align="center">
-
-            <Link color="inherit" href="https://material-ui.com/">
-                Wasteless
-            </Link>{' '}
-            {new Date().getFullYear()}
-        </Typography>
-    );
-}
 
 const loginUser = async (data) => {
-    let url = `${backend.LOGIN}`;
-    let headers = getHeaders();
+    let url = `${be.LOGIN}`;
+    let headers = getCORSHeaders();
 
     let res = await fetch(url, {
         method: "POST",
@@ -88,14 +73,14 @@ export default function LoginPage() {
     const user = useContext(UserContext);
     const [disabled, setDisabled] = useState(false);
     const [error, setError] = useState(false);
-    const [validated, setValidated] = useState(false);
+    const [validated, setValidated] = useState("false");
     const [correct, setCorrect] = useState(false);
-    const [redirect, setRedirect] = useState(false);
+    const [redirect, setRedirect] = useState(undefined);
 
     const submitForm = async (e) => {
         e.preventDefault();
         setError(false);
-        setValidated(true);
+        setValidated("true");
         if (e.currentTarget.checkValidity() === false) {
             e.stopPropagation();
         } else {
@@ -109,7 +94,7 @@ export default function LoginPage() {
                     username: data.login
                 });
                 setCorrect(true);
-                setTimeout(() => setRedirect(true), 3000);
+                setTimeout(() => setRedirect(paths_list.PROFILE.route), 3000);
             } catch(e) {
                 console.log(e);
                 setError(true);
@@ -158,13 +143,9 @@ export default function LoginPage() {
                             value={data.password}
                             onChange={e => setData({...data, password: e.target.value})}
                         />
-                        <FormControlLabel
-                            control={<Checkbox value="remember" color="primary"/>}
-                            label="Remember me"
-                        />
                         {error && <Alert severity="error"><AlertTitle>Error</AlertTitle>Something went <strong>wrong</strong> while trying to login user</Alert>}
                         {correct && <Alert severity="success"><AlertTitle>Success</AlertTitle>Login successful. <strong>Redirecting...</strong></Alert>}
-                        {redirect && <Redirect to={paths_list.PROFILE.route}/>}
+                        {redirect && <Redirect to={redirect}/>}
                         <Button
                             type="submit"
                             fullWidth
@@ -176,23 +157,15 @@ export default function LoginPage() {
                             {disabled ? "Loading..." : "Log in!"}
                         </Button>
                         <Grid container>
-                            <Grid item xs>
-                                <Link href="#" variant="body2">
-                                    Forgot password?
-                                </Link>
-                            </Grid>
                             <Grid item>
-                                <Link href="/register" variant="body2">
-                                    {"Don't have an account? Sign Up"}
+                                <Link variant="body2" onClick={() => setRedirect(paths_list.REGISTER.route)}>
+                                    Don't have an account? Sign Up
                                 </Link>
 
                             </Grid>
                         </Grid>
                     </form>
                 </div>
-                <Box mt={8}>
-                    <Copyright/>
-                </Box>
             </Card>
         </Container>
     );

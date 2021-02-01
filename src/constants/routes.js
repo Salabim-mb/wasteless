@@ -1,7 +1,7 @@
 import FridgesList from "../Pages/FridgesList/FridgesList";
 import ProductsList from "../Pages/ProductsList/ProductsList"
 import UserPage from "../Pages/UserPage/UserPage";
-import LoginPage from "../components/LoginPage/LoginPage";
+import LoginPage from "components/LoginPage/LoginPage";
 
 
 export const path_list = {
