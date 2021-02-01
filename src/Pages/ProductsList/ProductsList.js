@@ -143,9 +143,9 @@ export default function Album() {
     }
 
     function mapDate(product) {
-        let date = product.expiration_date.split("T");
-        let splitDate = date[0].split("-");
-        let newFormDate = splitDate[2] + "." + splitDate[1] + "." + splitDate[0];
+        let newDate = new Date(product.expiration_date)
+        let month = newDate.getMonth() + 1;
+        let newFormDate = newDate.getDate() + "." + month + "." + newDate.getFullYear();
         return newFormDate;
     }
 
@@ -182,7 +182,7 @@ export default function Album() {
                                                     Quantity: {product.quantity}
                                                 </Typography>
                                                 <Typography>
-                                                    Expiration date: {mapDate(product)}
+                                                    Expiration date: {product.expiration_date}
                                                 </Typography>
                                                 <Button variant="contained" color="primary" onClick={() => setOpenModal(product.id)}>
                                                     Show details
