@@ -5,7 +5,9 @@ export const be = {
     PLAIN: `${backend_path}/`,
     FRIDGE: `${backend_path}/fridges/`,
     PRODUCTS: `${backend_path}/products/`,
-    USERS: `${backend_path}/users/`
+    USERS: `${backend_path}/users/`,
+    LOGIN: `${backend_path}/login/`,
+    LOGOUT: `${backend_path}/logout/`
 };
 
 export const off_API = `${product_api}/product/`;

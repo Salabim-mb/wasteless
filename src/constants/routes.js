@@ -2,7 +2,8 @@ import NewProduct from "../Pages/NewProduct";
 import FridgesList from "../Pages/FridgesList/FridgesList";
 import ProductsList from "../Pages/ProductsList/ProductsList"
 import UserPage from "../Pages/UserPage/UserPage";
-import FuckingLoginPage from "../Pages/LoginPage/FuckingLoginPage";
+import LoginPage from "Pages/LoginPage/LoginPage";
+
 
 export const path_list = {
     DASHBOARD: {
@@ -49,7 +50,7 @@ export default [
     },
     {
         path: path_list.LOGIN.route,
-        component: FuckingLoginPage,
+        component: LoginPage,
         exact: true
     },
     {
@@ -68,3 +69,4 @@ export default [
         exact: true
     }
 ];
+
