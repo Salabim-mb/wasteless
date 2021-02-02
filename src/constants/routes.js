@@ -3,6 +3,7 @@ import FridgesList from "../Pages/FridgesList/FridgesList";
 import ProductsList from "../Pages/ProductsList/ProductsList"
 import UserPage from "../Pages/UserPage/UserPage";
 import FuckingLoginPage from "../Pages/LoginPage/FuckingLoginPage";
+import RegisterPage from "../Pages/RegisterPage/RegisterPage";
 
 export const path_list = {
     DASHBOARD: {
@@ -50,6 +51,11 @@ export default [
     {
         path: path_list.LOGIN.route,
         component: FuckingLoginPage,
+        exact: true
+    },
+    {
+        path: path_list.REGISTER.route,
+        component: RegisterPage,
         exact: true
     },
     {
