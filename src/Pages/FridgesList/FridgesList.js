@@ -7,6 +7,7 @@ import fridgeImage from '../../assets/fridge.svg'
 import CircularProgress from '@material-ui/core/CircularProgress';
 import {Redirect} from 'react-router-dom';
 import {path_list} from "../../constants/routes";
+import {getCORSHeaders} from "../../utils/fetchTools";
 
 const fridgesTest = [
     {
@@ -25,10 +26,7 @@ const fridgesTest = [
 
 const fetchFridgesList = async (token) => {
     const url = 'https://wasteless-backend.herokuapp.com/profile/fridges/'
-    const headers = {
-        Authorization: "Token " + token,
-        "Content-Type": "application/json",
-    }
+    const headers = getCORSHeaders(token)
 
     const res = await fetch(url, {
         headers,
