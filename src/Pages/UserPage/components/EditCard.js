@@ -1,7 +1,8 @@
 import {Avatar, Button, Container, Icon, Paper, TextField} from "@material-ui/core";
-import React from "react";
+import React, {useContext, useRef, useState} from "react";
 import {makeStyles} from "@material-ui/core/styles";
 import EditIcon from "@material-ui/icons/Edit";
+import {AlertContext} from "../../../context";
 
 const useStyles = makeStyles((theme) => ({
     mainDiv: {
@@ -59,6 +60,18 @@ const useStyles = makeStyles((theme) => ({
 
 export default function EditCard({user}) {
     const classes = useStyles();
+    const [oldPass, setOldPass] = useState("")
+    const [newPass, setNewPass] = useState("")
+    const [newPassR, setNewPassR] = useState("")
+    const alertC = useRef(useContext(AlertContext));
+
+    const handleSubmitPass = async (e) => {
+        try {
+            console.log("click")
+        } catch (err) {
+            alertC.current.showAlert("Couldn't change your password", "error")
+        }
+    }
 
     return (
         <Container fixed>
@@ -90,11 +103,11 @@ export default function EditCard({user}) {
                                 <Button variant="contained" color="primary" endIcon={<Icon>send</Icon>}>Submit</Button>
                             </div>
                             <h2>CHANGE PASSWORD</h2>
-                            <TextField className={classes.textField} label="Recent password" type="password"/>
-                            <TextField className={classes.textField} label="New password" type="password"/>
-                            <TextField className={classes.textField} label="Repeat password" type="password"/>
+                            <TextField className={classes.textField} label="Recent password" type="password" onChange={(e) => setOldPass(e.target.value)}/>
+                            <TextField className={classes.textField} label="New password" type="password" onChange={(e) => setNewPass(e.target.value)}/>
+                            <TextField className={classes.textField} label="Repeat password" type="password" onChange={(e) => setNewPassR(e.target.value)}/>
                             <div className={classes.submitBtn}>
-                                <Button variant="contained" color="primary" endIcon={<Icon>send</Icon>}>Submit</Button>
+                                <Button variant="contained" color="primary" endIcon={<Icon>send</Icon>} onClick={handleSubmitPass}>Submit</Button>
                             </div>
                         </div>
                     </div>
