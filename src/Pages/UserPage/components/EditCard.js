@@ -40,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
         width: "100%"
     },
     textField: {
-        width: "80%",
+        width: "100%",
         margin: theme.spacing(1)
     },
     editBtn: {
@@ -54,8 +54,24 @@ const useStyles = makeStyles((theme) => ({
         alignContent: "center",
         justifyContent: "right",
         marginTop: theme.spacing(2),
-        width: "80%"
+        width: "100%"
     },
+    deleteBtn: {
+        flex: 1,
+        display: "grid",
+        alignContent: "center",
+        justifyContent: "right",
+        marginTop: theme.spacing(2),
+    },
+    deleteDiv: {
+        display: "flex"
+    },
+    deleteText: {
+        alignContent: "center",
+        justifyContent: "right",
+        marginTop: theme.spacing(2),
+        flex: 2
+    }
 }))
 const checkPasswordFormat = (body) => {
     const oldPass = body.old_password
@@ -142,7 +158,7 @@ export default function EditCard() {
                                 <Button variant="contained" color="primary" endIcon={<Icon>send</Icon>}>Submit</Button>
                             </div>
                             <h2>CHANGE PASSWORD</h2>
-                            <TextField className={classes.textField} label="Recent password" type="password"
+                            <TextField className={classes.textField} label="Current password" type="password"
                                        onChange={(e) => setOldPass(e.target.value)}/>
                             <TextField className={classes.textField} label="New password" type="password"
                                        onChange={(e) => setNewPass(e.target.value)}/>
@@ -151,6 +167,16 @@ export default function EditCard() {
                             <div className={classes.submitBtn}>
                                 <Button variant="contained" color="primary" endIcon={<Icon>send</Icon>}
                                         onClick={handleSubmitPass}>Submit</Button>
+                            </div>
+                            <h2>DELETE ACCOUNT</h2>
+                            <div className={classes.deleteDiv}>
+                                <div className={classes.deleteText}>
+                                    <div><b>Delete account</b></div>
+                                    <div>Once you do it, there is no going back</div>
+                                </div>
+                                <div className={classes.deleteBtn}>
+                                    <Button variant="contained" color="secondary">Delete</Button>
+                                </div>
                             </div>
                         </div>
                     </div>
