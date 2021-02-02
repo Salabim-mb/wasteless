@@ -24,9 +24,9 @@ const fridgesTest = [
 ];
 
 const fetchFridgesList = async (token) => {
-    const url = 'https://wasteless-backend.herokuapp.com/profile/'
+    const url = 'https://wasteless-backend.herokuapp.com/profile/fridges/'
     const headers = {
-        Authorization: token,
+        Authorization: "Token " + token,
         "Content-Type": "application/json",
     }
 
@@ -134,8 +134,8 @@ export default function FridgesList() {
         const loadFridges = async (token) => {
             setLoading(true);
             try {
-                let {fridges} = await fetchFridgesList(token);
-                fridges = fridgesTest //delete when login is working
+                let fridges = await fetchFridgesList(token);
+                //fridges = fridgesTest //delete when login is working
                 setFridges(fridges);
             } catch (e) {
                 alertC.current.showAlert("Couldn't load fridges list!", "error")
