@@ -1,6 +1,4 @@
-import {useContext} from "react";
-import {UserContext} from "../../../context";
-import {be} from "src/constants/backendSetup";
+import {be} from "constants/backendSetup";
 import {getCORSHeaders} from "utils/fetchTools";
 
 
@@ -8,7 +6,7 @@ import {getCORSHeaders} from "utils/fetchTools";
 const logoutUser = async(token) => {
     let url = `${be.LOGOUT}`;
     let res = await fetch(url, {
-        method: "DELETE",
+        method: "GET",
         headers: getCORSHeaders(token)
     });
 
@@ -20,15 +18,12 @@ const logoutUser = async(token) => {
 };
 
 
-export const HandleLogout = async (e) => {
-        let user = useContext(UserContext);
+export const handleLogout = async (e, token) => {
         e.preventDefault();
         try {
-            await logoutUser(user.token);
+            await logoutUser(token);
         } catch(e) {
             console.log(e);
-        } finally {
-            user.logout();
         }
     }
 

@@ -6,12 +6,15 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 
-const DrawerList = ({setRedirect}) => (
+const DrawerList = ({setRedirect, userContext}) => (
     <>
         <Divider />
         <List>
             {accountOptions.map((item, idx) => (
-                <ListItem button key={idx} onClick={item?.path ? () => setRedirect(item.path) : item.action}>
+                <ListItem button key={idx} onClick={item?.path ? () => setRedirect(item.path) : (e) => {
+                    item.action(e, userContext?.token);
+                    userContext.logout();
+                }}>
                     <ListItemIcon>{item.icon}</ListItemIcon>
                     <ListItemText primary={item.name} />
                 </ListItem>

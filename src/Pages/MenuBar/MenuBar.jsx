@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {useHistory} from 'react-router-dom';
 import AppBar from '@material-ui/core/AppBar';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -18,6 +18,7 @@ import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
 import SwipeableDrawer from "@material-ui/core/SwipeableDrawer";
 import Slide from "@material-ui/core/Slide";
 import {path_list} from "constants/routes";
+import {UserContext} from "../../context";
 
 
 const drawerWidth = 240;
@@ -103,6 +104,7 @@ const MenuBar = (props) => {
     const classes = useStyles();
     const [mobileOpen, setMobileOpen] = useState(false);
     const [barName, setBarName] = useState(Object.values(path_list).filter((pathObject) => pathObject.route === history.location.pathname)[0]?.name || "");
+    const user = useContext(UserContext);
 
 
 
@@ -120,9 +122,9 @@ const MenuBar = (props) => {
                 </Typography>
             </div>
             <Divider />
-            <DrawerList setRedirect={redirectToPath} />
+            <DrawerList setRedirect={redirectToPath} userContext={user} />
             <Divider />
-            <DrawerList setRedirect={redirectToPath} />
+            <DrawerList setRedirect={redirectToPath} userContext={user} />
         </>
     );
 
