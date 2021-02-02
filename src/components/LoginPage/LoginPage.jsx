@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useState, useRef} from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -14,9 +14,8 @@ import {be} from "constants/backendSetup.js";
 import {getCORSHeaders} from "utils/fetchTools";
 import {UserContext} from "context";
 import {Redirect} from "react-router-dom";
-import Alert from "@material-ui/lab/Alert";
 import {path_list as paths_list} from "constants/routes";
-import AlertTitle from "@material-ui/lab/AlertTitle";
+import {AlertContext} from "context/AlertContext";
 
 
 const loginUser = async (data) => {
@@ -72,14 +71,12 @@ export default function LoginPage() {
     const classes = useStyles();
     const user = useContext(UserContext);
     const [disabled, setDisabled] = useState(false);
-    const [error, setError] = useState(false);
     const [validated, setValidated] = useState("false");
-    const [correct, setCorrect] = useState(false);
     const [redirect, setRedirect] = useState(undefined);
+    const alertC = useRef(useContext(AlertContext));
 
     const submitForm = async (e) => {
         e.preventDefault();
-        setError(false);
         setValidated("true");
         if (e.currentTarget.checkValidity() === false) {
             e.stopPropagation();
@@ -93,11 +90,11 @@ export default function LoginPage() {
                     email: email,
                     username: data.login
                 });
-                setCorrect(true);
-                setTimeout(() => setRedirect(paths_list.PROFILE.route), 3000);
+                alertC.current.showAlert("Login successful!", "success");
+                setRedirect(paths_list.PROFILE.route);
             } catch(e) {
                 console.log(e);
-                setError(true);
+                alertC.current.showAlert("Something went wrong while trying to login user", "error");
             } finally {
                 setDisabled(false);
             }
@@ -143,8 +140,6 @@ export default function LoginPage() {
                             value={data.password}
                             onChange={e => setData({...data, password: e.target.value})}
                         />
-                        {error && <Alert severity="error"><AlertTitle>Error</AlertTitle>Something went <strong>wrong</strong> while trying to login user</Alert>}
-                        {correct && <Alert severity="success"><AlertTitle>Success</AlertTitle>Login successful. <strong>Redirecting...</strong></Alert>}
                         {redirect && <Redirect to={redirect}/>}
                         <Button
                             type="submit"
