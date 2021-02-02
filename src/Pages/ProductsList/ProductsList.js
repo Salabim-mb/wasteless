@@ -92,8 +92,7 @@ export default function Album() {
     const fridgeId = fridge_id;
 
     for(let i = 0; i < productsList.length; i++) {
-        let splitDate = productsList[i].expiration_date.split(".");
-        let newFormDate = splitDate[1] + "." + splitDate[0] + "." + splitDate[2];
+        let newFormDate = mapDate(productsList[i]);
         let now = new Date().getTime();
         let dateOffset = (24*60*60*1000) * 3;
         let c1 = (productsList[i].product_name.toUpperCase().charCodeAt(0) * 5) % 256;
@@ -143,6 +142,13 @@ export default function Album() {
         }
     }
 
+    function mapDate(product) {
+        let newDate = new Date(product.expiration_date)
+        let month = newDate.getMonth() + 1;
+        let newFormDate = newDate.getDate() + "." + month + "." + newDate.getFullYear();
+        return newFormDate;
+    }
+
     return (
         <React.Fragment>
             <CssBaseline/>
@@ -176,7 +182,7 @@ export default function Album() {
                                                     Quantity: {product.quantity}
                                                 </Typography>
                                                 <Typography>
-                                                    Expiration date: {product.expiration_date}
+                                                    Expiration date: {mapDate(product)}
                                                 </Typography>
                                                 <Button variant="contained" color="primary" onClick={() => setOpenModal(product.id)}>
                                                     Show details
