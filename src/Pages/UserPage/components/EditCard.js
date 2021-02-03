@@ -1,4 +1,4 @@
-import {Avatar, Button, Container, Icon, Paper, TextField} from "@material-ui/core";
+import {Avatar, Button, Container, Icon, Modal, Paper, TextField} from "@material-ui/core";
 import React, {useContext, useRef, useState} from "react";
 import {makeStyles} from "@material-ui/core/styles";
 import EditIcon from "@material-ui/icons/Edit";
@@ -71,6 +71,20 @@ const useStyles = makeStyles((theme) => ({
         justifyContent: "right",
         marginTop: theme.spacing(2),
         flex: 2
+    },
+    modalPaper: {
+        position: 'absolute',
+        width: "60%",
+        backgroundColor: theme.palette.background.paper,
+        border: '2px solid #000',
+        boxShadow: theme.shadows[5],
+        padding: theme.spacing(2, 4, 3),
+        top: "25%",
+        left: "35%",
+        transform: `translate(-20%, -40%)`,
+    },
+    deleteTextField: {
+        width: "100%"
     }
 }))
 const checkPasswordFormat = (body) => {
@@ -112,6 +126,7 @@ export default function EditCard() {
     const [newPass, setNewPass] = useState("")
     const [newPassR, setNewPassR] = useState("")
     const alertC = useRef(useContext(AlertContext));
+    const [open, setOpen] = React.useState(false);
     const user = useContext((UserContext))
 
     const handleSubmitPass = async (e) => {
@@ -125,6 +140,31 @@ export default function EditCard() {
             alertC.current.showAlert(err, "error")
         }
     }
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    const handleOpen = () => {
+        setOpen(true);
+    };
+
+    const body = (
+        <div className={classes.modalPaper}>
+            <h2 id="simple-modal-title">Are you sure you want to delete account?</h2>
+            <p id="simple-modal-description">
+                This action cannot be <b>undone</b>. This will permanently delete the <b>{user?.data?.username}</b> account.
+            </p>
+
+            <p id="simple-modal-description">
+                Please type <b>{user?.data?.username}</b> to confirm.
+            </p>
+            <TextField label="Username" type="text" className={classes.deleteTextField}/>
+            <div className={classes.deleteBtn}>
+                <Button variant="contained" color="secondary">Delete</Button>
+            </div>
+        </div>
+    );
 
     return (
         <Container fixed>
@@ -175,13 +215,21 @@ export default function EditCard() {
                                     <div>Once you do it, there is no going back</div>
                                 </div>
                                 <div className={classes.deleteBtn}>
-                                    <Button variant="contained" color="secondary">Delete</Button>
+                                    <Button variant="contained" color="secondary" onClick={handleOpen}>Delete</Button>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </Paper>
+            <Modal
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="simple-modal-title"
+                aria-describedby="simple-modal-description"
+            >
+                {body}
+            </Modal>
         </Container>
     )
 }
