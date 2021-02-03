@@ -6,6 +6,7 @@ import {AlertContext, UserContext} from "../../../context";
 import {getCORSHeaders} from "../../../utils/fetchTools";
 import {path_list} from "../../../constants/routes";
 import {Redirect} from "react-router-dom";
+import {be} from "../../../constants/backendSetup";
 
 const useStyles = makeStyles((theme) => ({
     mainDiv: {
@@ -106,7 +107,7 @@ const checkPasswordFormat = (body) => {
 }
 
 const changePassword = async (body, token) => {
-    const url = "https://wasteless-backend.herokuapp.com/profile/changepassword";
+    const url = be.PLAIN + "profile/changepassword";
     const headers = getCORSHeaders(token);
 
     const res = await fetch(url, {
@@ -121,7 +122,7 @@ const changePassword = async (body, token) => {
 }
 
 const fetchDelete = async (token) => {
-    const url = "https://wasteless-backend.herokuapp.com/profile/";
+    const url = be.PLAIN + "profile/";
     const headers = getCORSHeaders(token);
 
     const res = await fetch(url, {
