@@ -171,7 +171,7 @@ export default function EditCard() {
     }
 
     const checkUsernameInput = (username) => {
-        if (!/^[a-zA-Z0-9]+$/.test(username)) {
+        if (!/^[\w.@+-]+$/.test(username)) {
             throw "Wrong username format."
         }
         if (username !== user.data.username) {
