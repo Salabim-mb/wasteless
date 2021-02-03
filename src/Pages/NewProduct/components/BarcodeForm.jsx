@@ -39,24 +39,18 @@ const decodeFromImage = async (e) =>{
     let img = document.getElementById("barcodeImg");
     let result = "";
     let barcodeFieldId = document.getElementById("barcode");
-    // codeReader.decodeFromImage(img)
-    //     .then(result => {
-    //         console.log(result);
-    //
-    //         barcodeFieldId.value = result.text;
-    //     })
-    //     .catch(err => {
-    //         console.error(err);
-    //         barcodeFieldId.value = err;
-    //     });
+
 
     try {
-        result = await codeReader.decodeFromImage(img);
+        result = await codeReader.decode(img);
     } catch (err) {
         console.error(err);
     }
     barcodeFieldId.value = result.text;
     console.log(result);
+
+
+
 }
 
 const BarcodeForm = ({data, setData}) => {
@@ -71,9 +65,8 @@ const BarcodeForm = ({data, setData}) => {
                     required
                     fullWidth
                     id="barcode"
-                    label="Barcode number"
                     autoComplete="barcode"
-                    value={data}
+                    // value={data}
                     onChange={e => setData(e.target.value)}
                 />
             </Grid>
