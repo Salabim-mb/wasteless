@@ -3,6 +3,9 @@ import React, {useContext, useRef, useState} from "react";
 import {makeStyles} from "@material-ui/core/styles";
 import EditIcon from "@material-ui/icons/Edit";
 import {AlertContext, UserContext} from "../../../context";
+import {getCORSHeaders} from "../../../utils/fetchTools";
+import {path_list} from "../../../constants/routes";
+import {Redirect} from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
     mainDiv: {
@@ -120,6 +123,20 @@ const changePassword = async (body, token) => {
     }
 }
 
+const fetchDelete = async (token) => {
+    const url = "https://wasteless-backend.herokuapp.com/profile/";
+    const headers = getCORSHeaders(token);
+
+    const res = await fetch(url, {
+        headers,
+        method: "DELETE"
+    });
+
+    if (res.status !== 204) {
+        throw "Couldn't delete your account."
+    }
+}
+
 export default function EditCard() {
     const classes = useStyles();
     const [oldPass, setOldPass] = useState("")
@@ -127,6 +144,8 @@ export default function EditCard() {
     const [newPassR, setNewPassR] = useState("")
     const alertC = useRef(useContext(AlertContext));
     const [open, setOpen] = React.useState(false);
+    const [redirect, setRedirect] = useState(undefined);
+    const [usernameD, setUsernameD] = useState("");
     const user = useContext((UserContext))
 
     const handleSubmitPass = async (e) => {
@@ -138,6 +157,27 @@ export default function EditCard() {
             alertC.current.showAlert("Successfully changed password.", "success")
         } catch (err) {
             alertC.current.showAlert(err, "error")
+        }
+    }
+
+    const handleDelete = async (e) => {
+        e.preventDefault()
+        try {
+            checkUsernameInput(usernameD)
+            await fetchDelete(user.token)
+            alertC.current.showAlert("Successfully deleted account.", "success")
+            setRedirect(path_list.DASHBOARD.route)
+        } catch (err) {
+            alertC.current.showAlert(err, "error")
+        }
+    }
+
+    const checkUsernameInput = (username) => {
+        if (!/^[a-zA-Z0-9]+$/.test(username)) {
+            throw "Wrong username format."
+        }
+        if (username !== user.data.username) {
+            throw "Wrong username."
         }
     }
 
@@ -153,15 +193,17 @@ export default function EditCard() {
         <div className={classes.modalPaper}>
             <h2 id="simple-modal-title">Are you sure you want to delete account?</h2>
             <p id="simple-modal-description">
-                This action cannot be <b>undone</b>. This will permanently delete the <b>{user?.data?.username}</b> account.
+                This action cannot be <b>undone</b>. This will permanently delete
+                the <b>{user?.data?.username}</b> account.
             </p>
 
             <p id="simple-modal-description">
                 Please type <b>{user?.data?.username}</b> to confirm.
             </p>
-            <TextField label="Username" type="text" className={classes.deleteTextField}/>
+            <TextField label="Username" type="text" className={classes.deleteTextField}
+                       onChange={(e) => setUsernameD(e.target.value)}/>
             <div className={classes.deleteBtn}>
-                <Button variant="contained" color="secondary">Delete</Button>
+                <Button variant="contained" color="secondary" onClick={handleDelete}>Delete</Button>
             </div>
         </div>
     );
@@ -174,7 +216,8 @@ export default function EditCard() {
                         <div className={classes.avatarDiv}>
                             <div>
                                 {user.avatarImg === "" ?
-                                    <Avatar className={classes.avatar}>{user?.data?.name.charAt(0).toUpperCase()}</Avatar> :
+                                    <Avatar
+                                        className={classes.avatar}>{user?.data?.name.charAt(0).toUpperCase()}</Avatar> :
                                     <Avatar className={classes.avatar} src={user?.data?.avatarImg}/>}
                             </div>
                             <div className={classes.editBtn}>
@@ -218,6 +261,7 @@ export default function EditCard() {
                                     <Button variant="contained" color="secondary" onClick={handleOpen}>Delete</Button>
                                 </div>
                             </div>
+                            {redirect && <Redirect to={redirect}/>}
                         </div>
                     </div>
                 </div>
