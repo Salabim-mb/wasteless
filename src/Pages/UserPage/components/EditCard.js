@@ -166,7 +166,8 @@ export default function EditCard() {
             checkUsernameInput(usernameD)
             await fetchDelete(user.token)
             alertC.current.showAlert("Successfully deleted account.", "success")
-            setRedirect(path_list.DASHBOARD.route)
+            user.logout()
+            setRedirect(path_list.LOGIN.route)
         } catch (err) {
             alertC.current.showAlert(err, "error")
         }
