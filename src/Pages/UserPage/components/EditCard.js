@@ -107,10 +107,7 @@ const checkPasswordFormat = (body) => {
 
 const changePassword = async (body, token) => {
     const url = "https://wasteless-backend.herokuapp.com/profile/changepassword";
-    const headers = {
-        "Content-Type": "application/json",
-        Authorization: "Token " + token
-    };
+    const headers = getCORSHeaders(token);
 
     const res = await fetch(url, {
         headers,
