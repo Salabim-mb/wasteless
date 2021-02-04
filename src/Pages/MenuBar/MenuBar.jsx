@@ -19,6 +19,7 @@ import SwipeableDrawer from "@material-ui/core/SwipeableDrawer";
 import Slide from "@material-ui/core/Slide";
 import {path_list} from "constants/routes";
 
+
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
@@ -102,6 +103,7 @@ const MenuBar = (props) => {
     const classes = useStyles();
     const [mobileOpen, setMobileOpen] = useState(false);
     const [barName, setBarName] = useState(Object.values(path_list).filter((pathObject) => pathObject.route === history.location.pathname)[0]?.name || "");
+
 
 
     const redirectToPath = (path) => {
