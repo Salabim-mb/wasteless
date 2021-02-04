@@ -218,7 +218,6 @@ export default function EditCard() {
         e.preventDefault()
         try{
             let body = {username: username, "first_name": name, "last_name": surname, email: email}
-            console.log(user.data.name)
             checkFieldsFormat(body)
             await fetchEditUser(body, user.token)
             alertC.current.showAlert("Successfully edited account.", "success")
@@ -283,10 +282,10 @@ export default function EditCard() {
 
                         </div>
                         <div className={classes.detailsDiv}>
-                            <TextField className={classes.textField} label="Name" defaultValue={user?.data?.name}
+                            <TextField className={classes.textField} label="Name" defaultValue={user?.data?.first_name}
                                        onChange={(e) => setName(e.target.value)}
                             />
-                            <TextField className={classes.textField} label="Surname" defaultValue={user?.data?.surname}
+                            <TextField className={classes.textField} label="Surname" defaultValue={user?.data?.last_name}
                                        onChange={(e) => setSurname(e.target.value)}
                             />
                             <TextField className={classes.textField} label="Email" defaultValue={user?.data?.email}
