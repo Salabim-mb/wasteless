@@ -8,7 +8,7 @@ const useStyles = makeStyles((theme) => {
     }
 })
 
-export default function ConsentCard({user}) {
+export default function SettingsCard({user}) {
     const classes = useStyles();
     return (
         <Container fixed>

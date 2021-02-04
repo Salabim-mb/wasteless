@@ -14,7 +14,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import MenuBookIcon from '@material-ui/icons/MenuBook';
 import ProfileCard from "./components/ProfileCard";
 import EditCard from "./components/EditCard";
-import ConsentCard from "./components/ConsentCard";
+import SettingsCard from "./components/SettingsCard";
 
 const user = {
     name: "Piotr",
@@ -49,7 +49,7 @@ export default function UserPage() {
                     <EditCard user={user}/>
                 )
             case 2:
-                return (<ConsentCard user={user}/>)
+                return (<SettingsCard user={user}/>)
             default :
                 return null
         }
