@@ -13,6 +13,7 @@ import {path_list} from "constants/routes";
 import {AlertContext} from "context/AlertContext";
 import {getCORSHeaders} from "../../utils/fetchTools";
 import {UserContext} from "../../context";
+import {be} from "../../constants/backendSetup";
 
 const validatePassword = (password) => {
     if (password.length < 8  || !/^[a-zA-Z0-9!@#$%&*]+$/.test(password) ) {
@@ -48,7 +49,7 @@ function validateInput(username, email, password, repeatPassword){
 }
 
 const register = async (data) => {
-    const url = "https://wasteless-backend.herokuapp.com/register/";
+    const url = `${be.REGISTER}`;
     const headers = getCORSHeaders()
 
     const res = await fetch(url, {
@@ -76,7 +77,7 @@ const register = async (data) => {
 }
 
 const log_in = async (credentials) => {
-    const url = "https://wasteless-backend.herokuapp.com/login/";
+    const url = `${be.LOGIN}`;
     const headers = getCORSHeaders()
     const res = await fetch(url, {
         headers,
