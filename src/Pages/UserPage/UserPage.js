@@ -11,7 +11,7 @@ import {
 } from "@material-ui/core";
 import PersonIcon from '@material-ui/icons/Person';
 import EditIcon from '@material-ui/icons/Edit';
-import MenuBookIcon from '@material-ui/icons/MenuBook';
+import SettingsIcon from '@material-ui/icons/Settings';
 import ProfileCard from "./components/ProfileCard";
 import EditCard from "./components/EditCard";
 import SettingsCard from "./components/SettingsCard";
@@ -49,7 +49,9 @@ export default function UserPage() {
                     <EditCard user={user}/>
                 )
             case 2:
-                return (<SettingsCard user={user}/>)
+                return (
+                    <SettingsCard user={user}/>
+                )
             default :
                 return null
         }
@@ -70,7 +72,7 @@ export default function UserPage() {
             >
                 <BottomNavigationAction label="Profile" icon={<PersonIcon/>}/>
                 <BottomNavigationAction label="Edit" icon={<EditIcon/>}/>
-                <BottomNavigationAction label="Consents" icon={<MenuBookIcon/>}/>
+                <BottomNavigationAction label="Settings" icon={<SettingsIcon/>}/>
             </BottomNavigation>
         </React.Fragment>
     );
