@@ -1,57 +1,51 @@
-import {Container, Paper} from "@material-ui/core";
+import {Container, ListItem, ListItemText, Paper} from "@material-ui/core";
 import React from "react";
 import {makeStyles} from "@material-ui/core/styles";
 import Switch from '@material-ui/core/Switch';
-import {Typography} from '@material-ui/core';
+import Divider from "@material-ui/core/Divider";
+import List from "@material-ui/core/List";
 
 const useStyles = makeStyles((theme) => ({
     mainDiv: {
         margin: theme.spacing(3),
         marginBottom: theme.spacing(8),
     },
-    settingsDiv: {
-        display: "block",
-        justifyContent:'center',
-        alignItems:'center'
-    },
-    elementDiv: {
-
-    },
 }))
 
 export default function SettingsCard({user}) {
+    const theme = {};
     const classes = useStyles();
     return (
         <Container fixed>
-            <Paper>
-                <div className={classes.mainDiv}>
-                    <div className={classes.settingsDiv}>
-                        <div className={classes.elementDiv}>
-                            <Typography>Dark mode</Typography>
-                            <Switch
-                                color="primary"
-                                name="checkedB"
-                                inputProps={{ 'aria-label': 'primary checkbox' }}
-                            />
-                        </div>
-                        <div className={classes.elementDiv}>
-                            <Typography>Email Notifications</Typography>
-                            <Switch
-                                color="primary"
-                                name="checkedB"
-                                inputProps={{ 'aria-label': 'primary checkbox' }}
-                            />
-                        </div>
-                        <div className={classes.elementDiv}>
-                            <Typography>Push Notifications</Typography>
-                            <Switch
-                                color="primary"
-                                name="checkedB"
-                                inputProps={{ 'aria-label': 'primary checkbox' }}
-                            />
-                        </div>
-                    </div>
-                </div>
+            <Paper className={classes.mainDiv}>
+                <List className={theme.list}>
+                    <ListItem>
+                        <ListItemText primary="Dark mode" />
+                        <Switch
+                            color="primary"
+                            name="push_notifications"
+                            inputProps={{'aria-label': 'secondary checkbox'}}
+                        />
+                    </ListItem>
+                    <Divider />
+                    <ListItem>
+                        <ListItemText primary="Email notifications" />
+                        <Switch
+                            color="primary"
+                            name="email_notifications"
+                            inputProps={{'aria-label': 'secondary checkbox'}}
+                        />
+                    </ListItem>
+                    <Divider />
+                    <ListItem>
+                        <ListItemText primary="Push notifications" />
+                        <Switch
+                            color="primary"
+                            name="dark"
+                            inputProps={{'aria-label': 'secondary checkbox'}}
+                        />
+                    </ListItem>
+                </List>
             </Paper>
         </Container>
     )
