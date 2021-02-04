@@ -13,7 +13,7 @@ const logoutUser = async(token) => {
     if (res.status === 200) {
         return await res.json();
     } else {
-        console.log("Err: " + res.status)
+        throw await res.json();
     }
 };
 
@@ -21,7 +21,8 @@ const logoutUser = async(token) => {
 export const handleLogout = async (e, token) => {
         e.preventDefault();
         try {
-            await logoutUser(token);
+            const {message} = await logoutUser(token);
+            return message;
         } catch(e) {
             console.log(e);
         }
