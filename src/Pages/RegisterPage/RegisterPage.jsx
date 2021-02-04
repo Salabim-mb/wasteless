@@ -11,6 +11,8 @@ import Card from "@material-ui/core/Card";
 import {Redirect} from "react-router-dom";
 import {path_list} from "constants/routes";
 import {AlertContext} from "context/AlertContext";
+import {getCORSHeaders} from "../../utils/fetchTools";
+import {UserContext} from "../../context";
 
 const validatePassword = (password) => {
     if (password.length < 8  || !/^[a-zA-Z0-9!@#$%&*]+$/.test(password) ) {
@@ -30,12 +32,15 @@ function validateEmail(email)
     }
 }
 
-function validateInput(username, email, password){
+function validateInput(username, email, password, repeatPassword){
     if( username === ""){
         throw "Please enter a username"
     }
     if( email === ""){
         throw "Please enter an email"
+    }
+    if( password !== repeatPassword){
+        throw "Passwords are not identical"
     }
     validateEmail(email)
     validateUsername(username)
@@ -44,9 +49,7 @@ function validateInput(username, email, password){
 
 const register = async (data) => {
     const url = "https://wasteless-backend.herokuapp.com/register/";
-    const headers = {
-        "Content-Type": "application/json"
-    };
+    const headers = getCORSHeaders()
 
     const res = await fetch(url, {
         headers,
@@ -69,6 +72,22 @@ const register = async (data) => {
             throw "Invalid email address"
         }
         throw "An unexpected error occured"
+    }
+}
+
+const log_in = async (credentials) => {
+    const url = "https://wasteless-backend.herokuapp.com/login/";
+    const headers = getCORSHeaders()
+    const res = await fetch(url, {
+        headers,
+        method: "POST",
+        body: JSON.stringify(credentials)
+    });
+
+    if (res.status === 200) {
+        return await res.json();
+    } else {
+        throw res.status;
     }
 }
 
@@ -100,20 +119,36 @@ const RegisterPage = () => {
     const classes = useStyles();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [repeatPassword, setRepeatPassword] = useState("");
     const [email, setEmail] = useState("");
     const [redirect, setRedirect] = useState(undefined);
     const [disabled, setDisabled] = useState(false);
     const [validated, setValidated] = useState("false");
     const alertC = useRef(useContext(AlertContext));
+    const user = useContext(UserContext);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            validateInput(username,email,password)
+            validateInput(username,email,password,repeatPassword)
             let response = await register({username: username, email: email, password: password});
             alertC.current.showAlert("Registered successfully!", "success");
             console.log(response)
-            setRedirect(path_list.LOGIN.route);
+            try {
+                let {token, first_name, last_name} = await log_in({username: username, password: password});
+                user.login(token, {
+                    first_name: first_name,
+                    last_name: last_name,
+                    email: email,
+                    username: username
+                });
+                setRedirect(path_list.PROFILE.route);
+            } catch(e) {
+                alertC.current.showAlert("Something went wrong while trying to login user", "error");
+                setRedirect(path_list.LOGIN.route);
+            } finally {
+
+            }
 
         } catch(e) {
             alertC.current.showAlert(e, "error");
@@ -156,7 +191,6 @@ const RegisterPage = () => {
                             label="Email"
                             name="email"
                             autoComplete="email"
-                            autoFocus
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                         />
@@ -172,6 +206,19 @@ const RegisterPage = () => {
                             autoComplete="current-password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
+                        />
+                        <TextField
+                            variant="outlined"
+                            margin="normal"
+                            required
+                            fullWidth
+                            name="repeat_password"
+                            label="Repeat password"
+                            type="password"
+                            id="repeat_password"
+                            autoComplete="repeat-password"
+                            value={repeatPassword}
+                            onChange={(e) => setRepeatPassword(e.target.value)}
                         />
                         {redirect && <Redirect to={redirect}/>}
                         <Button
