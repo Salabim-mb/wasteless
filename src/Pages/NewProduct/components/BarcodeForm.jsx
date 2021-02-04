@@ -1,8 +1,8 @@
 import React from 'react';
 import {Grid, TextField} from "@material-ui/core";
-import { makeStyles } from '@material-ui/core/styles';
+import {makeStyles} from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
-import { BrowserBarcodeReader } from '@zxing/library';
+import {BrowserBarcodeReader} from '@zxing/library';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -17,13 +17,13 @@ const useStyles = makeStyles((theme) => ({
 
 function onFileSelected(event) {
     var selectedFile = event.target.files[0];
-    if(selectedFile !== undefined) {
+    if (selectedFile !== undefined) {
         var reader = new FileReader();
 
         var imgtag = document.getElementById("barcodeImg");
         imgtag.title = selectedFile.name;
 
-        reader.onload = function(event) {
+        reader.onload = function (event) {
             imgtag.src = event.target.result;
         };
 
@@ -32,7 +32,7 @@ function onFileSelected(event) {
 
 }
 
-const decodeFromImage = async (e) =>{
+const decodeFromImage = async (e) => {
 
 
     let codeReader = new BrowserBarcodeReader();
@@ -48,7 +48,6 @@ const decodeFromImage = async (e) =>{
     }
     barcodeFieldId.value = result.text;
     console.log(result);
-
 
 
 }
@@ -70,7 +69,7 @@ const BarcodeForm = ({data, setData}) => {
                     onChange={e => setData(e.target.value)}
                 />
             </Grid>
-            <img id="barcodeImg" height="200" />
+            <img id="barcodeImg" height="200"/>
             <div className={classes.root}>
                 <input
                     accept="image/*"
@@ -78,16 +77,16 @@ const BarcodeForm = ({data, setData}) => {
                     id="contained-button-file"
                     multiple
                     type="file"
-                    onChange= {e => onFileSelected(e)}
+                    onChange={e => onFileSelected(e)}
                 />
                 <label htmlFor="contained-button-file">
                     <Button variant="contained" color="primary" component="span">
                         Upload
                     </Button>
                 </label>
-                <input accept="image/*" className={classes.input} id="icon-button-file" type="file" />
+                <input accept="image/*" className={classes.input} id="icon-button-file" type="file"/>
                 <label>
-                    <Button variant="contained" color="default" component="span" onClick={ e => decodeFromImage(e)}>
+                    <Button variant="contained" color="default" component="span" onClick={e => decodeFromImage(e)}>
                         Decode
                     </Button>
                 </label>
