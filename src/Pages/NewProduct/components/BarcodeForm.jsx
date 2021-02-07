@@ -1,8 +1,9 @@
-import React from 'react';
+import React, {useContext, useRef} from 'react';
 import {Grid, TextField} from "@material-ui/core";
 import {makeStyles} from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import {BrowserBarcodeReader} from '@zxing/library';
+import {AlertContext} from "context/AlertContext";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -32,28 +33,38 @@ function onFileSelected(event) {
 
 }
 
-const decodeFromImage = async (e) => {
-
-
-    let codeReader = new BrowserBarcodeReader();
-    let img = document.getElementById("barcodeImg");
-    let result = "";
-    let barcodeFieldId = document.getElementById("barcode");
-
-
-    try {
-        result = await codeReader.decode(img);
-    } catch (err) {
-        console.error(err);
-    }
-    barcodeFieldId.value = result.text;
-    console.log(result);
-
-
-}
 
 const BarcodeForm = ({data, setData}) => {
     const classes = useStyles();
+    const alertC = useRef(useContext(AlertContext));
+
+    function ShowErrorAlert() {
+        alertC.current.showAlert("Illegible photo, please zoom to barcode", "error");
+    }
+
+    function ShowSuccessAlert() {
+        alertC.current.showAlert("Decoding successful", "success");
+    }
+
+    const decodeFromImage = async (e) => {
+
+
+        let codeReader = new BrowserBarcodeReader();
+        let img = document.getElementById("barcodeImg");
+        let result = "";
+        let barcodeFieldId = document.getElementById("barcode");
+
+
+        try {
+            result = await codeReader.decode(img);
+            barcodeFieldId.value = result.text;
+            ShowSuccessAlert();
+        } catch (err) {
+            ShowErrorAlert();
+        }
+
+    }
+
     return (
         <>
             <Grid item xs={12}>
@@ -65,7 +76,6 @@ const BarcodeForm = ({data, setData}) => {
                     fullWidth
                     id="barcode"
                     autoComplete="barcode"
-                    // value={data}
                     onChange={e => setData(e.target.value)}
                 />
             </Grid>
