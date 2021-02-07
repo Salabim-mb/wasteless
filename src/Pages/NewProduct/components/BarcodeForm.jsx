@@ -34,7 +34,7 @@ function onFileSelected(event) {
 }
 
 
-const BarcodeForm = ({data, setData}) => {
+const BarcodeForm = ({data, setData, barcodeRequired, setBarcodeRequired}) => {
     const classes = useStyles();
     const alertC = useRef(useContext(AlertContext));
 
@@ -57,6 +57,7 @@ const BarcodeForm = ({data, setData}) => {
 
         try {
             result = await codeReader.decode(img);
+            setData(result.text);
             barcodeFieldId.value = result.text;
             ShowSuccessAlert();
         } catch (err) {
@@ -72,7 +73,7 @@ const BarcodeForm = ({data, setData}) => {
                     autoFocus
                     type="text"
                     variant="outlined"
-                    required
+                    required={barcodeRequired}
                     fullWidth
                     id="barcode"
                     autoComplete="barcode"
@@ -98,6 +99,11 @@ const BarcodeForm = ({data, setData}) => {
                 <label>
                     <Button variant="contained" color="default" component="span" onClick={e => decodeFromImage(e)}>
                         Decode
+                    </Button>
+                </label>
+                <label htmlFor="contained-button">
+                    <Button variant="contained" color="primary" component="span" onClick={() => setBarcodeRequired(false)}>
+                        I don't have a barcode
                     </Button>
                 </label>
             </div>
