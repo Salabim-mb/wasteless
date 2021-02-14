@@ -34,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-export default function UserPage() {
+export default function UserPage(props) {
     const classes = useStyles();
     const [bottomCardValue, setValue] = React.useState(0);
 
@@ -49,8 +49,9 @@ export default function UserPage() {
                     <EditCard user={user}/>
                 )
             case 2:
+                console.log(props);
                 return (
-                    <SettingsCard user={user}/>
+                    <SettingsCard user={user} setDarkMode={props.setDarkMode} />
                 )
             default :
                 return null
