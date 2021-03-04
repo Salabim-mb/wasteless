@@ -3,6 +3,7 @@ import HowToRegIcon from '@material-ui/icons/HowToReg';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import SettingsIcon from '@material-ui/icons/Settings';
 import React from "react";
+import {handleLogout} from "../Pages/MenuBar/components/Logout";
 
 export const mainOptions = [
     {
@@ -32,7 +33,7 @@ export const accountOptions = [
     {
         name: "Log out",
         icon: <ExitToAppIcon />,
-        action: () => {console.log("logout")},
+        action: (e, token) => handleLogout(e, token),
         requiresLogin: true
     }
 ];
