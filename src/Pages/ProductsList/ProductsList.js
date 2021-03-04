@@ -14,6 +14,7 @@ import {AlertContext, UserContext} from "context";
 import {useParams} from "react-router-dom";
 import {ErrorOutlineTwoTone} from "@material-ui/icons";
 import DetailsModal from "./components/DetailsModal";
+import {be} from "../../constants/backendSetup";
 
 const useStyles = makeStyles((theme) => ({
     icon: {
@@ -63,7 +64,7 @@ const fetchProductsList = async (token, fridgeId) => {
 };
 
 const fetchDeleteProduct = async (token, productId) => {
-    const baseURL = `https://wasteless-backend.herokuapp.com/fridges/${productId}/`
+    const baseURL = be.PRODUCTS + productId + '/';
     const headers = {
         Authorization: "Token " + token,
     }
@@ -73,9 +74,7 @@ const fetchDeleteProduct = async (token, productId) => {
         method: "DELETE"
     });
 
-    if (request.status === 204) {
-        return await request.json();
-    } else {
+    if (request.status !== 204) {
         throw request.status;
     }
 }
