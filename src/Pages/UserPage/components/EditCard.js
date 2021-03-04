@@ -1,8 +1,12 @@
-import {Avatar, Button, Container, Icon, Paper, TextField} from "@material-ui/core";
+import {Avatar, Button, Container, Icon, Modal, Paper, TextField} from "@material-ui/core";
 import React, {useContext, useRef, useState} from "react";
 import {makeStyles} from "@material-ui/core/styles";
 import EditIcon from "@material-ui/icons/Edit";
 import {AlertContext, UserContext} from "../../../context";
+import {getCORSHeaders} from "../../../utils/fetchTools";
+import {path_list} from "../../../constants/routes";
+import {Redirect} from "react-router-dom";
+import {be} from "../../../constants/backendSetup";
 
 const useStyles = makeStyles((theme) => ({
     mainDiv: {
@@ -40,7 +44,7 @@ const useStyles = makeStyles((theme) => ({
         width: "100%"
     },
     textField: {
-        width: "80%",
+        width: "100%",
         margin: theme.spacing(1)
     },
     editBtn: {
@@ -54,8 +58,38 @@ const useStyles = makeStyles((theme) => ({
         alignContent: "center",
         justifyContent: "right",
         marginTop: theme.spacing(2),
-        width: "80%"
+        width: "100%"
     },
+    deleteBtn: {
+        flex: 1,
+        display: "grid",
+        alignContent: "center",
+        justifyContent: "right",
+        marginTop: theme.spacing(2),
+    },
+    deleteDiv: {
+        display: "flex"
+    },
+    deleteText: {
+        alignContent: "center",
+        justifyContent: "right",
+        marginTop: theme.spacing(2),
+        flex: 2
+    },
+    modalPaper: {
+        position: 'absolute',
+        width: "60%",
+        backgroundColor: theme.palette.background.paper,
+        border: '2px solid #000',
+        boxShadow: theme.shadows[5],
+        padding: theme.spacing(2, 4, 3),
+        top: "25%",
+        left: "35%",
+        transform: `translate(-20%, -40%)`,
+    },
+    deleteTextField: {
+        width: "100%"
+    }
 }))
 const checkPasswordFormat = (body) => {
     const oldPass = body.old_password
@@ -73,11 +107,8 @@ const checkPasswordFormat = (body) => {
 }
 
 const changePassword = async (body, token) => {
-    const url = "https://wasteless-backend.herokuapp.com/profile/changepassword";
-    const headers = {
-        "Content-Type": "application/json",
-        Authorization: "Token " + token
-    };
+    const url = be.PLAIN + "profile/changepassword";
+    const headers = getCORSHeaders(token);
 
     const res = await fetch(url, {
         headers,
@@ -90,12 +121,29 @@ const changePassword = async (body, token) => {
     }
 }
 
+const fetchDelete = async (token) => {
+    const url = be.PLAIN + "profile/";
+    const headers = getCORSHeaders(token);
+
+    const res = await fetch(url, {
+        headers,
+        method: "DELETE"
+    });
+
+    if (res.status !== 204) {
+        throw "Couldn't delete your account."
+    }
+}
+
 export default function EditCard() {
     const classes = useStyles();
     const [oldPass, setOldPass] = useState("")
     const [newPass, setNewPass] = useState("")
     const [newPassR, setNewPassR] = useState("")
     const alertC = useRef(useContext(AlertContext));
+    const [open, setOpen] = React.useState(false);
+    const [redirect, setRedirect] = useState(undefined);
+    const [usernameD, setUsernameD] = useState("");
     const user = useContext((UserContext))
 
     const handleSubmitPass = async (e) => {
@@ -110,6 +158,55 @@ export default function EditCard() {
         }
     }
 
+    const handleDelete = async (e) => {
+        e.preventDefault()
+        try {
+            checkUsernameInput(usernameD)
+            await fetchDelete(user.token)
+            alertC.current.showAlert("Successfully deleted account.", "success")
+            user.logout()
+            setRedirect(path_list.LOGIN.route)
+        } catch (err) {
+            alertC.current.showAlert(err, "error")
+        }
+    }
+
+    const checkUsernameInput = (username) => {
+        if (!/^[\w.@+-]+$/.test(username)) {
+            throw "Wrong username format."
+        }
+        if (username !== user.data.username) {
+            throw "Wrong username."
+        }
+    }
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    const handleOpen = () => {
+        setOpen(true);
+    };
+
+    const body = (
+        <div className={classes.modalPaper}>
+            <h2 id="simple-modal-title">Are you sure you want to delete account?</h2>
+            <p id="simple-modal-description">
+                This action cannot be <b>undone</b>. This will permanently delete
+                the <b>{user?.data?.username}</b> account.
+            </p>
+
+            <p id="simple-modal-description">
+                Please type <b>{user?.data?.username}</b> to confirm.
+            </p>
+            <TextField label="Username" type="text" className={classes.deleteTextField}
+                       onChange={(e) => setUsernameD(e.target.value)}/>
+            <div className={classes.deleteBtn}>
+                <Button variant="contained" color="secondary" onClick={handleDelete}>Delete</Button>
+            </div>
+        </div>
+    );
+
     return (
         <Container fixed>
             <Paper>
@@ -118,7 +215,8 @@ export default function EditCard() {
                         <div className={classes.avatarDiv}>
                             <div>
                                 {user.avatarImg === "" ?
-                                    <Avatar className={classes.avatar}>{user?.data?.name.charAt(0).toUpperCase()}</Avatar> :
+                                    <Avatar
+                                        className={classes.avatar}>{user?.data?.name.charAt(0).toUpperCase()}</Avatar> :
                                     <Avatar className={classes.avatar} src={user?.data?.avatarImg}/>}
                             </div>
                             <div className={classes.editBtn}>
@@ -142,7 +240,7 @@ export default function EditCard() {
                                 <Button variant="contained" color="primary" endIcon={<Icon>send</Icon>}>Submit</Button>
                             </div>
                             <h2>CHANGE PASSWORD</h2>
-                            <TextField className={classes.textField} label="Recent password" type="password"
+                            <TextField className={classes.textField} label="Current password" type="password"
                                        onChange={(e) => setOldPass(e.target.value)}/>
                             <TextField className={classes.textField} label="New password" type="password"
                                        onChange={(e) => setNewPass(e.target.value)}/>
@@ -152,10 +250,29 @@ export default function EditCard() {
                                 <Button variant="contained" color="primary" endIcon={<Icon>send</Icon>}
                                         onClick={handleSubmitPass}>Submit</Button>
                             </div>
+                            <h2>DELETE ACCOUNT</h2>
+                            <div className={classes.deleteDiv}>
+                                <div className={classes.deleteText}>
+                                    <div><b>Delete account</b></div>
+                                    <div>Once you do it, there is no going back</div>
+                                </div>
+                                <div className={classes.deleteBtn}>
+                                    <Button variant="contained" color="secondary" onClick={handleOpen}>Delete</Button>
+                                </div>
+                            </div>
+                            {redirect && <Redirect to={redirect}/>}
                         </div>
                     </div>
                 </div>
             </Paper>
+            <Modal
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="simple-modal-title"
+                aria-describedby="simple-modal-description"
+            >
+                {body}
+            </Modal>
         </Container>
     )
 }
