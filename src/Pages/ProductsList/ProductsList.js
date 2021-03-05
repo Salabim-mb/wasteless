@@ -97,7 +97,7 @@ export default function Album() {
         let c1 = (productsList[i].product_name.toUpperCase().charCodeAt(0) * 5) % 256;
         let c2 = (productsList[i].product_name.toUpperCase().charCodeAt(1) * 5) % 256;
         let c3 = (productsList[i].product_name.toUpperCase().charCodeAt(2) * 5) % 256;
-        productsList[i].dateToCompare = Date.parse(newFormDate);
+        productsList[i].dateToCompare = Date.parse(newFormDate) + (24*60*60*1000);
         productsList[i].backgroundColor = "rgb(" + c1 + "," + c2 + "," + c3 + ")";
 
         if (now > productsList[i].dateToCompare){
@@ -142,9 +142,9 @@ export default function Album() {
     }
 
     function mapDate(product) {
-        let newDate = new Date(product.expiration_date)
+        let newDate = new Date(product.expiration_date);
         let month = newDate.getMonth() + 1;
-        let newFormDate = newDate.getDate() + "." + month + "." + newDate.getFullYear();
+        let newFormDate = month  + "." + newDate.getDay() + "." + newDate.getFullYear();
         return newFormDate;
     }
 
@@ -181,7 +181,7 @@ export default function Album() {
                                                     Quantity: {product.quantity}
                                                 </Typography>
                                                 <Typography>
-                                                    Expiration date: {mapDate(product)}
+                                                    Expiration date: {product.expiration_date.split("T")[0]}
                                                 </Typography>
                                                 <Button variant="contained" color="primary" onClick={() => setOpenModal(product.id)}>
                                                     Show details
