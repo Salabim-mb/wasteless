@@ -183,8 +183,8 @@ export default function EditCard() {
     const [open, setOpen] = React.useState(false);
     const [redirect, setRedirect] = useState(undefined);
     const [usernameD, setUsernameD] = useState("");
-    const [name, setName] = useState(user.data.name)
-    const [surname, setSurname] = useState(user.data.surname)
+    const [name, setName] = useState(user.data.first_name)
+    const [surname, setSurname] = useState(user.data.last_name)
     const [email, setEmail] = useState(user.data.email)
     const [username, setUsername] = useState(user.data.username)
 
@@ -221,6 +221,11 @@ export default function EditCard() {
             checkFieldsFormat(body)
             await fetchEditUser(body, user.token)
             alertC.current.showAlert("Successfully edited account.", "success")
+            let data = user.data;
+            data.email = email;
+            data.first_name = name;
+            data.last_name = surname;
+            user.login(user.token, data);
         } catch (err) {
             alertC.current.showAlert(err, "error")
         }
