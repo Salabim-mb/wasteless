@@ -33,7 +33,7 @@ const BarcodeForm = ({data, setData, barcodeRequired, setBarcodeRequired}) => {
 
     const readFileAndDecode = async (e) => {
         await onFileSelected(e);
-        setTimeout(() => { decodeFromImage(e); }, 8);
+        setTimeout(() => { decodeFromImage(e); }, 10);
     }
 
     const onFileSelected = async (e) => {
