@@ -16,22 +16,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-function onFileSelected(event) {
-    var selectedFile = event.target.files[0];
-    if (selectedFile !== undefined) {
-        var reader = new FileReader();
 
-        var imgtag = document.getElementById("barcodeImg");
-        imgtag.title = selectedFile.name;
-
-        reader.onload = function (event) {
-            imgtag.src = event.target.result;
-        };
-
-        reader.readAsDataURL(selectedFile);
-    }
-
-}
 
 
 const BarcodeForm = ({data, setData, barcodeRequired, setBarcodeRequired}) => {
@@ -46,7 +31,29 @@ const BarcodeForm = ({data, setData, barcodeRequired, setBarcodeRequired}) => {
         alertC.current.showAlert("Decoding successful", "success");
     }
 
-    const decodeFromImage = async (e) => {
+    const readFileAndDecode = async (e) => {
+        await onFileSelected(e);
+        setTimeout(() => { decodeFromImage(e); }, 8);
+    }
+
+    const onFileSelected = async (e) => {
+        var selectedFile = e.target.files[0];
+        if (selectedFile !== undefined) {
+            var reader = new FileReader();
+
+            var imgtag = document.getElementById("barcodeImg");
+            imgtag.title = selectedFile.name;
+
+            reader.onload = function (event) {
+                imgtag.src = event.target.result;
+            };
+
+            reader.readAsDataURL(selectedFile);
+        }
+
+    }
+
+    const decodeFromImage = async (e)=> {
 
 
         let codeReader = new BrowserBarcodeReader();
@@ -88,21 +95,16 @@ const BarcodeForm = ({data, setData, barcodeRequired, setBarcodeRequired}) => {
                     id="contained-button-file"
                     multiple
                     type="file"
-                    onChange={e => onFileSelected(e)}
+                    onChange={e => readFileAndDecode(e)}
                 />
                 <label htmlFor="contained-button-file">
                     <Button variant="contained" color="primary" component="span">
-                        Upload
+                        Upload & Decode
                     </Button>
                 </label>
                 <input accept="image/*" className={classes.input} id="icon-button-file" type="file"/>
-                <label>
-                    <Button variant="contained" color="default" component="span" onClick={e => decodeFromImage(e)}>
-                        Decode
-                    </Button>
-                </label>
                 <label htmlFor="contained-button">
-                    <Button variant="contained" color="primary" component="span" onClick={() => setBarcodeRequired(false)}>
+                    <Button variant="contained" color="default" component="span" onClick={() => setBarcodeRequired(false)}>
                         I don't have a barcode
                     </Button>
                 </label>
