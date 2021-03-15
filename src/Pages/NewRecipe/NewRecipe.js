@@ -77,6 +77,11 @@ export default function NewRecipe() {
 
     function generate() {
         return ingredients.map((value) => {
+                const handleDeleteIngredient = (e) => {
+                    e.preventDefault()
+                    let newList = ingredients.filter((element) => element !== value)
+                    setIngredients(newList)
+                }
                 const unit = value.unit !== "None" ? value.unit : ""
                 let text = value.quantity + " " + unit + " " + value.ingredient
                 let element = (<ListItem>
@@ -89,7 +94,7 @@ export default function NewRecipe() {
                         primary={text}
                     />
                     <ListItemSecondaryAction>
-                        <IconButton edge="end" aria-label="delete">
+                        <IconButton edge="end" aria-label="delete" onClick={handleDeleteIngredient}>
                             <DeleteIcon/>
                         </IconButton>
                     </ListItemSecondaryAction>
@@ -125,7 +130,7 @@ export default function NewRecipe() {
                 ingredient: ingredient
             }
             ingredients.forEach((element) => {
-                if (JSON.stringify(element) === JSON.stringify(formula)){
+                if (JSON.stringify(element) === JSON.stringify(formula)) {
                     throw "Ingredient already in the list"
                 }
             })
