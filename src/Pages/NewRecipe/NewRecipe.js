@@ -1,5 +1,5 @@
 import {makeStyles} from "@material-ui/core/styles";
-import React, {useContext, useRef} from "react";
+import React, {useContext, useRef, useState} from "react";
 import {AlertContext, UserContext} from "../../context";
 import {
     Button,
@@ -25,6 +25,10 @@ import FolderIcon from '@material-ui/icons/Folder';
 import DeleteIcon from '@material-ui/icons/Delete';
 import Fab from "@material-ui/core/Fab";
 import AddIcon from '@material-ui/icons/Add';
+import {be} from "../../constants/backendSetup";
+import {getCORSHeaders} from "../../utils/fetchTools";
+import {path_list} from "../../constants/routes";
+import {Redirect} from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
     mainDiv: {
@@ -50,6 +54,21 @@ const useStyles = makeStyles((theme) => ({
     }
 }))
 
+const fetchCreateRecipe = async (body, token) => {
+    const url = be.RECIPE;
+    const headers = getCORSHeaders(token);
+
+    const res = await fetch(url, {
+        headers,
+        method: "POST",
+        body: JSON.stringify(body)
+    });
+
+    if (res.status !== 201) {
+        throw "Couldn't create recipe."
+    }
+}
+
 export default function NewRecipe() {
     const classes = useStyles();
     const user = useContext((UserContext))
@@ -61,6 +80,9 @@ export default function NewRecipe() {
     const [unit, setUnit] = React.useState('g');
     const [mealType, setMealType] = React.useState('BF');
     const [ingredients, setIngredients] = React.useState([{unit: "g", quantity: "5", ingredient: "tomates"}]);
+    const [description, setDescription] = React.useState("")
+    const [instruction, setInstruction] = React.useState("")
+    const [redirect, setRedirect] = useState(undefined);
 
 
     const handleChangeDifficulty = (event) => {
@@ -104,7 +126,7 @@ export default function NewRecipe() {
         );
     }
 
-    const prepareIngredients = (e) => {
+    const prepareIngredients = () => {
         let prepared = []
         ingredients.forEach((element) => {
             const unit = element.unit !== "None" ? element.unit : ""
@@ -117,10 +139,10 @@ export default function NewRecipe() {
     const handleAddIngredient = (e) => {
         e.preventDefault()
         try {
-            if (!/^[\d]+$/.test(quantity)) {
+            if (!/^[\d.,]+$/.test(quantity)) {
                 throw "Wrong quantity format"
             }
-            if (!/^[A-Za-z]+$/.test(ingredient)) {
+            if (!/^[A-Za-z\s]+$/.test(ingredient)) {
                 throw "Wrong ingredient format"
             }
 
@@ -129,6 +151,7 @@ export default function NewRecipe() {
                 quantity: quantity,
                 ingredient: ingredient
             }
+
             ingredients.forEach((element) => {
                 if (JSON.stringify(element) === JSON.stringify(formula)) {
                     throw "Ingredient already in the list"
@@ -147,9 +170,41 @@ export default function NewRecipe() {
         e.preventDefault()
         try {
             const pre_ingredients = prepareIngredients()
-            let body = {recipe_name: recipeName, difficulty: difficulty, tags: "",}
+            let body = {
+                recipe_name: recipeName,
+                difficulty: difficulty,
+                tags: [],
+                ingredients: pre_ingredients,
+                description: description,
+                instructions: instruction,
+                image_url: "",
+                meal: mealType,
+                rating: "0"
+            }
+            validateFields(body)
+            await fetchCreateRecipe(body, user.token)
+            alertC.current.showAlert("Successfully created recipe.", "success")
+            setRedirect(path_list.PROFILE.route)
         } catch (err) {
             alertC.current.showAlert(err, "error")
+        }
+    }
+
+    const validateFields = (body) => {
+        if (!/^[A-Za-z\s.,?!-()]+$/.test(body.recipe_name)) {
+            throw "Wrong recipe name format"
+        }
+        if (!/^[A-Za-z\s]+$/.test(body.difficulty)) {
+            throw "Wrong difficulty format"
+        }
+        if (!/^[A-Za-z\s.,?!-()]+$/.test(body.description)) {
+            throw "Wrong description format"
+        }
+        if (!/^[A-Za-z\s\d.,?!-()]+$/.test(body.instructions)) {
+            throw "Wrong instruction format"
+        }
+        if (!/^[A-Za-z\s]+$/.test(body.meal)) {
+            throw "Wrong meal type format"
         }
     }
 
@@ -226,13 +281,16 @@ export default function NewRecipe() {
                                 <AddIcon/>
                             </Fab>
                         </div>
-                        <TextField className={classes.textField} label="Description" multiline></TextField>
-                        <TextField className={classes.textField} label="Instructions" multiline></TextField>
+                        <TextField className={classes.textField} label="Description" multiline
+                                   onChange={(e) => setDescription(e.target.value)}></TextField>
+                        <TextField className={classes.textField} label="Instructions" multiline
+                                   onChange={(e) => setInstruction(e.target.value)}></TextField>
                         <div className={classes.floatingButton}>
                             <Button variant="contained" color="primary" endIcon={<Icon>send</Icon>}
                                     onClick={handleSubmit}>Submit</Button>
                         </div>
                     </div>
+                    {redirect && <Redirect to={redirect}/>}
                 </Paper>
             </Container>
         </React.Fragment>
