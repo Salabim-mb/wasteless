@@ -1,14 +1,12 @@
 import {makeStyles} from "@material-ui/core/styles";
-import React, {useContext} from "react";
-import {UserContext} from "../../context";
+import React, {useContext, useRef} from "react";
+import {AlertContext, UserContext} from "../../context";
 import {
-    BottomNavigation,
-    BottomNavigationAction, Button,
-    Card,
-    CardContent,
+    Button,
     Container,
     CssBaseline,
-    FormControl, Icon,
+    FormControl,
+    Icon,
     InputLabel,
     ListItem,
     ListItemAvatar,
@@ -16,13 +14,10 @@ import {
     ListItemText,
     MenuItem,
     Paper,
-    Select, TextareaAutosize,
+    Select,
     TextField,
     Typography
 } from "@material-ui/core";
-import PersonIcon from "@material-ui/icons/Person";
-import EditIcon from "@material-ui/icons/Edit";
-import MenuBookIcon from "@material-ui/icons/MenuBook";
 import List from "@material-ui/core/List";
 import Avatar from "@material-ui/core/Avatar";
 import IconButton from "@material-ui/core/IconButton";
@@ -58,10 +53,14 @@ const useStyles = makeStyles((theme) => ({
 export default function NewRecipe() {
     const classes = useStyles();
     const user = useContext((UserContext))
+    const alertC = useRef(useContext(AlertContext));
+    const [recipeName, setRecipeName] = React.useState('');
     const [difficulty, setDifficulty] = React.useState('BG');
+    const [quantity, setQuantity] = React.useState("0");
+    const [ingredient, setIngredient] = React.useState('');
     const [unit, setUnit] = React.useState('g');
     const [mealType, setMealType] = React.useState('BF');
-    const [ingredients, setIngredients] = React.useState({})
+    const [ingredients, setIngredients] = React.useState([{unit: "g", quantity: "5", ingredient: "tomates"}]);
 
 
     const handleChangeDifficulty = (event) => {
@@ -76,19 +75,18 @@ export default function NewRecipe() {
         setUnit(event.target.value)
     }
 
-    function generate(ingredients) {
+    function generate() {
         return ingredients.map((value) => {
-                let text = ""
                 const unit = value.unit !== "None" ? value.unit : ""
-                text = value.quantity + " " + unit + " " + value.ingredient
-                return (<ListItem>
+                let text = value.quantity + " " + unit + " " + value.ingredient
+                let element = (<ListItem>
                     <ListItemAvatar>
                         <Avatar>
                             <FolderIcon/>
                         </Avatar>
                     </ListItemAvatar>
                     <ListItemText
-                        primary= {text}
+                        primary={text}
                     />
                     <ListItemSecondaryAction>
                         <IconButton edge="end" aria-label="delete">
@@ -96,8 +94,58 @@ export default function NewRecipe() {
                         </IconButton>
                     </ListItemSecondaryAction>
                 </ListItem>)
+                return React.cloneElement(element);
             }
         );
+    }
+
+    const prepareIngredients = (e) => {
+        let prepared = []
+        ingredients.forEach((element) => {
+            const unit = element.unit !== "None" ? element.unit : ""
+            const text = element.quantity + " " + unit + " " + element.ingredient;
+            prepared.push(text);
+        })
+        return prepared;
+    }
+
+    const handleAddIngredient = (e) => {
+        e.preventDefault()
+        try {
+            if (!/^[\d]+$/.test(quantity)) {
+                throw "Wrong quantity format"
+            }
+            if (!/^[A-Za-z]+$/.test(ingredient)) {
+                throw "Wrong ingredient format"
+            }
+
+            const formula = {
+                unit: unit,
+                quantity: quantity,
+                ingredient: ingredient
+            }
+            ingredients.forEach((element) => {
+                if (JSON.stringify(element) === JSON.stringify(formula)){
+                    throw "Ingredient already in the list"
+                }
+            })
+            setIngredients([
+                ...ingredients, formula
+            ])
+        } catch (err) {
+            alertC.current.showAlert(err, "error")
+        }
+
+    }
+
+    const handleSubmit = async (e) => {
+        e.preventDefault()
+        try {
+            const pre_ingredients = prepareIngredients()
+            let body = {recipe_name: recipeName, difficulty: difficulty, tags: "",}
+        } catch (err) {
+            alertC.current.showAlert(err, "error")
+        }
     }
 
     return (
@@ -106,7 +154,8 @@ export default function NewRecipe() {
             <Container fixed>
                 <Paper>
                     <div className={classes.mainDiv}>
-                        <TextField className={classes.textField} label="Recipe name"></TextField>
+                        <TextField className={classes.textField} label="Recipe name"
+                                   onChange={(e) => setRecipeName(e.target.value)}></TextField>
                         <FormControl className={classes.textField}>
                             <InputLabel id="demo-simple-select-label">Difficulty</InputLabel>
                             <Select
@@ -139,11 +188,12 @@ export default function NewRecipe() {
                                 INGREDIENTS
                             </Typography>
                             <List dense={true}>
-                                {/*{generate(ingredients)}*/}
+                                {generate()}
                             </List>
                         </div>
                         <div className={classes.ingredientsDiv}>
-                            <TextField className={classes.textField} label="Quantity"></TextField>
+                            <TextField className={classes.textField} label="Quantity" defaultValue={quantity}
+                                       onChange={(e) => setQuantity(e.target.value)}></TextField>
                             <FormControl className={classes.textField}>
                                 <InputLabel id="demo-simple-select-label">Unit</InputLabel>
                                 <Select
@@ -158,21 +208,24 @@ export default function NewRecipe() {
                                     <MenuItem value={''}>None</MenuItem>
                                     <MenuItem value={'tbsp'}>Tbsp</MenuItem>
                                     <MenuItem value={'tsp'}>Tsp</MenuItem>
-                                    <MenuItem value={'ml'}>Mililiter</MenuItem>
+                                    <MenuItem value={'ml'}>Milliliter</MenuItem>
                                     <MenuItem value={'l'}>Liter</MenuItem>
                                 </Select>
                             </FormControl>
-                            <TextField className={classes.textField} label="Ingredient"></TextField>
+                            <TextField className={classes.textField} label="Ingredient" defaultValue={ingredient}
+                                       onChange={(e) => setIngredient(e.target.value)}></TextField>
                         </div>
                         <div className={classes.floatingButton}>
-                            <Fab size="small" color="secondary" aria-label="add" className={classes.margin}>
+                            <Fab size="small" color="secondary" aria-label="add" className={classes.margin}
+                                 onClick={handleAddIngredient}>
                                 <AddIcon/>
                             </Fab>
                         </div>
                         <TextField className={classes.textField} label="Description" multiline></TextField>
                         <TextField className={classes.textField} label="Instructions" multiline></TextField>
                         <div className={classes.floatingButton}>
-                            <Button variant="contained" color="primary" endIcon={<Icon>send</Icon>}>Submit</Button>
+                            <Button variant="contained" color="primary" endIcon={<Icon>send</Icon>}
+                                    onClick={handleSubmit}>Submit</Button>
                         </div>
                     </div>
                 </Paper>
