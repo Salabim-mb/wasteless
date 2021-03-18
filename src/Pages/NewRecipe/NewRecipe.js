@@ -29,11 +29,14 @@ import {be} from "../../constants/backendSetup";
 import {getCORSHeaders} from "../../utils/fetchTools";
 import {path_list} from "../../constants/routes";
 import {Redirect} from "react-router-dom";
+import {fileToBase64} from "../../utils/fileToBase64";
+import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 
 const useStyles = makeStyles((theme) => ({
     mainDiv: {
         margin: theme.spacing(3),
         marginBottom: theme.spacing(8),
+        paddingBottom: theme.spacing(1),
         textAlign: "center"
     },
     textField: {
@@ -50,6 +53,9 @@ const useStyles = makeStyles((theme) => ({
     floatingButton: {
         justifyContent: "center",
         alignContent: "center",
+        margin: theme.spacing(1)
+    },
+    imageDiv: {
         margin: theme.spacing(1)
     }
 }))
@@ -79,10 +85,12 @@ export default function NewRecipe() {
     const [ingredient, setIngredient] = React.useState('');
     const [unit, setUnit] = React.useState('g');
     const [mealType, setMealType] = React.useState('BF');
-    const [ingredients, setIngredients] = React.useState([{unit: "g", quantity: "5", ingredient: "tomates"}]);
+    const [ingredients, setIngredients] = React.useState([]);
     const [description, setDescription] = React.useState("")
     const [instruction, setInstruction] = React.useState("")
     const [redirect, setRedirect] = useState(undefined);
+    const [isVisible, setVisible] = useState(false);
+    const [photoData, setPhotoData] = useState("");
 
 
     const handleChangeDifficulty = (event) => {
@@ -109,7 +117,7 @@ export default function NewRecipe() {
                 let element = (<ListItem>
                     <ListItemAvatar>
                         <Avatar>
-                            <FolderIcon/>
+                            <PlayArrowIcon/>
                         </Avatar>
                     </ListItemAvatar>
                     <ListItemText
@@ -133,6 +141,8 @@ export default function NewRecipe() {
             const text = element.quantity + " " + unit + " " + element.ingredient;
             prepared.push(text);
         })
+        if (prepared.length == 0)
+            throw "You have to add ingredients"
         return prepared;
     }
 
@@ -167,7 +177,7 @@ export default function NewRecipe() {
     }
 
     const handleSubmit = async (e) => {
-        e.preventDefault()
+        e.preventDefault();
         try {
             const pre_ingredients = prepareIngredients()
             let body = {
@@ -177,7 +187,7 @@ export default function NewRecipe() {
                 ingredients: pre_ingredients,
                 description: description,
                 instructions: instruction,
-                image_url: "",
+                image_url: photoData,
                 meal: mealType,
                 rating: "0"
             }
@@ -187,6 +197,29 @@ export default function NewRecipe() {
             setRedirect(path_list.PROFILE.route)
         } catch (err) {
             alertC.current.showAlert(err, "error")
+        }
+    }
+
+    async function onFileSelected(event) {
+        setVisible(true);
+        let selectedFile = event.target.files[0];
+        try {
+            let b64 = await fileToBase64(selectedFile);
+            setPhotoData(b64);
+        } catch (err) {
+            alertC.current.showAlert('Couldn\'t convert photo', "error");
+        }
+        if (selectedFile !== undefined) {
+            let reader = new FileReader();
+
+            let imgtag = document.getElementById("barcodeImg");
+            imgtag.title = selectedFile.name;
+
+            reader.onload = function (event) {
+                imgtag.src = event.target.result;
+            };
+
+            reader.readAsDataURL(selectedFile);
         }
     }
 
@@ -205,6 +238,9 @@ export default function NewRecipe() {
         }
         if (!/^[A-Za-z\s]+$/.test(body.meal)) {
             throw "Wrong meal type format"
+        }
+        if (body.image_url.length == 0) {
+            throw "You need to attach photo"
         }
     }
 
@@ -285,10 +321,31 @@ export default function NewRecipe() {
                                    onChange={(e) => setDescription(e.target.value)}></TextField>
                         <TextField className={classes.textField} label="Instructions" multiline
                                    onChange={(e) => setInstruction(e.target.value)}></TextField>
+                        <div>
+                            {
+                                isVisible ? <div className={classes.imageDiv}><img id="barcodeImg" height="200"/></div> : <div></div>
+                            }
+                        </div>
+                        <div>
+                            <input
+                                accept="image/*"
+                                className={classes.input}
+                                id="contained-button-file"
+                                multiple
+                                type="file"
+                                onChange={e => onFileSelected(e)} hidden
+                            />
+                            <label htmlFor="contained-button-file">
+                                <Button variant="contained" color="primary" component="span">
+                                    Upload
+                                </Button>
+                            </label>
+                        </div>
                         <div className={classes.floatingButton}>
                             <Button variant="contained" color="primary" endIcon={<Icon>send</Icon>}
                                     onClick={handleSubmit}>Submit</Button>
                         </div>
+
                     </div>
                     {redirect && <Redirect to={redirect}/>}
                 </Paper>
