@@ -49,14 +49,23 @@ const useStyles = makeStyles((theme) => ({
     },
     fixedHeight: {
         height: 250,
+        justifyContent:'center',
+        textAlign:'center',
+        // [theme.breakpoints.down('sm')]: {
+        //     height: "auto",
+        //     width: '100vh',
+        // },
+
     },
     cardDetails: {
         textAlign: 'center',
         justifyContent:'center',
     },
     centered: {
+        justifyContent:'center',
+        textAlign:'center',
 
-    }
+    },
 }));
 
 const StyledTableCell = withStyles((theme) => ({
@@ -96,7 +105,7 @@ export default function RecipePage() {
                             <Grid container spacing={3}>
                                 {exampleRecipe.map((recipe) => (
                                     <Grid container spacing={3}>
-                                        <Grid item xs={12} md={6} lg={7}>
+                                        <Grid item xs={12} md={6} lg={6}>
                                             <Paper className={fixedHeightPaper}>
                                                 <Typography component="p" variant="h4">
                                                     {recipe.recipe_name}
@@ -155,12 +164,15 @@ export default function RecipePage() {
                                         </Grid>
                                         <Grid item xs={12} md={5} lg={5}>
                                             {/*<Paper >*/}
-                                                <Typography component="img" src={recipe.image_url}  className={classes.fixedHeight}>
+                                            {/*    <Typography component="img" src={recipe.image_url}  className={classes.fixedHeight}>*/}
+                                            <div className={classes.centered}>
+                                                <img src={recipe.image_url} className={classes.fixedHeight} />
+                                            </div>
 
-                                                </Typography>
+                                                {/*</Typography>*/}
                                             {/*</Paper>*/}
                                         </Grid>
-                                        <Grid item xs={11}  md={5}>
+                                        <Grid item xs={12}  md={5}>
                                             <Paper className={classes.paper}>
                                                 <Title>Ingredients</Title>
                                                 <React.Fragment>
@@ -178,15 +190,19 @@ export default function RecipePage() {
                                                 <h5></h5>
                                             </Paper>
                                         </Grid>
-                                        <Grid item xs={11}  md={6}>
+                                        <Grid item xs={12}  md={7}>
                                             <Paper className={classes.paper}>
 
                                                 <Title>Preparation details</Title>
                                                 <Typography>{recipe.instructions}</Typography>
                                             </Paper>
                                         </Grid>
-                                        <Grid>
+                                        <Grid item xs={12}>
+                                            <Paper className={classes.paper}>
 
+                                                <Title>Comments</Title>
+                                                <Typography></Typography>
+                                            </Paper>
                                         </Grid>
                                     </Grid>
                                 ))}
