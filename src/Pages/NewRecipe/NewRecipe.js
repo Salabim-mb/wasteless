@@ -31,6 +31,7 @@ import {path_list} from "../../constants/routes";
 import {Redirect} from "react-router-dom";
 import {fileToBase64} from "../../utils/fileToBase64";
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
+import NewComment from "./components/NewComment";
 
 const useStyles = makeStyles((theme) => ({
     mainDiv: {
@@ -350,8 +351,11 @@ export default function NewRecipe() {
 
                     </div>
                     {redirect && <Redirect to={redirect}/>}
+                    <NewComment/>
                 </Paper>
+
             </Container>
+
         </React.Fragment>
     )
 }
