@@ -169,7 +169,9 @@ export default function NewRecipe() {
             })
             setIngredients([
                 ...ingredients, formula
-            ])
+            ]);
+            setQuantity("0");
+            setIngredient("");
         } catch (err) {
             alertC.current.showAlert(err, "error")
         }
@@ -224,19 +226,19 @@ export default function NewRecipe() {
     }
 
     const validateFields = (body) => {
-        if (!/^[A-Za-z\s.,?!-()]+$/.test(body.recipe_name)) {
+        if (!/^[A-Za-zżźćńółęąśŻŹĆĄŚĘŁÓŃ\s.,?!-()]+$/.test(body.recipe_name)) {
             throw "Wrong recipe name format"
         }
-        if (!/^[A-Za-z\s]+$/.test(body.difficulty)) {
+        if (!/^[A-Za-zżźćńółęąśŻŹĆĄŚĘŁÓŃ\s]+$/.test(body.difficulty)) {
             throw "Wrong difficulty format"
         }
-        if (!/^[A-Za-z\s.,?!-()]+$/.test(body.description)) {
+        if (!/^[A-Za-zżźćńółęąśŻŹĆĄŚĘŁÓŃ\s.,?!-()]+$/.test(body.description)) {
             throw "Wrong description format"
         }
-        if (!/^[A-Za-z\s\d.,?!-()]+$/.test(body.instructions)) {
+        if (!/^[A-Za-zżźćńółęąśŻŹĆĄŚĘŁÓŃ\s\d.,?!-()]+$/.test(body.instructions)) {
             throw "Wrong instruction format"
         }
-        if (!/^[A-Za-z\s]+$/.test(body.meal)) {
+        if (!/^[A-Za-zżźćńółęąśŻŹĆĄŚĘŁÓŃ\s]+$/.test(body.meal)) {
             throw "Wrong meal type format"
         }
         if (body.image_url.length == 0) {
@@ -288,7 +290,7 @@ export default function NewRecipe() {
                             </List>
                         </div>
                         <div className={classes.ingredientsDiv}>
-                            <TextField className={classes.textField} label="Quantity" defaultValue={quantity}
+                            <TextField className={classes.textField} label="Quantity" value={quantity}
                                        onChange={(e) => setQuantity(e.target.value)}></TextField>
                             <FormControl className={classes.textField}>
                                 <InputLabel id="demo-simple-select-label">Unit</InputLabel>
@@ -308,7 +310,7 @@ export default function NewRecipe() {
                                     <MenuItem value={'l'}>Liter</MenuItem>
                                 </Select>
                             </FormControl>
-                            <TextField className={classes.textField} label="Ingredient" defaultValue={ingredient}
+                            <TextField className={classes.textField} label="Ingredient" value={ingredient}
                                        onChange={(e) => setIngredient(e.target.value)}></TextField>
                         </div>
                         <div className={classes.floatingButton}>
