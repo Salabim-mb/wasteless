@@ -123,8 +123,6 @@ const MenuBar = (props) => {
             </div>
             <Divider />
             <DrawerList setRedirect={redirectToPath} userContext={user} alertC={alertC.current} />
-            <Divider />
-            <DrawerList setRedirect={redirectToPath} userContext={user} alertC={alertC.current} />
         </>
     );
 
