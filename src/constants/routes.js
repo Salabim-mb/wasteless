@@ -24,10 +24,6 @@ export const path_list = {
         route: "/user",
         name: "My profile"
     },
-    SETTINGS: {
-        route: "/settings",
-        name: "Settings"
-    },
     FRIDGE_LIST: {
         route: "/user/fridge",
         name: "My fridge list"
@@ -39,7 +35,7 @@ export const path_list = {
     },
     FRIDGE_NEW_PRODUCT: {
         route: "/user/fridge/:fridge_id/new-product",
-        redirect: (fridge_id) => `/user/${fridge_id}/new-product`,
+        redirect: (fridge_id) => `/user/fridge/${fridge_id}/new-product`,
         name: "Add product"
     },
     NEW_RECIPE: {

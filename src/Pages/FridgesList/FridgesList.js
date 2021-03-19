@@ -8,24 +8,10 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import {Redirect} from 'react-router-dom';
 import {path_list} from "../../constants/routes";
 import {getCORSHeaders} from "../../utils/fetchTools";
-
-const fridgesTest = [
-    {
-        id: 1,
-        fridge_name: 'Fridge one',
-    },
-    {
-        id: 2,
-        fridge_name: 'Fridge two',
-    },
-    {
-        id: 3,
-        fridge_name: 'Fridge three',
-    },
-];
+import {be} from "../../constants/backendSetup";
 
 const fetchFridgesList = async (token) => {
-    const url = 'https://wasteless-backend.herokuapp.com/profile/fridges/'
+    const url = be.FRIDGE;
     const headers = getCORSHeaders(token)
 
     const res = await fetch(url, {
@@ -36,8 +22,7 @@ const fetchFridgesList = async (token) => {
     if (res.status === 200) {
         return await res.json();
     } else {
-        return "good"
-        // throw res.status
+        throw res.status
     }
 };
 
@@ -133,10 +118,9 @@ export default function FridgesList() {
             setLoading(true);
             try {
                 let fridges = await fetchFridgesList(token);
-                //fridges = fridgesTest //delete when login is working
                 setFridges(fridges);
             } catch (e) {
-                alertC.current.showAlert("Couldn't load fridges list!", "error")
+                alertC.current.showAlert("Couldn't load fridge list!", "error")
             } finally {
                 setLoading(false)
             }
