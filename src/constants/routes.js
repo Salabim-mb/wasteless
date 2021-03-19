@@ -4,6 +4,7 @@ import ProductsList from "../Pages/ProductsList/ProductsList"
 import UserPage from "../Pages/UserPage/UserPage";
 import LoginPage from "Pages/LoginPage/LoginPage";
 import RegisterPage from "../Pages/RegisterPage/RegisterPage";
+import RecipePage from "../Pages/RecipePage/RecipePage";
 
 export const path_list = {
     DASHBOARD: {
@@ -40,6 +41,11 @@ export const path_list = {
         redirect: (fridge_id) => `/user/${fridge_id}/new-product`,
         name: "Add product"
     },
+    RECIPE_PAGE: {
+        route: "/recipes/:recipe_id",
+        redirect: (recipe_id) => `/recipes/${recipe_id}`,
+        name: "Recipe details"
+    },
 }
 
 export default [
@@ -72,6 +78,11 @@ export default [
         path: path_list.FRIDGE_NEW_PRODUCT.route,
         component: NewProduct,
         exact: true
-    }
+    },
+    {
+        path: path_list.RECIPE_PAGE.route,
+        component: RecipePage,
+        exact: true
+    },
 ];
 
