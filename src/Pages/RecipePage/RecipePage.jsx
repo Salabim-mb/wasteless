@@ -1,18 +1,12 @@
-import React, {useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import clsx from 'clsx';
 import {makeStyles, withStyles} from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import Box from '@material-ui/core/Box';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-import Chart from './Chart';
-import Orders from './Orders';
 import exampleRecipe from "./exampleRecipe";
-import CardMedia from '@material-ui/core/CardMedia';
 import CircularProgress from "@material-ui/core/CircularProgress";
-import Card from "@material-ui/core/Card";
-import Deposits from "./Deposits";
 import Typography from "@material-ui/core/Typography";
 import SignalCellular1BarIcon from '@material-ui/icons/SignalCellular1Bar';
 import SignalCellular3BarIcon from '@material-ui/icons/SignalCellular3Bar';
@@ -29,9 +23,12 @@ import Title from "./Title";
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import {be} from "../../constants/backendSetup";
+import {useParams} from "react-router-dom";
+import {AlertContext} from "context/AlertContext";
+import {getCORSHeaders} from "../../utils/fetchTools";
+import {UserContext} from "../../context";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -51,11 +48,6 @@ const useStyles = makeStyles((theme) => ({
         height: 250,
         justifyContent:'center',
         textAlign:'center',
-        // [theme.breakpoints.down('sm')]: {
-        //     height: "auto",
-        //     width: '100vh',
-        // },
-
     },
     cardDetails: {
         textAlign: 'center',
@@ -86,10 +78,50 @@ const StyledTableRow = withStyles((theme) => ({
     },
 }))(TableRow);
 
+
 export default function RecipePage() {
     const classes = useStyles();
     const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
+    const user = useContext(UserContext);
     const [loading, setLoading] = useState(false);
+    const [recipe, setRecipe] = useState(exampleRecipe);
+    const {recipe_id} = useParams();
+    const recipeId = recipe_id;
+    const alertC = useRef(useContext(AlertContext));
+
+
+    useEffect(() => {
+        const loadRecipe = async (token) => {
+            setLoading(true);
+            try {
+                let res = await getRecipe(token);
+                await setRecipe([res]);
+            } catch(e) {
+                console.log(e);
+                alertC.current.showAlert("Something went wrong while trying to fetch recipe details", "error");
+            } finally {
+                setLoading(false);
+            }
+        };
+        loadRecipe(user.token);
+    }, [user.token]);
+
+    const getRecipe = async (token) => {
+        const headers = getCORSHeaders(token);
+        const url = be.RECIPE + recipeId + "/";
+        let res = await fetch(url, {
+            headers,
+            method: "GET"
+        });
+
+        if (res.status === 200) {
+            return await res.json();
+        } else {
+            alertC.current.showAlert("Something went wrong while trying to fetch recipe details", "error");
+            throw res.status;
+
+        }
+    };
 
 
     return (
@@ -97,22 +129,24 @@ export default function RecipePage() {
             <CssBaseline/>
             <main className={classes.content}>
                 <div/>
-                <Container maxWidth="lg" className={classes.container}>
+                <Container maxWidth="lg" className={classes.container} >
                     {
                         loading ? (
-                            <CircularProgress/>
+                            <div className={classes.centered}>
+                                <CircularProgress/>
+                            </div>
                         ) : (
                             <Grid container spacing={3}>
-                                {exampleRecipe.map((recipe) => (
-                                    <Grid container spacing={3}>
+                                {recipe.map((recipe,id) => (
+                                    <Grid container spacing={3} key={id}>
                                         <Grid item xs={12} md={6} lg={6}>
                                             <Paper className={fixedHeightPaper}>
-                                                <Typography component="p" variant="h4">
+                                                <Typography variant="h4">
                                                     {recipe.recipe_name}
                                                 </Typography>
                                                 <Grid container spacing={3} className={classes.cardDetails}>
                                                     <Grid item xs={2} sm={2}>
-                                                        <Typography>
+                                                        <Typography component={'span'}>
                                                             {recipe.difficulty === "BG" ? <h5>Beginner</h5>   : recipe.difficulty === "IT" ? <h5>Intermediate</h5>  : <h5>Advanced</h5>}
                                                         </Typography>
                                                         <Typography>
@@ -120,7 +154,7 @@ export default function RecipePage() {
                                                         </Typography>
                                                     </Grid>
                                                     <Grid item xs={4} sm={4}>
-                                                        <Typography>
+                                                        <Typography component={'span'}>
                                                             <h5>{recipe.ratings_num}</h5>
                                                         </Typography>
                                                         <Typography>
@@ -143,7 +177,7 @@ export default function RecipePage() {
                                                         </Typography>
                                                     </Grid>
                                                     <Grid item xs={2} sm={2}>
-                                                        <Typography>
+                                                        <Typography component={'span'}>
                                                             {recipe.meal === "BF" ? <h5>Breakfast</h5>   : recipe.meal === "LU" ? <h5>Lunch</h5>  : recipe.meal === "DN" ? <h5>Dinner</h5> : <h5>Supper</h5>}
                                                         </Typography>
                                                         <Typography>
@@ -151,7 +185,7 @@ export default function RecipePage() {
                                                         </Typography>
                                                     </Grid>
                                                     <Grid item xs={4} sm={4}>
-                                                        <Typography>
+                                                        <Typography component={'span'}>
                                                         <h5> {recipe.prep_time}</h5>
                                                     </Typography>
                                                         <Typography>
@@ -163,14 +197,9 @@ export default function RecipePage() {
                                             </Paper>
                                         </Grid>
                                         <Grid item xs={12} md={5} lg={5}>
-                                            {/*<Paper >*/}
-                                            {/*    <Typography component="img" src={recipe.image_url}  className={classes.fixedHeight}>*/}
                                             <div className={classes.centered}>
                                                 <img src={recipe.image_url} className={classes.fixedHeight} />
                                             </div>
-
-                                                {/*</Typography>*/}
-                                            {/*</Paper>*/}
                                         </Grid>
                                         <Grid item xs={12}  md={5}>
                                             <Paper className={classes.paper}>
@@ -178,16 +207,16 @@ export default function RecipePage() {
                                                 <React.Fragment>
                                                         <Table >
                                                             <TableBody>
-                                                                {recipe.ingredients.map((value, index) => (
-                                                                    <StyledTableRow  key={index}>
-                                                                        <StyledTableCell >{value}</StyledTableCell >
+                                                                {/*{recipe.ingredients.map((value, index) => (*/}
+                                                                {/*    <StyledTableRow  key={index}>*/}
+                                                                {/*        <StyledTableCell >{value}</StyledTableCell >*/}
 
-                                                                    </StyledTableRow>
-                                                                ))}
+                                                                {/*    </StyledTableRow>*/}
+                                                                {/*))}*/}
                                                             </TableBody>
                                                         </Table>
                                                 </React.Fragment>
-                                                <h5></h5>
+                                                <h5> </h5>
                                             </Paper>
                                         </Grid>
                                         <Grid item xs={12}  md={7}>
@@ -201,7 +230,7 @@ export default function RecipePage() {
                                             <Paper className={classes.paper}>
 
                                                 <Title>Comments</Title>
-                                                <Typography></Typography>
+                                                <Typography> </Typography>
                                             </Paper>
                                         </Grid>
                                     </Grid>
