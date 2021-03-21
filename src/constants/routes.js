@@ -46,32 +46,38 @@ export default [
     {
         path: path_list.FRIDGE.route,
         component: ProductsList,
-        exact: true
+        exact: true,
+        requiresLogin: true
     },
     {
         path: path_list.LOGIN.route,
         component: LoginPage,
-        exact: true
+        exact: true,
+        requiresLogin: false
     },
     {
         path: path_list.REGISTER.route,
         component: RegisterPage,
-        exact: true
+        exact: true,
+        requiresLogin: false
     },
     {
         path: path_list.PROFILE.route,
         exact: true,
-        component: UserPage
+        component: UserPage,
+        requiresLogin: true
     },
     {
         path: path_list.FRIDGE_LIST.route,
         exact: true,
-        component: FridgesList
+        component: FridgesList,
+        requiresLogin: true
     },
     {
         path: path_list.FRIDGE_NEW_PRODUCT.route,
         component: NewProduct,
-        exact: true
+        exact: true,
+        requiresLogin: true
     }
 ];
 

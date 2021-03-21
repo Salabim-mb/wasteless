@@ -2,30 +2,19 @@ import React, {useContext, useEffect, useRef, useState} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import ButtonBase from '@material-ui/core/ButtonBase';
 import Typography from '@material-ui/core/Typography';
-import {AlertContext, UserContext} from "../../context";
-import fridgeImage from '../../assets/fridge.svg'
+import {AlertContext, UserContext} from "context";
+import fridgeImage from 'assets/fridge.svg'
 import CircularProgress from '@material-ui/core/CircularProgress';
 import {Redirect} from 'react-router-dom';
-import {path_list} from "../../constants/routes";
-import {getCORSHeaders} from "../../utils/fetchTools";
-
-const fridgesTest = [
-    {
-        id: 1,
-        fridge_name: 'Fridge one',
-    },
-    {
-        id: 2,
-        fridge_name: 'Fridge two',
-    },
-    {
-        id: 3,
-        fridge_name: 'Fridge three',
-    },
-];
+import {path_list} from "constants/routes";
+import {getCORSHeaders} from "utils/fetchTools";
+import {be} from "constants/backendSetup";
+import Fab from "@material-ui/core/Fab";
+import AddIcon from '@material-ui/icons/Add';
+import NewFridgeModal from "./components/NewFridgeModal";
 
 const fetchFridgesList = async (token) => {
-    const url = 'https://wasteless-backend.herokuapp.com/profile/fridges/'
+    const url = be.FRIDGE
     const headers = getCORSHeaders(token)
 
     const res = await fetch(url, {
@@ -36,8 +25,7 @@ const fetchFridgesList = async (token) => {
     if (res.status === 200) {
         return await res.json();
     } else {
-        return "good"
-        // throw res.status
+        throw res.status
     }
 };
 
@@ -117,6 +105,14 @@ const useStyles = makeStyles((theme) => ({
         left: 'calc(50% - 9px)',
         transition: theme.transitions.create('opacity'),
     },
+    extendedIcon: {
+        marginRight: theme.spacing(1),
+    },
+    fab: {
+        position: "absolute",
+        bottom: theme.spacing(2),
+        right: theme.spacing(2),
+    },
 }));
 
 export default function FridgesList() {
@@ -127,13 +123,13 @@ export default function FridgesList() {
     const [loading, setLoading] = useState(false);
     const [fridges, setFridges] = useState([]);
     const [redirect, setRedirect] = useState(undefined);
+    const [open, setOpen] = useState(false);
 
     useEffect(() => {
         const loadFridges = async (token) => {
             setLoading(true);
             try {
                 let fridges = await fetchFridgesList(token);
-                //fridges = fridgesTest //delete when login is working
                 setFridges(fridges);
             } catch (e) {
                 alertC.current.showAlert("Couldn't load fridges list!", "error")
@@ -150,17 +146,18 @@ export default function FridgesList() {
                 loading ? (
                     <CircularProgress/>
                 ) : (
-                    fridges.map((image) => (
-                        <ButtonBase
-                            onClick={() => setRedirect(image.id)}
-                            focusRipple
-                            key={image.fridge_name}
-                            className={classes.image}
-                            focusVisibleClassName={classes.focusVisible}
-                            style={{
-                                width: image.width,
-                            }}
-                        >
+                    <>
+                        {fridges.map((image) => (
+                            <ButtonBase
+                                onClick={() => setRedirect(image.id)}
+                                focusRipple
+                                key={image.fridge_name}
+                                className={classes.image}
+                                focusVisibleClassName={classes.focusVisible}
+                                style={{
+                                    width: image.width,
+                                }}
+                            >
                           <span
                               className={classes.imageSrc}
                               style={{
@@ -179,8 +176,14 @@ export default function FridgesList() {
                                 <span className={classes.imageMarked}/>
                             </Typography>
                           </span>
-                        </ButtonBase>
-                    ))
+                            </ButtonBase>
+                        ))}
+                        <Fab className={classes.fab} variant="extended" color="secondary" onClick={() => setOpen(true)}>
+                            <AddIcon className={classes.extendedIcon} />
+                            Add fridge
+                        </Fab>
+                        <NewFridgeModal open={open} setOpen={setOpen}/>
+                    </>
                 )
             }
             {redirect && <Redirect to={path_list.FRIDGE.redirect(redirect)}/> }
