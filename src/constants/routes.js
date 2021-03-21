@@ -41,14 +41,6 @@ export const path_list = {
         redirect: (fridge_id) => `/user/${fridge_id}/new-product`,
         name: "Add product"
     },
-    FRIDGE1_NEW_PRODUCT: {
-        route: "/user/fridge/1/new-product",
-        name: "Add product"
-    },
-    FRIDGE1: {
-        route: "/user/fridge/1",
-        name: "Add product"
-    },
     RECIPES_LIST: {
         route: "/recipes",
         name: "Recipes list"
