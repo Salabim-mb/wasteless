@@ -11,10 +11,13 @@ import {Button, CardHeader, CircularProgress} from "@material-ui/core";
 import Avatar from '@material-ui/core/Avatar';
 import Delete from '@material-ui/icons/Delete';
 import {AlertContext, UserContext} from "context";
-import {useParams} from "react-router-dom";
+import {Redirect, useParams} from "react-router-dom";
 import {ErrorOutlineTwoTone} from "@material-ui/icons";
 import DetailsModal from "./components/DetailsModal";
 import {be} from "../../constants/backendSetup";
+import Fab from "@material-ui/core/Fab";
+import AddIcon from '@material-ui/icons/Add';
+import {path_list} from "../../constants/routes";
 
 const useStyles = makeStyles((theme) => ({
     icon: {
@@ -41,7 +44,15 @@ const useStyles = makeStyles((theme) => ({
     },
     cardContent: {
         flexGrow: 1,
-    }
+    },
+    fab: {
+        position: "absolute",
+        bottom: theme.spacing(2),
+        right: theme.spacing(2),
+    },
+    extendedIcon: {
+        marginRight: theme.spacing(1),
+    },
 }));
 
 const fetchProductsList = async (token, fridgeId) => {
@@ -87,6 +98,7 @@ export default function Album() {
     const [loading, setLoading] = useState(false);
     const [productsList, setProductsList] = useState([]);
     const [openModal, setOpenModal] = useState(false);
+    const [redirect, setRedirect] = useState(false);
     const {fridge_id} = useParams();
     const fridgeId = fridge_id;
 
@@ -157,45 +169,52 @@ export default function Album() {
                         loading ? (
                             <CircularProgress />
                         ) : (
-                            <Grid container spacing={4}>
-                                {productsList.map((product, idxProduct) => (
-                                    <Grid item key={idxProduct} xs={12} sm={6} md={4}>
-                                        <Card className={classes.card}>
-                                            <CardHeader
-                                                avatar={
-                                                    <Avatar aria-label="recipe" className={classes.avatar} style={{backgroundColor: product.backgroundColor}}>
-                                                        {product.dateToCompare < (new Date()).getTime() ? <ErrorOutlineTwoTone /> : product.product_name.charAt(0)}
-                                                    </Avatar>
-                                                }
-                                                action={
-                                                    <IconButton aria-label="delete" onClick={(e) => handleDeleteClick(e, product.id)}>
-                                                        <Delete/>
-                                                    </IconButton>
-                                                }
-                                            />
-                                            <CardContent className={classes.cardContent} style={{color: product.color}}>
-                                                <Typography gutterBottom variant="h5" component="h2">
-                                                    {product.product_name}
-                                                </Typography>
-                                                <Typography>
-                                                    Quantity: {product.quantity}
-                                                </Typography>
-                                                <Typography>
-                                                    Expiration date: {product.expiration_date.split("T")[0]}
-                                                </Typography>
-                                                <Button variant="contained" color="primary" onClick={() => setOpenModal(product.id)}>
-                                                    Show details
-                                                </Button>
-                                            </CardContent>
-                                        </Card>
-                                    </Grid>
-                                ))}
-                            </Grid>
+                            <>
+                                <Grid container spacing={4}>
+                                    {productsList.map((product, idxProduct) => (
+                                        <Grid item key={idxProduct} xs={12} sm={6} md={4}>
+                                            <Card className={classes.card}>
+                                                <CardHeader
+                                                    avatar={
+                                                        <Avatar aria-label="recipe" className={classes.avatar} style={{backgroundColor: product.backgroundColor}}>
+                                                            {product.dateToCompare < (new Date()).getTime() ? <ErrorOutlineTwoTone /> : product.product_name.charAt(0)}
+                                                        </Avatar>
+                                                    }
+                                                    action={
+                                                        <IconButton aria-label="delete" onClick={(e) => handleDeleteClick(e, product.id)}>
+                                                            <Delete/>
+                                                        </IconButton>
+                                                    }
+                                                />
+                                                <CardContent className={classes.cardContent} style={{color: product.color}}>
+                                                    <Typography gutterBottom variant="h5" component="h2">
+                                                        {product.product_name}
+                                                    </Typography>
+                                                    <Typography>
+                                                        Quantity: {product.quantity}
+                                                    </Typography>
+                                                    <Typography>
+                                                        Expiration date: {product.expiration_date.split("T")[0]}
+                                                    </Typography>
+                                                    <Button variant="contained" color="primary" onClick={() => setOpenModal(product.id)}>
+                                                        Show details
+                                                    </Button>
+                                                </CardContent>
+                                            </Card>
+                                        </Grid>
+                                    ))}
+                                </Grid>
+                                <Fab onClick={() => setRedirect(true)} className={classes.fab} variant="extended" color="secondary">
+                                   <AddIcon className={classes.extendedIcon} />
+                                   Add product
+                                </Fab>
+                            </>
                         )
                     }
                 </Container>
                 <DetailsModal setOpen={setOpenModal} open={!!openModal} product_id={openModal} />
             </main>
+            {redirect && <Redirect to={path_list.FRIDGE_NEW_PRODUCT.redirect(fridgeId)} />}
         </React.Fragment>
     );
 }

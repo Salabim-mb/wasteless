@@ -132,7 +132,7 @@ export default function FridgesList() {
                 let fridges = await fetchFridgesList(token);
                 setFridges(fridges);
             } catch (e) {
-                alertC.current.showAlert("Couldn't load fridges list!", "error")
+                alertC.current.showAlert("Couldn't load fridge list!", "error")
             } finally {
                 setLoading(false)
             }
