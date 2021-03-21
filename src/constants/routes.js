@@ -5,7 +5,6 @@ import UserPage from "../Pages/UserPage/UserPage";
 import LoginPage from "Pages/LoginPage/LoginPage";
 import RegisterPage from "../Pages/RegisterPage/RegisterPage";
 import RecipesList from "../Pages/RecipesList/RecipesList";
-import RecipesList2 from "../Pages/RecipesList/RecipesList2";
 
 export const path_list = {
     DASHBOARD: {
@@ -54,10 +53,6 @@ export const path_list = {
         route: "/recipes",
         name: "Recipes list"
     },
-    RECIPES_LIST2: {
-        route: "/recipes2",
-        name: "Recipes list2"
-    },
     RECIPE_PAGE: {
         route: "/recipes/:recipe_id",
         redirect: (recipe_id) => `/recipes/${recipe_id}`,
@@ -98,11 +93,6 @@ export default [
     },
     {
         path: path_list.RECIPES_LIST.route,
-        component: RecipesList2,
-        exact: true
-    },
-    {
-        path: path_list.RECIPES_LIST2.route,
         component: RecipesList,
         exact: true
     },

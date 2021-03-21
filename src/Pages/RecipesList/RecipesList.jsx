@@ -1,33 +1,35 @@
-import React, {useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography';
 import {makeStyles} from '@material-ui/core/styles';
-import GridList from '@material-ui/core/GridList';
-import GridListTile from '@material-ui/core/GridListTile';
-import GridListTileBar from '@material-ui/core/GridListTileBar';
-import IconButton from '@material-ui/core/IconButton';
-import InfoIcon from '@material-ui/icons/Info';
-import tileData from './tileData';
-import CssBaseline from "@material-ui/core/CssBaseline";
-import Container from "@material-ui/core/Container";
+import Container from '@material-ui/core/Container';
 import {Button, CircularProgress} from "@material-ui/core";
-import Grid from "@material-ui/core/Grid";
-import DetailsModal from "../ProductsList/components/DetailsModal";
-import Card from "@material-ui/core/Card";
-import Typography from "@material-ui/core/Typography";
+import {AlertContext, UserContext} from "context";
+import {Redirect} from "react-router-dom";
+import {be} from "../../constants/backendSetup";
+import tileData from './tileData';
+import CardMedia from "@material-ui/core/CardMedia";
+import SignalCellular1BarIcon from '@material-ui/icons/SignalCellular1Bar';
+import SignalCellular3BarIcon from '@material-ui/icons/SignalCellular3Bar';
+import SignalCellular4BarIcon from '@material-ui/icons/SignalCellular4Bar';
+import StarIcon from '@material-ui/icons/Star';
+import StarBorderIcon from '@material-ui/icons/StarBorder';
+import StarHalfIcon from '@material-ui/icons/StarHalf';
+import FreeBreakfastIcon from '@material-ui/icons/FreeBreakfast';
+import RestaurantIcon from '@material-ui/icons/Restaurant';
+import EmojiFoodBeverageIcon from '@material-ui/icons/EmojiFoodBeverage';
+import WorkIcon from '@material-ui/icons/Work';
+import AccessTimeIcon from '@material-ui/icons/AccessTime';
+import {getCORSHeaders} from "../../utils/fetchTools";
+import {path_list as paths_list} from "../../constants/routes";
+import Link from "@material-ui/core/Link";
+
 
 const useStyles = makeStyles((theme) => ({
-    // root: {
-    //     display: 'flex',
-    //     flexWrap: 'wrap',
-    //     justifyContent: 'space-around',
-    //     overflow: 'hidden',
-    //     backgroundColor: theme.palette.background.paper,
-    // },
-    gridList: {
-        // width: 600,
-        // height: 450,
-    },
     icon: {
-        color: 'rgba(255, 255, 255, 0.54)',
         marginRight: theme.spacing(2),
     },
     heroContent: {
@@ -41,16 +43,71 @@ const useStyles = makeStyles((theme) => ({
         paddingTop: theme.spacing(8),
         paddingBottom: theme.spacing(8),
     },
-    titleClass: {
-        titlePosition: 'top',
-    }
+    card: {
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+    },
+    cardMedia: {
+        paddingTop: '56.25%', // 16:9
+    },
+    cardContent: {
+        flexGrow: 1,
+    },
+    centered: {
+        justifyContent:'center',
+        textAlign:'center',
+
+    },
 }));
 
 
 export default function RecipesList() {
     const classes = useStyles();
+
+    const alertC = useRef(useContext(AlertContext));
+    const user = useContext(UserContext);
     const [loading, setLoading] = useState(false);
-    const [openModal, setOpenModal] = useState(false);
+    const [count, setCount] = useState(0);
+    const [next, setNext] = useState(null);
+    const [previous, setPrevious] = useState(null);
+    const [recipes, setRecipes] = useState([]);
+    const [redirect, setRedirect] = useState(undefined);
+
+    useEffect(() => {
+        const loadRecipes = async (token) => {
+            setLoading(true);
+            try {
+                let res = await getRecipes(token);
+                await setRecipes(res.results);
+                await setCount(res.count);
+                await setNext(res.next);
+                await setPrevious(res.previous);
+            } catch (e) {
+                console.log(e);
+                alertC.current.showAlert("Something went wrong while trying to fetch recipes list", "error");
+            } finally {
+                setLoading(false);
+            }
+        };
+        loadRecipes(user.token);
+    }, [user.token]);
+
+    const getRecipes = async (token) => {
+        const headers = getCORSHeaders(token);
+        const url = be.RECIPE;
+        let res = await fetch(url, {
+            headers,
+            method: "GET"
+        });
+
+        if (res.status === 200) {
+            return await res.json();
+        } else {
+            alertC.current.showAlert("Something went wrong while trying to fetch recipe list", "error");
+            throw res.status;
+        }
+    };
 
     return (
         <React.Fragment>
@@ -59,47 +116,148 @@ export default function RecipesList() {
                 <Container className={classes.cardGrid} maxWidth="md">
                     {
                         loading ? (
-                            <CircularProgress/>
+                            <div className={classes.centered}>
+                                <CircularProgress/>
+                            </div>
                         ) : (
                             <Grid container spacing={4}>
-                                {tileData.map((tile) => (
-                                    <Grid item xs={12} sm={6}>
-                                        <GridListTile key={tile.id} >
-                                            <img src={tile.img} alt={tile.title}/>
-                                            <GridListTileBar
-                                                title={tile.title}
-                                                subtitle={<Grid container spacing={3} className={classes.cardDetails}>
-                                                    <Grid item xs={12} sm={6}>
+                                {recipes.map((recipe, id) => (
+                                    <Grid item key={id} xs={12} sm={6} md={4}>
+                                        <Card className={classes.card}>
+
+                                            <CardMedia
+                                                className={classes.cardMedia}
+                                                image={recipe.image_url}
+                                                title="Image title"
+                                            />
+
+                                            <CardContent className={classes.cardContent}>
+
+                                                <Typography gutterBottom variant="h5" component="h2">
+                                                    {recipe.recipe_name}
+                                                </Typography>
+                                                <Grid container spacing={3} className={classes.centered}>
+                                                    <Grid item xs={2} sm={2}>
+                                                        <Typography component={'span'}>
+                                                            {recipe.difficulty === "BG" ?
+                                                                <h5>BG</h5> : recipe.difficulty === "IT" ?
+                                                                    <h5>IT</h5> : <h5>AD</h5>}
+                                                        </Typography>
                                                         <Typography>
-                                                            {tile.level}
+                                                            {recipe.difficulty === "BG" ?
+                                                                <SignalCellular1BarIcon/> : recipe.difficulty === "IT" ?
+                                                                    <SignalCellular3BarIcon/> :
+                                                                    <SignalCellular4BarIcon/>}
                                                         </Typography>
                                                     </Grid>
-                                                    <Grid item xs={12} sm={6}>
+                                                    <Grid item xs={4} sm={4}>
+                                                        <Typography component={'span'}>
+                                                            <h5>{recipe.ratings_num}</h5>
+                                                        </Typography>
                                                         <Typography>
-                                                            {tile.rate}
+                                                            {parseFloat(recipe.rating, 10) < parseFloat("0.25", 10) ?
+                                                                <StarBorderIcon/> :
+                                                                parseFloat(recipe.rating, 10) < parseFloat("0.75", 10) ?
+                                                                    <StarHalfIcon/> :
+                                                                    <StarIcon/>}
+                                                            {parseFloat(recipe.rating, 10) < parseFloat("1.25", 10) ?
+                                                                <StarBorderIcon/> :
+                                                                parseFloat(recipe.rating, 10) < parseFloat("1.75", 10) ?
+                                                                    <StarHalfIcon/> :
+                                                                    <StarIcon/>}
+                                                            {parseFloat(recipe.rating, 10) < parseFloat("2.25", 10) ?
+                                                                <StarBorderIcon/> :
+                                                                parseFloat(recipe.rating, 10) < parseFloat("2.75", 10) ?
+                                                                    <StarHalfIcon/> :
+                                                                    <StarIcon/>}
+                                                            {parseFloat(recipe.rating, 10) < parseFloat("3.25", 10) ?
+                                                                <StarBorderIcon/> :
+                                                                parseFloat(recipe.rating, 10) < parseFloat("3.75", 10) ?
+                                                                    <StarHalfIcon/> :
+                                                                    <StarIcon/>}
+                                                            {parseFloat(recipe.rating, 10) < parseFloat("4.25", 10) ?
+                                                                <StarBorderIcon/> :
+                                                                parseFloat(recipe.rating, 10) < parseFloat("4.75", 10) ?
+                                                                    <StarHalfIcon/> :
+                                                                    <StarIcon/>}
+
                                                         </Typography>
                                                     </Grid>
-                                                    <Grid item xs={12}>
+                                                    <Grid item xs={2} sm={2}>
+                                                        <Typography component={'span'}>
+                                                            {recipe.meal === "BF" ?
+                                                                <h5>BF</h5> : recipe.meal === "LU" ?
+                                                                    <h5>LU</h5> : recipe.meal === "DN" ?
+                                                                        <h5>DN</h5> : <h5>SU</h5>}
+                                                        </Typography>
                                                         <Typography>
-                                                            {tile.description}
+                                                            {recipe.meal === "BF" ?
+                                                                <FreeBreakfastIcon/> : recipe.meal === "LU" ?
+                                                                    <WorkIcon/> : recipe.meal === "DN" ?
+                                                                        <RestaurantIcon/> : <EmojiFoodBeverageIcon/>}
                                                         </Typography>
                                                     </Grid>
-                                                    <Grid item xs={12}>
-                                                        <Button variant="contained" color="primary">
+                                                    <Grid item xs={4} sm={4}>
+                                                        <Typography component={'span'}>
+                                                            <h5> {recipe.prep_time}</h5>
+                                                        </Typography>
+                                                        <Typography>
+                                                            <AccessTimeIcon/>
+                                                        </Typography>
+                                                    </Grid>
+                                                </Grid>
+                                                <Grid item xs={12}>
+                                                    <Typography>
+                                                        {recipe.description}
+                                                    </Typography>
+                                                </Grid>
+                                                <h5> </h5>
+                                                {redirect && <Redirect to={redirect}/>}
+                                                <Grid item xs={12} className={classes.centered}>
+                                                    <Link onClick={() => setRedirect(paths_list.RECIPES_LIST.route + "/" + recipe.id)}>
+
+                                                        <Button variant="contained" color="primary" >
                                                             Show details
                                                         </Button>
-                                                    </Grid>
-                                                </Grid>}
-
-                                            />
-                                        </GridListTile>
+                                                    </Link>
+                                                </Grid>
+                                            </CardContent>
+                                        </Card>
                                     </Grid>
                                 ))}
                             </Grid>
                         )
                     }
+                    <h5> </h5>
+                    <Grid container spacing={4}>
+                    <Grid item xs={6} className={classes.centered}>
+                        {previous === null ? (
+                                <Button variant="contained" color="primary" disabled={true}>
+                                    Back
+                                </Button>
+                        ) : (
+                            <Link onClick={() => setRedirect(previous)}>
+                                <Button variant="contained" color="primary" >
+                                    Back
+                                </Button>
+                            </Link>
+                        )}
+                    </Grid>
+                    <Grid item xs={6} className={classes.centered}>
+                        {next === null ? (
+                            <Button variant="contained" color="primary" disabled={true}>
+                                Next
+                            </Button>
+                        ) : (
+                        <Link onClick={() => setRedirect(next)}>
+                            <Button variant="contained" color="primary" >
+                                Next
+                            </Button>
+                        </Link>
+                            )}
+                    </Grid>
+                    </Grid>
                 </Container>
-                <DetailsModal setOpen={setOpenModal} open={!!openModal} product_id={openModal}/>
             </main>
         </React.Fragment>
     );
