@@ -4,187 +4,61 @@ import image2 from './breakfast2.jpg';
 import image3 from './breakfast3.jpg';
 
 
-  const tileData = [
-    {
-      id: 1,
-      img: image1,
-      title: 'Kanapeczky',
-      author: 'author',
-      rate: '5',
-      countRates: '90',
-      ingredients: [
-        "marchew", "koperek", "soczewica"
-      ],
-      level: "easy",
-      description: "Idealne do tego żeby rano nie iść głodnym na wykład",
-      instruction: "Mieszoj tak mieszoj i wyjdzie",
-      comments: ["dobre", "słabe", "zdania ekspertów są podzielone"]
-    },
-    {
-      id: 2,
-      img: image2,
-      title: 'Trójkomty',
-      author: 'author',
-      rate: '4',
-      countRates: '231',
-      ingredients: [
-        "marchew", "koperek", "soczewica"
-      ],
-      level: "medium",
-      description: "Są spoko bo som trójkomtne, nawet ciepłe, i chrupkie w środku",
-      instruction: "Mieszoj tak mieszoj i wyjdzie",
-      comments: ["dobre", "słabe", "zdania ekspertów są podzielone"]
-    },
-    {
-      id: 3,
-      img: image3,
-      title: 'Jajuszka',
-      author: 'author',
-      rate: '3',
-      countRates: '67',
-      ingredients: [
-        "marchew", "koperek", "soczewica"
-      ],
-      level: "hard",
-      description: "Śniadanie zjedzone, zero potrzeb",
-      instruction: "Mieszoj tak mieszoj i wyjdzie",
-      comments: ["dobre", "słabe", "zdania ekspertów są podzielone"]
-    },
-    {
-      id: 4,
-      img: image1,
-      title: 'Potrawa1',
-      author: 'author',
-      rate: '2',
-      countRates: '67',
-      ingredients: [
-        "marchew", "koperek", "soczewica"
-      ],
-      level: "easy",
-      description: "Śniadanie zjedzone, zero potrzeb",
-      instruction: "Mieszoj tak mieszoj i wyjdzie",
-      comments: ["dobre", "słabe", "zdania ekspertów są podzielone"]
-    },
-    {
-      id: 5,
-      img: image2,
-      title: 'Potrawa2',
-      author: 'author',
-      rate: '1',
-      countRates: '67',
-      ingredients: [
-        "marchew", "koperek", "soczewica"
-      ],
-      level: "easy",
-      description: "Śniadanie zjedzone, zero potrzeb",
-      instruction: "Mieszoj tak mieszoj i wyjdzie",
-      comments: ["dobre", "słabe", "zdania ekspertów są podzielone"]
-    },
-    {
-      id: 6,
-      img: image3,
-      title: 'Potrawa3',
-      author: 'author',
-      rate: '2',
-      countRates: '67',
-      ingredients: [
-        "marchew", "koperek", "soczewica"
-      ],
-      level: "easy",
-      description: "Śniadanie zjedzone, zero potrzeb",
-      instruction: "Mieszoj tak mieszoj i wyjdzie",
-      comments: ["dobre", "słabe", "zdania ekspertów są podzielone"]
-    },
-    {
-      id: 7,
-      img: image1,
-      title: 'Potrawa1',
-      author: 'author',
-      rate: '1',
-      countRates: '67',
-      ingredients: [
-        "marchew", "koperek", "soczewica"
-      ],
-      level: "easy",
-      description: "Śniadanie zjedzone, zero potrzeb",
-      instruction: "Mieszoj tak mieszoj i wyjdzie",
-      comments: ["dobre", "słabe", "zdania ekspertów są podzielone"]
-    },
-    {
-      id: 8,
-      img: image2,
-      title: 'Potrawa2',
-      author: 'author',
-      rate: '5',
-      countRates: '67',
-      ingredients: [
-        "marchew", "koperek", "soczewica"
-      ],
-      level: "easy",
-      description: "Śniadanie zjedzone, zero potrzeb",
-      instruction: "Mieszoj tak mieszoj i wyjdzie",
-      comments: ["dobre", "słabe", "zdania ekspertów są podzielone"]
-    },
-    {
-      id: 9,
-      img: image3,
-      title: 'Potrawa3',
-      author: 'author',
-      rate: '5',
-      countRates: '67',
-      ingredients: [
-        "marchew", "koperek", "soczewica"
-      ],
-      level: "easy",
-      description: "Śniadanie zjedzone, zero potrzeb",
-      instruction: "Mieszoj tak mieszoj i wyjdzie",
-      comments: ["dobre", "słabe", "zdania ekspertów są podzielone"]
-    },
-    {
-      id: 10,
-      img: image1,
-      title: 'Potrawa1',
-      author: 'author',
-      rate: '5',
-      countRates: '67',
-      ingredients: [
-        "marchew", "koperek", "soczewica"
-      ],
-      level: "easy",
-      description: "Śniadanie zjedzone, zero potrzeb",
-      instruction: "Mieszoj tak mieszoj i wyjdzie",
-      comments: ["dobre", "słabe", "zdania ekspertów są podzielone"]
-    },
-    {
-      id: 11,
-      img: image2,
-      title: 'Potrawa2',
-      author: 'author',
-      rate: '5',
-      countRates: '67',
-      ingredients: [
-        "marchew", "koperek", "soczewica"
-      ],
-      level: "easy",
-      description: "Śniadanie zjedzone, zero potrzeb",
-      instruction: "Mieszoj tak mieszoj i wyjdzie",
-      comments: ["dobre", "słabe", "zdania ekspertów są podzielone"]
-    },
-    {
-      id: 12,
-      img: image3,
-      title: 'Potrawa3',
-      author: 'author',
-      rate: '5',
-      countRates: '67',
-      ingredients: [
-        "marchew", "koperek", "soczewica"
-      ],
-      level: "easy",
-      description: "Śniadanie zjedzone, zero potrzeb",
-      instruction: "Mieszoj tak mieszoj i wyjdzie",
-      comments: ["dobre", "słabe", "zdania ekspertów są podzielone"]
-    },
-  ];
+  const tileData =
+      {
+        "count": 3,
+        "next": null,
+        "previous": null,
+        "results": [
+          {
+            id: 1,
+            recipe_name: "Tost z kurczakiem i jajkiem",
+            ingredients: null,
+            // ingredients: ["pierś z kurczaka", "przyprawa do kurczaka Knorr", "kromka pieczywa tostowego", "sałata lodowa", "majonez", "bekon", "ogórek konserwowy", "pomidor", "jajo", "olej"],
+            tags: ["pierś z kurczaka", "przyprawa do kurczaka Knorr", "kromka pieczywa tostowego", "sałata lodowa", "majonez", "bekon", "ogórek konserwowy", "pomidor", "jajo", "olej"],
+            difficulty: "BG",
+            description: "Idealny zestaw dla porannego głodomora i dla miłośników jajek z bekonem, ale w niecodzienny sposób. Pokochasz to!",
+            instructions: "Krok 1: Tosty lekko podpiecz w opiekaczu lub na suchej paleni. Krok 2: Pierś kurczaka polej połową oleju i posyp przyprawą Knorr. Upiecz na grillu lub podsmaż na patelni. Krok 3: Na pozostałym tłuszczu usmaż z obu stron jajko sadzone. Krok 4: Następnie posmaruj majonezem chleb, ułóż na kromkach porwaną sałatę, plastry pomidora i kurczaka. Krok 5: Plasterki ogórka wraz z jajkiem ułóż na jednej z kromek. Krok 6: Podsmaż bekon i ułóż go na drugiej kromce. Krok 7: Kromki ułóż jedną na drugiej i przykryj trzecim tostem. Gotową kanapkę przekłuj dwiema wykałaczkami. Przekrój na dwa trójkąty. Podawaj z frytkami.",
+            image_url: image1,
+            meal: "BF",
+            rating: 4.6,
+            ratings_num: 69,
+            prep_time: "15-20 min.",
+            comments: [],
+          },
+          {
+            id: 2,
+            recipe_name: "Tost z kurczakiem i jajkiem",
+            ingredients: null,
+            // ingredients: ["pierś z kurczaka", "przyprawa do kurczaka Knorr", "kromka pieczywa tostowego", "sałata lodowa", "majonez", "bekon", "ogórek konserwowy", "pomidor", "jajo", "olej"],
+            tags: ["pierś z kurczaka", "przyprawa do kurczaka Knorr", "kromka pieczywa tostowego", "sałata lodowa", "majonez", "bekon", "ogórek konserwowy", "pomidor", "jajo", "olej"],
+            difficulty: "BG",
+            description: "Idealny zestaw dla porannego głodomora i dla miłośników jajek z bekonem, ale w niecodzienny sposób. Pokochasz to!",
+            instructions: "Krok 1: Tosty lekko podpiecz w opiekaczu lub na suchej paleni. Krok 2: Pierś kurczaka polej połową oleju i posyp przyprawą Knorr. Upiecz na grillu lub podsmaż na patelni. Krok 3: Na pozostałym tłuszczu usmaż z obu stron jajko sadzone. Krok 4: Następnie posmaruj majonezem chleb, ułóż na kromkach porwaną sałatę, plastry pomidora i kurczaka. Krok 5: Plasterki ogórka wraz z jajkiem ułóż na jednej z kromek. Krok 6: Podsmaż bekon i ułóż go na drugiej kromce. Krok 7: Kromki ułóż jedną na drugiej i przykryj trzecim tostem. Gotową kanapkę przekłuj dwiema wykałaczkami. Przekrój na dwa trójkąty. Podawaj z frytkami.",
+            image_url: image2,
+            meal: "BF",
+            rating: 4.6,
+            ratings_num: 69,
+            prep_time: "15-20 min.",
+            comments: [],
+          },
+          {
+            id: 3,
+            recipe_name: "Tost z kurczakiem i jajkiem",
+            ingredients: null,
+            // ingredients: ["pierś z kurczaka", "przyprawa do kurczaka Knorr", "kromka pieczywa tostowego", "sałata lodowa", "majonez", "bekon", "ogórek konserwowy", "pomidor", "jajo", "olej"],
+            tags: ["pierś z kurczaka", "przyprawa do kurczaka Knorr", "kromka pieczywa tostowego", "sałata lodowa", "majonez", "bekon", "ogórek konserwowy", "pomidor", "jajo", "olej"],
+            difficulty: "BG",
+            description: "Idealny zestaw dla porannego głodomora i dla miłośników jajek z bekonem, ale w niecodzienny sposób. Pokochasz to!",
+            instructions: "Krok 1: Tosty lekko podpiecz w opiekaczu lub na suchej paleni. Krok 2: Pierś kurczaka polej połową oleju i posyp przyprawą Knorr. Upiecz na grillu lub podsmaż na patelni. Krok 3: Na pozostałym tłuszczu usmaż z obu stron jajko sadzone. Krok 4: Następnie posmaruj majonezem chleb, ułóż na kromkach porwaną sałatę, plastry pomidora i kurczaka. Krok 5: Plasterki ogórka wraz z jajkiem ułóż na jednej z kromek. Krok 6: Podsmaż bekon i ułóż go na drugiej kromce. Krok 7: Kromki ułóż jedną na drugiej i przykryj trzecim tostem. Gotową kanapkę przekłuj dwiema wykałaczkami. Przekrój na dwa trójkąty. Podawaj z frytkami.",
+            image_url: image3,
+            meal: "BF",
+            rating: 4.6,
+            ratings_num: 69,
+            prep_time: "15-20 min.",
+            comments: [],
+          },
+        ]
+      };
 
   export default tileData;

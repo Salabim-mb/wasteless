@@ -58,6 +58,11 @@ export const path_list = {
         route: "/recipes2",
         name: "Recipes list2"
     },
+    RECIPE_PAGE: {
+        route: "/recipes/:recipe_id",
+        redirect: (recipe_id) => `/recipes/${recipe_id}`,
+        name: "Recipe details"
+    },
 }
 
 export default [
@@ -100,6 +105,10 @@ export default [
         path: path_list.RECIPES_LIST2.route,
         component: RecipesList,
         exact: true
-    }
+    },
+    {
+        path: path_list.RECIPE_PAGE.route,
+        exact: true
+    },
 ];
 
