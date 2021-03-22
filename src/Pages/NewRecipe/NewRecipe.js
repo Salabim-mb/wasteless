@@ -2,7 +2,8 @@ import {makeStyles} from "@material-ui/core/styles";
 import React, {useContext, useRef, useState} from "react";
 import {AlertContext, UserContext} from "../../context";
 import {
-    Button, Chip,
+    Button,
+    Chip,
     Container,
     CssBaseline,
     FormControl,
@@ -21,7 +22,6 @@ import {
 import List from "@material-ui/core/List";
 import Avatar from "@material-ui/core/Avatar";
 import IconButton from "@material-ui/core/IconButton";
-import FolderIcon from '@material-ui/icons/Folder';
 import DeleteIcon from '@material-ui/icons/Delete';
 import Fab from "@material-ui/core/Fab";
 import AddIcon from '@material-ui/icons/Add';
@@ -218,7 +218,7 @@ export default function NewRecipe() {
             const text = element.quantity + " " + unit + " " + element.ingredient;
             prepared.push(text);
         })
-        if (prepared.length == 0)
+        if (prepared.length === 0)
             throw "You have to add ingredients"
         return prepared;
     }
@@ -308,10 +308,10 @@ export default function NewRecipe() {
         if (!/^[A-Za-zżźćńółęąśŻŹĆĄŚĘŁÓŃ\s]+$/.test(body.meal)) {
             throw "Wrong meal type format"
         }
-        if (body.image_url.length == 0) {
+        if (body.image_url.length === 0) {
             throw "You need to attach photo"
         }
-        if (body.tags.length == 0){
+        if (body.tags.length === 0){
             throw "You need to attach tags"
         }
     }
@@ -413,7 +413,7 @@ export default function NewRecipe() {
                         <div>
                             {
                                 isVisible ?
-                                    <div className={classes.imageDiv}><img id="barcodeImg" height="200"/></div> :
+                                    <div className={classes.imageDiv}><img id="barcodeImg" height="200" alt=""/></div> :
                                     <div></div>
                             }
                         </div>
