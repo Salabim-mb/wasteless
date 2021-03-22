@@ -30,16 +30,11 @@ const useStyles = makeStyles((theme) => ({
 
 const labels = {
     0: "Uneatable",
-    0.5: 'Disgusting',
     1: 'Disgusting+',
-    1.5: 'Not bad',
-    2: 'Not bad+',
-    2.5: 'Good',
-    3: 'Good+',
-    3.5: 'Tasty',
-    4: 'Tasty+',
-    4.5: 'Delicious',
-    5: 'Delicious+',
+    2: 'Not bad',
+    3: 'Good',
+    4: 'Tasty',
+    5: 'Delicious',
 };
 
 async function fetchRating(bodyRating, token) {
@@ -59,7 +54,7 @@ async function fetchRating(bodyRating, token) {
 }
 
 async function fetchComment(bodyComment, token) {
-    let url = be.COMMENT;
+    let url = be.PROFILE + "comments/";
     const headers = getCORSHeaders(token);
 
     const res = await fetch(url, {
@@ -77,7 +72,7 @@ export default function NewComment({id}) {
     const classes = useStyles();
     const user = useContext((UserContext))
     const alertC = useRef(useContext(AlertContext));
-    const [rating, setRating] = React.useState(0.5);
+    const [rating, setRating] = React.useState(0);
     const [hover, setHover] = React.useState(-1);
     const [comment, setComment] = React.useState("");
 
@@ -98,8 +93,7 @@ export default function NewComment({id}) {
             await fetchRating(bodyRating, user.token)
             validateComment(comment);
             let bodyComment = {
-                author: user?.data?.username,
-                date_added: "",
+                date_added: (new Date()).toISOString(),
                 content: comment,
                 recipe_id: id
             }

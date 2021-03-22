@@ -11,7 +11,8 @@ export const be = {
     REGISTER: `${backend_path}/register/`,
     RECIPE: `${backend_path}/recipes/`,
     RATING: `${backend_path}/ratings/`,
-    COMMENT: `${backend_path}/comments/`
+    COMMENT: `${backend_path}/comments/`,
+    PROFILE: `${backend_path}/profile/`
 };
 
 export const off_API = `${product_api}/product/`;
