@@ -2,7 +2,7 @@ import {makeStyles} from "@material-ui/core/styles";
 import React, {useContext, useRef, useState} from "react";
 import {AlertContext, UserContext} from "../../context";
 import {
-    Button,
+    Button, Chip,
     Container,
     CssBaseline,
     FormControl,
@@ -57,6 +57,17 @@ const useStyles = makeStyles((theme) => ({
     },
     imageDiv: {
         margin: theme.spacing(1)
+    },
+    tag: {
+        margin: theme.spacing(0.5),
+    },
+    tagsDiv: {
+        display: 'flex',
+        justifyContent: 'center',
+        flexWrap: 'wrap',
+        listStyle: 'none',
+        padding: theme.spacing(0.5),
+        margin: 0,
     }
 }))
 
@@ -93,6 +104,8 @@ export default function NewRecipe() {
     const [redirect, setRedirect] = useState(undefined);
     const [isVisible, setVisible] = useState(false);
     const [photoData, setPhotoData] = useState("");
+    const [tag, setTag] = useState("");
+    const [tags, setTags] = React.useState([]);
 
 
     const handleChangeDifficulty = (event) => {
@@ -110,6 +123,10 @@ export default function NewRecipe() {
     const handleChangeTimeUnit = (event) => {
         setTimeUnit(event.target.value)
     }
+
+    const handleTagDelete = (tagToDelete) => () => {
+        setTags((tags) => tags.filter((tag) => tag.key !== tagToDelete.key));
+    };
 
     function generate() {
         return ingredients.map((value) => {
@@ -140,16 +157,26 @@ export default function NewRecipe() {
         );
     }
 
-    const prepareIngredients = () => {
-        let prepared = []
-        ingredients.forEach((element) => {
-            const unit = element.unit !== "None" ? element.unit : ""
-            const text = element.quantity + " " + unit + " " + element.ingredient;
-            prepared.push(text);
-        })
-        if (prepared.length == 0)
-            throw "You have to add ingredients"
-        return prepared;
+    const handleAddTag = (e) => {
+        e.preventDefault()
+        try {
+            if (!/^[A-Za-zżźćńółęąśŻŹĆĄŚĘŁÓŃ\s.,?!-()]+$/.test(tag)) {
+                throw "Wrong tag format"
+            }
+            if (tags.filter((e) => e.label === tag).length !== 0) {
+                throw "Tag already added"
+            }
+            let last_element = tags[tags.length - 1]
+            let key_to_add = last_element === undefined ? -1 : last_element.key
+            let element = {
+                key: key_to_add + 1,
+                label: tag
+            }
+            setTags([...tags, element])
+            setTag("")
+        } catch (err) {
+            alertC.current.showAlert(err, "error")
+        }
     }
 
     const handleAddIngredient = (e) => {
@@ -184,8 +211,20 @@ export default function NewRecipe() {
 
     }
 
+    const prepareIngredients = () => {
+        let prepared = []
+        ingredients.forEach((element) => {
+            const unit = element.unit !== "None" ? element.unit : ""
+            const text = element.quantity + " " + unit + " " + element.ingredient;
+            prepared.push(text);
+        })
+        if (prepared.length == 0)
+            throw "You have to add ingredients"
+        return prepared;
+    }
+
     const preparePrepTime = () => {
-        if (time === "0"){
+        if (time === "0") {
             throw "Time value can not be 0"
         }
         if (!/^[\d]+$/.test(time)) {
@@ -196,15 +235,24 @@ export default function NewRecipe() {
         return time + " " + unit_format
     }
 
+    const prepareTags = () => {
+        let prepared = []
+        tags.forEach((e) => {
+            prepared.push(e.label)
+        })
+        return prepared
+    }
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
             const pre_ingredients = prepareIngredients()
             const pre_prep_time = preparePrepTime()
+            const pre_tags = prepareTags()
             let body = {
                 recipe_name: recipeName,
                 difficulty: difficulty,
-                tags: [],
+                tags: pre_tags,
                 ingredients: pre_ingredients,
                 description: description,
                 instructions: instruction,
@@ -262,6 +310,9 @@ export default function NewRecipe() {
         }
         if (body.image_url.length == 0) {
             throw "You need to attach photo"
+        }
+        if (body.tags.length == 0){
+            throw "You need to attach tags"
         }
     }
 
@@ -361,8 +412,36 @@ export default function NewRecipe() {
                                    onChange={(e) => setInstruction(e.target.value)}></TextField>
                         <div>
                             {
-                                isVisible ? <div className={classes.imageDiv}><img id="barcodeImg" height="200"/></div> : <div></div>
+                                isVisible ?
+                                    <div className={classes.imageDiv}><img id="barcodeImg" height="200"/></div> :
+                                    <div></div>
                             }
+                        </div>
+                        <div className={classes.horizontalDiv}>
+                            <TextField className={classes.textField} label="Tag" value={tag}
+                                       onChange={(e) => setTag(e.target.value)}></TextField>
+                            <div className={classes.floatingButton}>
+                                <Fab size="small" color="secondary" aria-label="add" className={classes.margin}
+                                     onClick={handleAddTag}>
+                                    <AddIcon/>
+                                </Fab>
+                            </div>
+                        </div>
+                        <div className={classes.tagsDiv}>
+                            {tags.map((data) => {
+                                let icon;
+
+                                return (
+                                    <li key={data.key}>
+                                        <Chip
+                                            icon={icon}
+                                            label={data.label}
+                                            onDelete={handleTagDelete(data)}
+                                            className={classes.tag}
+                                        />
+                                    </li>
+                                );
+                            })}
                         </div>
                         <div>
                             <input
