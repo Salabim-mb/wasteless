@@ -24,7 +24,7 @@ import EmojiFoodBeverageIcon from '@material-ui/icons/EmojiFoodBeverage';
 import WorkIcon from '@material-ui/icons/Work';
 import AccessTimeIcon from '@material-ui/icons/AccessTime';
 import {getCORSHeaders} from "../../utils/fetchTools";
-import {path_list as paths_list} from "../../constants/routes";
+import {path_list, path_list as paths_list} from "../../constants/routes";
 import Link from "@material-ui/core/Link";
 
 
@@ -79,10 +79,14 @@ export default function RecipesList() {
             setLoading(true);
             try {
                 let res = await getRecipes(token);
-                await setRecipes(res.results);
-                await setCount(res.count);
-                await setNext(res.next);
-                await setPrevious(res.previous);
+                if (res !== null){
+                    await setRecipes(res.results);
+                    await setCount(res.count);
+                    await setNext(res.next);
+                    await setPrevious(res.previous);
+                } else {
+                    setRedirect(path_list.LOGIN.route);
+                }
             } catch (e) {
                 console.log(e);
                 alertC.current.showAlert("Something went wrong while trying to fetch recipes list", "error");
@@ -100,13 +104,15 @@ export default function RecipesList() {
             headers,
             method: "GET"
         });
-
         if (res.status === 200) {
             return await res.json();
+        } else if (res.status === 401) {
+            alertC.current.showAlert("You have to be logged in to see recipes", "error");
+            return null;
         } else {
-            alertC.current.showAlert("Something went wrong while trying to fetch recipe list", "error");
-            throw res.status;
-        }
+                alertC.current.showAlert("Something went wrong while trying to fetch recipe list", "error");
+                throw res.status;
+            }
     };
 
     return (
@@ -243,6 +249,7 @@ export default function RecipesList() {
                             </Link>
                         )}
                     </Grid>
+                        {redirect && <Redirect to={redirect}/>}
                     <Grid item xs={6} className={classes.centered}>
                         {next === null ? (
                             <Button variant="contained" color="primary" disabled={true}>
