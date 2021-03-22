@@ -185,7 +185,7 @@ export default function NewRecipe() {
             if (!/^[\d.,]+$/.test(quantity)) {
                 throw "Wrong quantity format"
             }
-            if (!/^[A-Za-z\s]+$/.test(ingredient)) {
+            if (!/^[A-Za-zżźćńółęąśŻŹĆĄŚĘŁÓŃ\s]+$/.test(ingredient)) {
                 throw "Wrong ingredient format"
             }
 
