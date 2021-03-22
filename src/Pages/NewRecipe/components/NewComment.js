@@ -29,44 +29,12 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 const labels = {
-    0: "Uneatable",
-    1: 'Disgusting+',
+    1: 'Disgusting',
     2: 'Not bad',
     3: 'Good',
     4: 'Tasty',
     5: 'Delicious',
 };
-
-async function fetchRating(bodyRating, token) {
-    let url = be.RATING;
-    const headers = getCORSHeaders(token);
-
-    const res = await fetch(url, {
-        headers,
-        method: "POST",
-        body: JSON.stringify(bodyRating)
-    });
-
-    if (res.status !== 201) {
-        throw "Couldn't add your rating."
-    }
-
-}
-
-async function fetchComment(bodyComment, token) {
-    let url = be.PROFILE + "comments/";
-    const headers = getCORSHeaders(token);
-
-    const res = await fetch(url, {
-        headers,
-        method: "POST",
-        body: JSON.stringify(bodyComment)
-    });
-
-    if (res.status !== 201) {
-        throw "Couldn't add your comment."
-    }
-}
 
 export default function NewComment({id}) {
     const classes = useStyles();
@@ -76,9 +44,46 @@ export default function NewComment({id}) {
     const [hover, setHover] = React.useState(-1);
     const [comment, setComment] = React.useState("");
 
+    async function fetchRating(bodyRating, token) {
+        let url = be.PROFILE + "ratings/" + id + "/";
+        const headers = getCORSHeaders(token);
+
+        const res = await fetch(url, {
+            headers,
+            method: "POST",
+            body: JSON.stringify(bodyRating)
+        });
+
+        if (res.status !== 201) {
+            throw "Couldn't add your rating."
+        }
+
+    }
+
+    async function fetchComment(bodyComment, token) {
+        let url = be.PROFILE + "comments/";
+        const headers = getCORSHeaders(token);
+
+        const res = await fetch(url, {
+            headers,
+            method: "POST",
+            body: JSON.stringify(bodyComment)
+        });
+
+        if (res.status !== 201) {
+            throw "Couldn't add your comment."
+        }
+    }
+
     function validateComment(comment) {
         if (!/^[A-Za-zżźćńółęąśŻŹĆĄŚĘŁÓŃ\s.,?!-()]+$/.test(comment)) {
             throw "Wrong comment format"
+        }
+    }
+
+    function validateRating() {
+        if(rating === 0){
+            throw "You must add rating"
         }
     }
 
@@ -88,8 +93,8 @@ export default function NewComment({id}) {
             let bodyRating = {
                 rating: rating,
                 recipe_id: id,
-                user_id: ""
             }
+            validateRating()
             await fetchRating(bodyRating, user.token)
             validateComment(comment);
             let bodyComment = {
@@ -112,7 +117,7 @@ export default function NewComment({id}) {
                     <Rating
                         name="hover-feedback"
                         value={rating}
-                        precision={0.5}
+                        precision={1}
                         onChange={(event, newValue) => {
                             setRating(newValue);
                         }}
