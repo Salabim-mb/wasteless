@@ -127,7 +127,7 @@ export default function NewComment({id}) {
                     />
                     {rating !== null && <Box ml={2}>{labels[hover !== -1 ? hover : rating]}</Box>}
                 </div>
-                <TextField className={classes.textField} label="Comment" multiline onChange={(e) => setComment(e.target.value)}></TextField>
+                <TextField className={classes.textField} label="Comment" multiline rows={3} onChange={(e) => setComment(e.target.value)}></TextField>
                 <div className={classes.publishBtn}>
                     <Button variant="contained" color="primary" endIcon={<Icon>send</Icon>} onClick={handlePublish}>Publish</Button>
                 </div>
