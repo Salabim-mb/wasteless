@@ -49,10 +49,6 @@ const useStyles = makeStyles((theme) => ({
         justifyContent:'center',
         textAlign:'center',
     },
-    cardDetails: {
-        textAlign: 'center',
-        justifyContent:'center',
-    },
     centered: {
         justifyContent:'center',
         textAlign:'center',
@@ -144,7 +140,7 @@ export default function RecipePage() {
                                                 <Typography variant="h4">
                                                     {recipe.recipe_name}
                                                 </Typography>
-                                                <Grid container spacing={3} className={classes.cardDetails}>
+                                                <Grid container spacing={3} className={classes.centered}>
                                                     <Grid item xs={2} sm={2}>
                                                         <Typography component={'span'}>
                                                             {recipe.difficulty === "BG" ? <h5>Beginner</h5>   : recipe.difficulty === "IT" ? <h5>Intermediate</h5>  : <h5>Advanced</h5>}
