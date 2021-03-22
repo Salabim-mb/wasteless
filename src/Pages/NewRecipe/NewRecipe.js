@@ -43,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
         width: "80%",
         margin: theme.spacing(1)
     },
-    ingredientsDiv: {
+    horizontalDiv: {
         display: "flex"
     },
     ingredientsList: {
@@ -61,7 +61,7 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 const fetchCreateRecipe = async (body, token) => {
-    const url = be.RECIPE;
+    const url = be.PROFILE + "recipes/";
     const headers = getCORSHeaders(token);
 
     const res = await fetch(url, {
@@ -84,6 +84,8 @@ export default function NewRecipe() {
     const [quantity, setQuantity] = React.useState("0");
     const [ingredient, setIngredient] = React.useState('');
     const [unit, setUnit] = React.useState('g');
+    const [timeUnit, setTimeUnit] = React.useState('min');
+    const [time, setTime] = React.useState('1');
     const [mealType, setMealType] = React.useState('BF');
     const [ingredients, setIngredients] = React.useState([]);
     const [description, setDescription] = React.useState("")
@@ -103,6 +105,10 @@ export default function NewRecipe() {
 
     const handleChangeUnit = (event) => {
         setUnit(event.target.value)
+    }
+
+    const handleChangeTimeUnit = (event) => {
+        setTimeUnit(event.target.value)
     }
 
     function generate() {
@@ -178,10 +184,23 @@ export default function NewRecipe() {
 
     }
 
+    const preparePrepTime = () => {
+        if (time === "0"){
+            throw "Time value can not be 0"
+        }
+        if (!/^[\d]+$/.test(time)) {
+            throw "Wrong time value"
+        }
+        let day_format = time === "1" ? "day" : "days"
+        let unit_format = timeUnit === "days" ? day_format : timeUnit
+        return time + " " + unit_format
+    }
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
             const pre_ingredients = prepareIngredients()
+            const pre_prep_time = preparePrepTime()
             let body = {
                 recipe_name: recipeName,
                 difficulty: difficulty,
@@ -191,7 +210,7 @@ export default function NewRecipe() {
                 instructions: instruction,
                 image_url: photoData,
                 meal: mealType,
-                rating: "0"
+                prep_time: pre_prep_time
             }
             validateFields(body)
             await fetchCreateRecipe(body, user.token)
@@ -278,9 +297,26 @@ export default function NewRecipe() {
                                 <MenuItem value={'BF'}>Breakfast</MenuItem>
                                 <MenuItem value={'LU'}>Lunch</MenuItem>
                                 <MenuItem value={'DN'}>Dinner</MenuItem>
-                                <MenuItem value={'SP'}>Supper</MenuItem>
+                                <MenuItem value={'SU'}>Supper</MenuItem>
                             </Select>
                         </FormControl>
+                        <div className={classes.horizontalDiv}>
+                            <TextField className={classes.textField} label="Time" value={time}
+                                       onChange={(e) => setTime(e.target.value)}></TextField>
+                            <FormControl className={classes.textField}>
+                                <InputLabel id="demo-simple-select-label">Unit</InputLabel>
+                                <Select
+                                    labelId="demo-simple-select-label"
+                                    id="demo-simple-select"
+                                    value={timeUnit}
+                                    onChange={handleChangeTimeUnit}
+                                >
+                                    <MenuItem value={'min'}>Minutes</MenuItem>
+                                    <MenuItem value={'h'}>Hours</MenuItem>
+                                    <MenuItem value={'days'}>Days</MenuItem>
+                                </Select>
+                            </FormControl>
+                        </div>
                         <div className={classes.ingredientsList}>
                             <Typography variant="h6" className={classes.title}>
                                 INGREDIENTS
@@ -289,7 +325,7 @@ export default function NewRecipe() {
                                 {generate()}
                             </List>
                         </div>
-                        <div className={classes.ingredientsDiv}>
+                        <div className={classes.horizontalDiv}>
                             <TextField className={classes.textField} label="Quantity" value={quantity}
                                        onChange={(e) => setQuantity(e.target.value)}></TextField>
                             <FormControl className={classes.textField}>
@@ -319,9 +355,9 @@ export default function NewRecipe() {
                                 <AddIcon/>
                             </Fab>
                         </div>
-                        <TextField className={classes.textField} label="Description" multiline
+                        <TextField className={classes.textField} label="Description" multiline rows={4}
                                    onChange={(e) => setDescription(e.target.value)}></TextField>
-                        <TextField className={classes.textField} label="Instructions" multiline
+                        <TextField className={classes.textField} label="Instructions" multiline rows={4}
                                    onChange={(e) => setInstruction(e.target.value)}></TextField>
                         <div>
                             {
