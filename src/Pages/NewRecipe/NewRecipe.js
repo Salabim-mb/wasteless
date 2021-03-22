@@ -32,6 +32,7 @@ import {Redirect} from "react-router-dom";
 import {fileToBase64} from "../../utils/fileToBase64";
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import NewComment from "./components/NewComment";
+import FilterBar from "./components/FilterBar";
 
 const useStyles = makeStyles((theme) => ({
     mainDiv: {
@@ -353,6 +354,8 @@ export default function NewRecipe() {
                     {redirect && <Redirect to={redirect}/>}
                     <NewComment/>
                 </Paper>
+
+                <FilterBar/>
 
             </Container>
 
