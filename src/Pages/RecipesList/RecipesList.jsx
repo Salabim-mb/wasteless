@@ -25,6 +25,7 @@ import AccessTimeIcon from '@material-ui/icons/AccessTime';
 import {getCORSHeaders} from "../../utils/fetchTools";
 import {path_list, path_list as paths_list} from "../../constants/routes";
 import Link from "@material-ui/core/Link";
+import FilterBar from "./components/FilterBar";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -54,8 +55,8 @@ const useStyles = makeStyles((theme) => ({
         flexGrow: 1,
     },
     centered: {
-        justifyContent:'center',
-        textAlign:'center',
+        justifyContent: 'center',
+        textAlign: 'center',
 
     },
 }));
@@ -78,7 +79,7 @@ export default function RecipesList() {
             setLoading(true);
             try {
                 let res = await getRecipes(token);
-                if (res !== null){
+                if (res !== null) {
                     await setRecipes(res.results);
                     await setCount(res.count);
                     await setNext(res.next);
@@ -99,6 +100,7 @@ export default function RecipesList() {
     const getRecipes = async (token) => {
         const headers = getCORSHeaders(token);
         const url = be.RECIPE;
+        console.log("fwqfqwfqwfqw")
         let res = await fetch(url, {
             headers,
             method: "GET"
@@ -109,9 +111,9 @@ export default function RecipesList() {
             alertC.current.showAlert("You have to be logged in to see recipes", "error");
             return null;
         } else {
-                alertC.current.showAlert("Something went wrong while trying to fetch recipe list", "error");
-                throw res.status;
-            }
+            alertC.current.showAlert("Something went wrong while trying to fetch recipe list", "error");
+            throw res.status;
+        }
     };
 
     return (
@@ -125,6 +127,7 @@ export default function RecipesList() {
                                 <CircularProgress/>
                             </div>
                         ) : (
+
                             <Grid container spacing={4}>
                                 {recipes.map((recipe, id) => (
                                     <Grid item key={id} xs={12} sm={6} md={4}>
@@ -199,7 +202,8 @@ export default function RecipesList() {
                                                             {recipe.meal === "BF" ?
                                                                 <FreeBreakfastIcon/> : recipe.meal === "LU" ?
                                                                     <WorkIcon/> : recipe.meal === "DN" ?
-                                                                        <RestaurantIcon/> : <EmojiFoodBeverageIcon/>}
+                                                                        <RestaurantIcon/> :
+                                                                        <EmojiFoodBeverageIcon/>}
                                                         </Typography>
                                                     </Grid>
                                                     <Grid item xs={4} sm={4}>
@@ -216,12 +220,13 @@ export default function RecipesList() {
                                                         {recipe.description}
                                                     </Typography>
                                                 </Grid>
-                                                <h5> </h5>
+                                                <h5></h5>
                                                 {redirect && <Redirect to={redirect}/>}
                                                 <Grid item xs={12} className={classes.centered}>
-                                                    <Link onClick={() => setRedirect(paths_list.RECIPES_LIST.route + "/" + recipe.id)}>
+                                                    <Link
+                                                        onClick={() => setRedirect(paths_list.RECIPES_LIST.route + "/" + recipe.id)}>
 
-                                                        <Button variant="contained" color="primary" >
+                                                        <Button variant="contained" color="primary">
                                                             Show details
                                                         </Button>
                                                     </Link>
@@ -233,35 +238,35 @@ export default function RecipesList() {
                             </Grid>
                         )
                     }
-                    <h5> </h5>
+                    <h5></h5>
                     <Grid container spacing={4}>
-                    <Grid item xs={6} className={classes.centered}>
-                        {previous === null ? (
+                        <Grid item xs={6} className={classes.centered}>
+                            {previous === null ? (
                                 <Button variant="contained" color="primary" disabled={true}>
                                     Back
                                 </Button>
-                        ) : (
-                            <Link onClick={() => setRedirect(previous)}>
-                                <Button variant="contained" color="primary" >
-                                    Back
-                                </Button>
-                            </Link>
-                        )}
-                    </Grid>
-                        {redirect && <Redirect to={redirect}/>}
-                    <Grid item xs={6} className={classes.centered}>
-                        {next === null ? (
-                            <Button variant="contained" color="primary" disabled={true}>
-                                Next
-                            </Button>
-                        ) : (
-                        <Link onClick={() => setRedirect(next)}>
-                            <Button variant="contained" color="primary" >
-                                Next
-                            </Button>
-                        </Link>
+                            ) : (
+                                <Link onClick={() => setRedirect(previous)}>
+                                    <Button variant="contained" color="primary">
+                                        Back
+                                    </Button>
+                                </Link>
                             )}
-                    </Grid>
+                        </Grid>
+                        {redirect && <Redirect to={redirect}/>}
+                        <Grid item xs={6} className={classes.centered}>
+                            {next === null ? (
+                                <Button variant="contained" color="primary" disabled={true}>
+                                    Next
+                                </Button>
+                            ) : (
+                                <Link onClick={() => setRedirect(next)}>
+                                    <Button variant="contained" color="primary">
+                                        Next
+                                    </Button>
+                                </Link>
+                            )}
+                        </Grid>
                     </Grid>
                 </Container>
             </main>
