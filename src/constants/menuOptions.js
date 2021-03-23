@@ -36,7 +36,7 @@ export const accountOptions = [
     },
     {
         name: "Log out",
-        icon: <ExitToAppIcon />,
+        icon: <ExitToAppIcon/>,
         action: (e, token) => handleLogout(e, token),
         requiresLogin: true
     }
