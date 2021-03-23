@@ -1,5 +1,5 @@
 import {makeStyles} from "@material-ui/core/styles";
-import React, {useContext, useRef} from "react";
+import React, {useContext, useEffect, useRef} from "react";
 import {
     Button, Chip,
     Container,
@@ -19,6 +19,9 @@ import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import Fab from "@material-ui/core/Fab";
 import AddIcon from "@material-ui/icons/Add";
+import {getCORSHeaders} from "../../../utils/fetchTools";
+import {be} from "../../../constants/backendSetup";
+import {path_list} from "../../../constants/routes";
 
 const useStyles = makeStyles((theme) => ({
     mainDiv: {
@@ -81,28 +84,31 @@ const useStyles = makeStyles((theme) => ({
     }
 }))
 
-export default function FilterBar({id}) {
+export default function FilterBar(props) {
     const classes = useStyles();
     const [sort, setSort] = React.useState('pa');
-    const [difficulty, setDifficulty] = React.useState('BG');
-    const [open, setOpen] = React.useState(false);
+    const [difficulty, setDifficulty] = React.useState('none');
+    const [open, setOpenModal] = React.useState(false);
     const alertC = useRef(useContext(AlertContext));
     const [tag, setTag] = React.useState("");
     const [tags, setTags] = React.useState([]);
     const [ingredient, setIngredient] = React.useState("");
     const [ingredients, setIngredients] = React.useState([]);
-    const [mealType, setMealType] = React.useState('BF');
+    const [mealType, setMealType] = React.useState('none');
+    const user = useContext((UserContext))
+    const [searchValue, setSearchValue] = React.useState('');
 
     const handleClose = () => {
-        setOpen(false);
+        setOpenModal(false);
     };
 
     const handleOpen = () => {
-        setOpen(true);
+        setOpenModal(true);
     };
 
-    const handleChangeSort = (event) => {
-        setSort(event.target.value)
+    const handleChangeSort = async (event) => {
+        await setSort(event.target.value)
+        await filterList();
     }
 
     const handleChangeDifficulty = (event) => {
@@ -139,18 +145,108 @@ export default function FilterBar({id}) {
         }
     }
 
-    const handleSave = (e) => {
+    const handleSave = async(e) => {
         e.preventDefault();
+        await setOpenModal(false);
+        await filterList();
     }
 
     const handleIngredientDelete = (ingredientToDelete) => () => {
         setIngredients((ingredients) => ingredients.filter((ingredient) => ingredient.key !== ingredientToDelete.key));
     };
 
+    function createParams() {
+        let returnValue = "?"
+        if (searchValue !== "") {
+            returnValue += "name=" + searchValue + "&";
+        }
+        if (ingredients.length !== 0) {
+            let text = "{"
+            ingredients.forEach((element) => {
+                text += "\"" + element.label + "\","
+            })
+            text =text.slice(0, -1)
+            text += "}"
+            returnValue += "ingredients=" + text + "&";
+        }
+        if (tags.length !== 0) {
+            let text = "{"
+            tags.forEach((element) => {
+                text += "\"" + element.label + "\","
+            })
+            text = text.slice(0, -1)
+            text += "}"
+            returnValue += "tags=" + text + "&";
+        }
+        if (difficulty !== "none") {
+            returnValue += "difficulty=" + difficulty + "&";
+        }
+        if (mealType !== "none") {
+            returnValue += "meal=" + mealType + "&";
+        }
+        returnValue += "order=" + sort;
+        console.log(returnValue);
+        return returnValue;
+    }
+
+    const fetchFiltered = async (token) => {
+        const headers = getCORSHeaders(token);
+        let params = createParams()
+        const url = be.RECIPE + params
+        let res = await fetch(url, {
+            headers
+        });
+        if (res.status === 200) {
+            return await res.json();
+        } else if (res.status === 401) {
+            alertC.current.showAlert("You have to be logged in to see recipes", "error");
+            return null;
+        } else {
+            alertC.current.showAlert("Something went wrong while trying to fetch recipe list", "error");
+        }
+    }
+
+    function validateParams() {
+        if (!/^[A-Za-zżźćńółęąśŻŹĆĄŚĘŁÓŃ\s\d.,?!-()]*$/.test(searchValue)) {
+            throw "Wrong search text format"
+        }
+        ingredients.forEach((element) => {
+            if (!/^[A-Za-zżźćńółęąśŻŹĆĄŚĘŁÓŃ\s\d.,?!-()]*$/.test(element.label)) {
+                throw "Wrong ingredient format"
+            }
+        })
+
+        tags.forEach((element) => {
+            if (!/^[A-Za-zżźćńółęąśŻŹĆĄŚĘŁÓŃ\s\d.,?!-()]*/.test(element.label)) {
+                throw "Wrong tag format"
+            }
+        })
+    }
+
+    const filterList = async () => {
+        props.setLoading(true);
+        try {
+            validateParams()
+            let res = await fetchFiltered(user.token);
+            if (res !== null) {
+                await props.setRecipes(res.results);
+                await props.setCount(res.count);
+                await props.setNext(res.next);
+                await props.setPrevious(res.previous);
+            } else {
+                props.setRedirect(path_list.LOGIN.route);
+            }
+        } catch (err) {
+            alertC.current.showAlert(err, "error");
+        } finally {
+            props.setLoading(false);
+        }
+    }
+
     const handleAddIngredient = (e) => {
         e.preventDefault()
         try {
-            if (!/^[A-Za-zżźćńółęąśŻŹĆĄŚĘŁÓŃ\d\s.,?!-()]+$/.test(tag)) {
+            if (!/^[A-Za-zżźćńółęąśŻŹĆĄŚĘŁÓŃ\d\s.,?!-()]+$/.test(ingredient)) {
                 throw "Wrong ingredient format"
             }
             if (ingredients.filter((e) => e.label === ingredient).length !== 0) {
@@ -169,6 +265,11 @@ export default function FilterBar({id}) {
         }
     }
 
+    const handleSearch = async (e) => {
+        e.preventDefault();
+        await filterList();
+    }
+
     const body = (
         <div className={classes.modalPaper}>
             <div className={classes.flex}>
@@ -184,7 +285,7 @@ export default function FilterBar({id}) {
                             value={difficulty}
                             onChange={handleChangeDifficulty}
                         >
-                            <MenuItem value={''}>All</MenuItem>
+                            <MenuItem value={'none'}>All</MenuItem>
                             <MenuItem value={'BG'}>Beginner</MenuItem>
                             <MenuItem value={'IT'}>Intermediate</MenuItem>
                             <MenuItem value={'AD'}>Advanced</MenuItem>
@@ -265,7 +366,7 @@ export default function FilterBar({id}) {
                             value={mealType}
                             onChange={handleChangeMealType}
                         >
-                            <MenuItem value={''}>All</MenuItem>
+                            <MenuItem value={'none'}>All</MenuItem>
                             <MenuItem value={'BF'}>Breakfast</MenuItem>
                             <MenuItem value={'LU'}>Lunch</MenuItem>
                             <MenuItem value={'DN'}>Dinner</MenuItem>
@@ -289,8 +390,11 @@ export default function FilterBar({id}) {
                         <InputBase
                             placeholder="Search"
                             inputProps={{'aria-label': 'search google maps'}}
+                            value={searchValue}
+                            onChange={(e) => setSearchValue(e.target.value)}
                         />
-                        <IconButton type="submit" className={classes.iconButton} aria-label="search">
+                        <IconButton type="submit" className={classes.iconButton} aria-label="search"
+                                    onClick={handleSearch}>
                             <SearchIcon/>
                         </IconButton>
                     </div>

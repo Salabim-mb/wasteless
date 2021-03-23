@@ -100,7 +100,6 @@ export default function RecipesList() {
     const getRecipes = async (token) => {
         const headers = getCORSHeaders(token);
         const url = be.RECIPE;
-        console.log("fwqfqwfqwfqw")
         let res = await fetch(url, {
             headers,
             method: "GET"
@@ -121,121 +120,123 @@ export default function RecipesList() {
             <CssBaseline/>
             <main>
                 <Container className={classes.cardGrid} maxWidth="md">
+                    <FilterBar setLoading={setLoading} setRecipes={setRecipes} setCount={setCount} setNext={setNext} setPrevious={setPrevious} setRedirect={setRedirect}/>
                     {
                         loading ? (
                             <div className={classes.centered}>
                                 <CircularProgress/>
                             </div>
                         ) : (
+                            <div>
+                                <Grid container spacing={4}>
+                                    {recipes.map((recipe, id) => (
+                                        <Grid item key={id} xs={12} sm={6} md={4}>
+                                            <Card className={classes.card}>
 
-                            <Grid container spacing={4}>
-                                {recipes.map((recipe, id) => (
-                                    <Grid item key={id} xs={12} sm={6} md={4}>
-                                        <Card className={classes.card}>
+                                                <CardMedia
+                                                    className={classes.cardMedia}
+                                                    image={recipe.image_url}
+                                                    title="Image title"
+                                                />
 
-                                            <CardMedia
-                                                className={classes.cardMedia}
-                                                image={recipe.image_url}
-                                                title="Image title"
-                                            />
+                                                <CardContent className={classes.cardContent}>
 
-                                            <CardContent className={classes.cardContent}>
-
-                                                <Typography gutterBottom variant="h5" component="h2">
-                                                    {recipe.recipe_name}
-                                                </Typography>
-                                                <Grid container spacing={3} className={classes.centered}>
-                                                    <Grid item xs={2} sm={2}>
-                                                        <Typography component={'span'}>
-                                                            {recipe.difficulty === "BG" ?
-                                                                <h5>BG</h5> : recipe.difficulty === "IT" ?
-                                                                    <h5>IT</h5> : <h5>AD</h5>}
-                                                        </Typography>
-                                                        <Typography>
-                                                            {recipe.difficulty === "BG" ?
-                                                                <SignalCellular1BarIcon/> : recipe.difficulty === "IT" ?
-                                                                    <SignalCellular3BarIcon/> :
-                                                                    <SignalCellular4BarIcon/>}
-                                                        </Typography>
-                                                    </Grid>
-                                                    <Grid item xs={4} sm={4}>
-                                                        <Typography component={'span'}>
-                                                            <h5>{recipe.ratings_num}</h5>
-                                                        </Typography>
-                                                        <Typography>
-                                                            {parseFloat(recipe.rating, 10) < parseFloat("0.25", 10) ?
-                                                                <StarBorderIcon/> :
-                                                                parseFloat(recipe.rating, 10) < parseFloat("0.75", 10) ?
-                                                                    <StarHalfIcon/> :
-                                                                    <StarIcon/>}
-                                                            {parseFloat(recipe.rating, 10) < parseFloat("1.25", 10) ?
-                                                                <StarBorderIcon/> :
-                                                                parseFloat(recipe.rating, 10) < parseFloat("1.75", 10) ?
-                                                                    <StarHalfIcon/> :
-                                                                    <StarIcon/>}
-                                                            {parseFloat(recipe.rating, 10) < parseFloat("2.25", 10) ?
-                                                                <StarBorderIcon/> :
-                                                                parseFloat(recipe.rating, 10) < parseFloat("2.75", 10) ?
-                                                                    <StarHalfIcon/> :
-                                                                    <StarIcon/>}
-                                                            {parseFloat(recipe.rating, 10) < parseFloat("3.25", 10) ?
-                                                                <StarBorderIcon/> :
-                                                                parseFloat(recipe.rating, 10) < parseFloat("3.75", 10) ?
-                                                                    <StarHalfIcon/> :
-                                                                    <StarIcon/>}
-                                                            {parseFloat(recipe.rating, 10) < parseFloat("4.25", 10) ?
-                                                                <StarBorderIcon/> :
-                                                                parseFloat(recipe.rating, 10) < parseFloat("4.75", 10) ?
-                                                                    <StarHalfIcon/> :
-                                                                    <StarIcon/>}
-
-                                                        </Typography>
-                                                    </Grid>
-                                                    <Grid item xs={2} sm={2}>
-                                                        <Typography component={'span'}>
-                                                            {recipe.meal === "BF" ?
-                                                                <h5>BF</h5> : recipe.meal === "LU" ?
-                                                                    <h5>LU</h5> : recipe.meal === "DN" ?
-                                                                        <h5>DN</h5> : <h5>SU</h5>}
-                                                        </Typography>
-                                                        <Typography>
-                                                            {recipe.meal === "BF" ?
-                                                                <FreeBreakfastIcon/> : recipe.meal === "LU" ?
-                                                                    <WorkIcon/> : recipe.meal === "DN" ?
-                                                                        <RestaurantIcon/> :
-                                                                        <EmojiFoodBeverageIcon/>}
-                                                        </Typography>
-                                                    </Grid>
-                                                    <Grid item xs={4} sm={4}>
-                                                        <Typography component={'span'}>
-                                                            <h5> {recipe.prep_time}</h5>
-                                                        </Typography>
-                                                        <Typography>
-                                                            <AccessTimeIcon/>
-                                                        </Typography>
-                                                    </Grid>
-                                                </Grid>
-                                                <Grid item xs={12}>
-                                                    <Typography>
-                                                        {recipe.description}
+                                                    <Typography gutterBottom variant="h5" component="h2">
+                                                        {recipe.recipe_name}
                                                     </Typography>
-                                                </Grid>
-                                                <h5></h5>
-                                                {redirect && <Redirect to={redirect}/>}
-                                                <Grid item xs={12} className={classes.centered}>
-                                                    <Link
-                                                        onClick={() => setRedirect(paths_list.RECIPES_LIST.route + "/" + recipe.id)}>
+                                                    <Grid container spacing={3} className={classes.centered}>
+                                                        <Grid item xs={2} sm={2}>
+                                                            <Typography component={'span'}>
+                                                                {recipe.difficulty === "BG" ?
+                                                                    <h5>BG</h5> : recipe.difficulty === "IT" ?
+                                                                        <h5>IT</h5> : <h5>AD</h5>}
+                                                            </Typography>
+                                                            <Typography>
+                                                                {recipe.difficulty === "BG" ?
+                                                                    <SignalCellular1BarIcon/> : recipe.difficulty === "IT" ?
+                                                                        <SignalCellular3BarIcon/> :
+                                                                        <SignalCellular4BarIcon/>}
+                                                            </Typography>
+                                                        </Grid>
+                                                        <Grid item xs={4} sm={4}>
+                                                            <Typography component={'span'}>
+                                                                <h5>{recipe.ratings_num}</h5>
+                                                            </Typography>
+                                                            <Typography>
+                                                                {parseFloat(recipe.rating, 10) < parseFloat("0.25", 10) ?
+                                                                    <StarBorderIcon/> :
+                                                                    parseFloat(recipe.rating, 10) < parseFloat("0.75", 10) ?
+                                                                        <StarHalfIcon/> :
+                                                                        <StarIcon/>}
+                                                                {parseFloat(recipe.rating, 10) < parseFloat("1.25", 10) ?
+                                                                    <StarBorderIcon/> :
+                                                                    parseFloat(recipe.rating, 10) < parseFloat("1.75", 10) ?
+                                                                        <StarHalfIcon/> :
+                                                                        <StarIcon/>}
+                                                                {parseFloat(recipe.rating, 10) < parseFloat("2.25", 10) ?
+                                                                    <StarBorderIcon/> :
+                                                                    parseFloat(recipe.rating, 10) < parseFloat("2.75", 10) ?
+                                                                        <StarHalfIcon/> :
+                                                                        <StarIcon/>}
+                                                                {parseFloat(recipe.rating, 10) < parseFloat("3.25", 10) ?
+                                                                    <StarBorderIcon/> :
+                                                                    parseFloat(recipe.rating, 10) < parseFloat("3.75", 10) ?
+                                                                        <StarHalfIcon/> :
+                                                                        <StarIcon/>}
+                                                                {parseFloat(recipe.rating, 10) < parseFloat("4.25", 10) ?
+                                                                    <StarBorderIcon/> :
+                                                                    parseFloat(recipe.rating, 10) < parseFloat("4.75", 10) ?
+                                                                        <StarHalfIcon/> :
+                                                                        <StarIcon/>}
 
-                                                        <Button variant="contained" color="primary">
-                                                            Show details
-                                                        </Button>
-                                                    </Link>
-                                                </Grid>
-                                            </CardContent>
-                                        </Card>
-                                    </Grid>
-                                ))}
-                            </Grid>
+                                                            </Typography>
+                                                        </Grid>
+                                                        <Grid item xs={2} sm={2}>
+                                                            <Typography component={'span'}>
+                                                                {recipe.meal === "BF" ?
+                                                                    <h5>BF</h5> : recipe.meal === "LU" ?
+                                                                        <h5>LU</h5> : recipe.meal === "DN" ?
+                                                                            <h5>DN</h5> : <h5>SU</h5>}
+                                                            </Typography>
+                                                            <Typography>
+                                                                {recipe.meal === "BF" ?
+                                                                    <FreeBreakfastIcon/> : recipe.meal === "LU" ?
+                                                                        <WorkIcon/> : recipe.meal === "DN" ?
+                                                                            <RestaurantIcon/> :
+                                                                            <EmojiFoodBeverageIcon/>}
+                                                            </Typography>
+                                                        </Grid>
+                                                        <Grid item xs={4} sm={4}>
+                                                            <Typography component={'span'}>
+                                                                <h5> {recipe.prep_time}</h5>
+                                                            </Typography>
+                                                            <Typography>
+                                                                <AccessTimeIcon/>
+                                                            </Typography>
+                                                        </Grid>
+                                                    </Grid>
+                                                    <Grid item xs={12}>
+                                                        <Typography>
+                                                            {recipe.description}
+                                                        </Typography>
+                                                    </Grid>
+                                                    <h5></h5>
+                                                    {redirect && <Redirect to={redirect}/>}
+                                                    <Grid item xs={12} className={classes.centered}>
+                                                        <Link
+                                                            onClick={() => setRedirect(paths_list.RECIPES_LIST.route + "/" + recipe.id)}>
+
+                                                            <Button variant="contained" color="primary">
+                                                                Show details
+                                                            </Button>
+                                                        </Link>
+                                                    </Grid>
+                                                </CardContent>
+                                            </Card>
+                                        </Grid>
+                                    ))}
+                                </Grid>
+                            </div>
                         )
                     }
                     <h5></h5>
