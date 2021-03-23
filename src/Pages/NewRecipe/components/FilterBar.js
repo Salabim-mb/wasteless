@@ -54,7 +54,6 @@ const useStyles = makeStyles((theme) => ({
         top: "25%",
         left: "35%",
         transform: `translate(-20%, -40%)`,
-        display: "flex"
     },
     searchDiv: {
         justifyContent: "center",
@@ -78,7 +77,7 @@ const useStyles = makeStyles((theme) => ({
         margin: 0,
     },
     flex: {
-        display: "flex"
+        margin: theme.spacing(3)
     }
 }))
 
@@ -185,6 +184,7 @@ export default function FilterBar({id}) {
                             value={difficulty}
                             onChange={handleChangeDifficulty}
                         >
+                            <MenuItem value={''}>All</MenuItem>
                             <MenuItem value={'BG'}>Beginner</MenuItem>
                             <MenuItem value={'IT'}>Intermediate</MenuItem>
                             <MenuItem value={'AD'}>Advanced</MenuItem>
@@ -265,6 +265,7 @@ export default function FilterBar({id}) {
                             value={mealType}
                             onChange={handleChangeMealType}
                         >
+                            <MenuItem value={''}>All</MenuItem>
                             <MenuItem value={'BF'}>Breakfast</MenuItem>
                             <MenuItem value={'LU'}>Lunch</MenuItem>
                             <MenuItem value={'DN'}>Dinner</MenuItem>
