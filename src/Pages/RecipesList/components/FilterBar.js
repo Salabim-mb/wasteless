@@ -112,7 +112,7 @@ export default function FilterBar(props) {
 
     useEffect(() => {
         filterList();
-    }, [sort])
+    }, [sort, open])
 
     const handleChangeDifficulty = (event) => {
         setDifficulty(event.target.value)
@@ -150,8 +150,7 @@ export default function FilterBar(props) {
 
     const handleSave = async(e) => {
         e.preventDefault();
-        await setOpenModal(false);
-        await filterList();
+        setOpenModal(false);
     }
 
     const handleIngredientDelete = (ingredientToDelete) => () => {
@@ -188,7 +187,6 @@ export default function FilterBar(props) {
             returnValue += "meal=" + mealType + "&";
         }
         returnValue += "order=" + sort;
-        console.log(returnValue);
         return returnValue;
     }
 
