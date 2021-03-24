@@ -21,7 +21,6 @@ import {
 import List from "@material-ui/core/List";
 import Avatar from "@material-ui/core/Avatar";
 import IconButton from "@material-ui/core/IconButton";
-import FolderIcon from '@material-ui/icons/Folder';
 import DeleteIcon from '@material-ui/icons/Delete';
 import Fab from "@material-ui/core/Fab";
 import AddIcon from '@material-ui/icons/Add';
@@ -31,7 +30,6 @@ import {path_list} from "../../constants/routes";
 import {Redirect} from "react-router-dom";
 import {fileToBase64} from "../../utils/fileToBase64";
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
-import NewComment from "./components/NewComment";
 
 const useStyles = makeStyles((theme) => ({
     mainDiv: {
@@ -351,7 +349,6 @@ export default function NewRecipe() {
 
                     </div>
                     {redirect && <Redirect to={redirect}/>}
-                    <NewComment id = {1}/>
                 </Paper>
 
             </Container>

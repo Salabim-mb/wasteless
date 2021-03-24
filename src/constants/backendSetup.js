@@ -9,6 +9,7 @@ export const be = {
     LOGIN: `${backend_path}/login/`,
     LOGOUT: `${backend_path}/logout/`,
     REGISTER: `${backend_path}/register/`,
+    RECIPE: `${backend_path}/recipes/`,
     PROFILE: `${backend_path}/profile/`
 };
 
