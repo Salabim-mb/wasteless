@@ -107,9 +107,12 @@ export default function FilterBar(props) {
     };
 
     const handleChangeSort = async (event) => {
-        await setSort(event.target.value)
-        await filterList();
+        setSort(event.target.value)
     }
+
+    useEffect(() => {
+        filterList();
+    }, [sort])
 
     const handleChangeDifficulty = (event) => {
         setDifficulty(event.target.value)
@@ -412,8 +415,8 @@ export default function FilterBar(props) {
                             <MenuItem value={'rd'}>Ranking <ArrowDropUpIcon/></MenuItem>
                             <MenuItem value={'na'}>Name <ArrowDropDownIcon/></MenuItem>
                             <MenuItem value={'nd'}>Name <ArrowDropUpIcon/></MenuItem>
-                            <MenuItem value={'ta'}>Time <ArrowDropDownIcon/> </MenuItem>
-                            <MenuItem value={'td'}>Time <ArrowDropUpIcon/></MenuItem>
+                            {/*<MenuItem value={'ta'}>Time <ArrowDropDownIcon/> </MenuItem>*/}
+                            {/*<MenuItem value={'td'}>Time <ArrowDropUpIcon/></MenuItem>*/}
                         </Select>
                     </FormControl>
                     <div className={classes.filterBtn}>
