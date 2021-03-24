@@ -79,10 +79,14 @@ export default function NewComment({id}) {
         if (!/^[A-Za-zżźćńółęąśŻŹĆĄŚĘŁÓŃ\s.,?!-()]+$/.test(comment)) {
             throw "Wrong comment format"
         }
+        if (user.data?.username === null)
+        {
+            throw "You must be logged in"
+        }
     }
 
     function validateRating() {
-        if(rating === 0){
+        if(rating === 0 || rating === null){
             throw "You must add rating"
         }
     }
@@ -94,14 +98,18 @@ export default function NewComment({id}) {
                 rating: rating,
                 recipe_id: id,
             }
+            console.log(bodyRating);
             validateRating()
             await fetchRating(bodyRating, user.token)
             validateComment(comment);
+            console.log(user)
             let bodyComment = {
                 date_added: (new Date()).toISOString(),
                 content: comment,
-                recipe_id: id
+                recipe_id: id,
+                author_name: user.data.username
             }
+            console.log(bodyComment);
             await fetchComment(bodyComment, user.token)
             alertC.current.showAlert("Successfully created comment.", "success")
         } catch (err){

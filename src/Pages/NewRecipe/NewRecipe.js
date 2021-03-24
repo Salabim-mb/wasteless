@@ -351,7 +351,7 @@ export default function NewRecipe() {
 
                     </div>
                     {redirect && <Redirect to={redirect}/>}
-                    <NewComment/>
+                    <NewComment id = {1}/>
                 </Paper>
 
             </Container>
