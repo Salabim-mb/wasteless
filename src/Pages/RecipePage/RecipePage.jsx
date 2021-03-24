@@ -232,7 +232,6 @@ export default function RecipePage() {
 
                                                 <Title>Comments</Title>
                                                 <NewComment id={recipe_id}/>
-                                                <Typography> </Typography>
                                             </Paper>
                                         </Grid>
                                     </Grid>

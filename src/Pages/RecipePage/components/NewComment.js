@@ -11,7 +11,6 @@ import {validate} from "@material-ui/pickers";
 const useStyles = makeStyles((theme) => ({
     mainDiv: {
         margin: theme.spacing(3),
-        marginBottom: theme.spacing(8),
         paddingBottom: theme.spacing(1),
         textAlign: "left"
     },
@@ -30,9 +29,9 @@ const useStyles = makeStyles((theme) => ({
 
 const labels = {
     1: 'Disgusting',
-    2: 'Not bad',
-    3: 'Good',
-    4: 'Tasty',
+    2: 'Bad',
+    3: 'Not bad',
+    4: 'Good',
     5: 'Delicious',
 };
 
@@ -98,18 +97,15 @@ export default function NewComment({id}) {
                 rating: rating,
                 recipe_id: id,
             }
-            console.log(bodyRating);
             validateRating()
             await fetchRating(bodyRating, user.token)
             validateComment(comment);
-            console.log(user)
             let bodyComment = {
                 date_added: (new Date()).toISOString(),
                 content: comment,
                 recipe_id: id,
                 author_name: user.data.username
             }
-            console.log(bodyComment);
             await fetchComment(bodyComment, user.token)
             alertC.current.showAlert("Successfully created comment.", "success")
         } catch (err){
