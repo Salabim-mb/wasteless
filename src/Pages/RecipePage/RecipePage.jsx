@@ -29,6 +29,7 @@ import {useParams} from "react-router-dom";
 import {AlertContext} from "context/AlertContext";
 import {getCORSHeaders} from "../../utils/fetchTools";
 import {UserContext} from "../../context";
+import NewComment from "./components/NewComment";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -230,7 +231,7 @@ export default function RecipePage() {
                                             <Paper className={classes.paper}>
 
                                                 <Title>Comments</Title>
-                                                <Typography> </Typography>
+                                                <NewComment id={recipe_id}/>
                                             </Paper>
                                         </Grid>
                                     </Grid>
