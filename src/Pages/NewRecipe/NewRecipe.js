@@ -311,7 +311,7 @@ export default function NewRecipe() {
         if (body.image_url.length === 0) {
             throw "You need to attach photo"
         }
-        if (body.tags.length === 0){
+        if (body.tags.length === 0) {
             throw "You need to attach tags"
         }
     }
@@ -417,15 +417,15 @@ export default function NewRecipe() {
                                     <div></div>
                             }
                         </div>
-                        <div className={classes.horizontalDiv}>
-                            <TextField className={classes.textField} label="Tag" value={tag}
-                                       onChange={(e) => setTag(e.target.value)}></TextField>
-                            <div className={classes.floatingButton}>
-                                <Fab size="small" color="secondary" aria-label="add" className={classes.margin}
-                                     onClick={handleAddTag}>
-                                    <AddIcon/>
-                                </Fab>
-                            </div>
+
+                        <TextField className={classes.textField} label="Tag" value={tag}
+                                   onChange={(e) => setTag(e.target.value)}></TextField>
+
+                        <div className={classes.floatingButton}>
+                            <Fab size="small" color="secondary" aria-label="add" className={classes.margin}
+                                 onClick={handleAddTag}>
+                                <AddIcon/>
+                            </Fab>
                         </div>
                         <div className={classes.tagsDiv}>
                             {tags.map((data) => {
