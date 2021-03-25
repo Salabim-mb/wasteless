@@ -73,7 +73,7 @@ export default function RecipesList() {
     const [previous, setPrevious] = useState(null);
     const [recipes, setRecipes] = useState([]);
     const [redirect, setRedirect] = useState(undefined);
-    const [filterParams, setFilterParams] = useState("");
+    const [filterParams, setFilterParams] = useState("&order=pd");
     const [page, setPage] = useState(1);
     const [page_size, setPageSize] = useState(9);
     const [url, setUrl] = useState((`${be.RECIPE}?page=${page}&page_size=${page_size}`));
@@ -100,13 +100,8 @@ export default function RecipesList() {
     };
 
     useEffect(() => {
-        setUrl(url + filterParams);
-    }, [filterParams]);
-
-    useEffect(() => {
-        console.log("qjiofqw");
         loadRecipes(user.token, url + filterParams);
-    }, [user.token, url]);
+    }, [user.token, url, filterParams]);
 
     const getRecipes = async (token, url) => {
         const headers = getCORSHeaders(token);
@@ -130,7 +125,7 @@ export default function RecipesList() {
             <CssBaseline/>
             <main>
                 <Container className={classes.cardGrid} maxWidth="md">
-                    <FilterBar setLoading={setLoading} setRecipes={setRecipes} setCount={setCount} setNext={setNext} setPrevious={setPrevious} setRedirect={setRedirect} setFilterParams={setFilterParams}/>
+                    <FilterBar setLoading={setLoading} setFilterParams={setFilterParams}/>
                     {
                         loading ? (
                             <div className={classes.centered}>

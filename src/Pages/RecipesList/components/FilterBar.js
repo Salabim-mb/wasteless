@@ -86,7 +86,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function FilterBar(props) {
     const classes = useStyles();
-    const [sort, setSort] = React.useState('pa');
+    const [sort, setSort] = React.useState('pd');
     const [difficulty, setDifficulty] = React.useState('none');
     const [open, setOpenModal] = React.useState(false);
     const alertC = useRef(useContext(AlertContext));
@@ -110,7 +110,13 @@ export default function FilterBar(props) {
         setSort(event.target.value)
     }
 
+    const firstUpdate = useRef(true);
+
     useEffect(() => {
+        if(firstUpdate.current) {
+            firstUpdate.current = false;
+            return;
+        }
         filterList();
     }, [sort, open])
 
@@ -228,7 +234,6 @@ export default function FilterBar(props) {
         props.setLoading(true);
         try {
             validateParams();
-            console.log("Im in filterbar")
             let params = createParams();
             props.setFilterParams(params);
             // let res = await fetchFiltered(user.token);
@@ -410,10 +415,10 @@ export default function FilterBar(props) {
                             value={sort}
                             onChange={handleChangeSort}
                         >
-                            <MenuItem value={'pa'}>Popularity <ArrowDropDownIcon/> </MenuItem>
-                            <MenuItem value={'pd'}>Popularity <ArrowDropUpIcon/> </MenuItem>
-                            <MenuItem value={'ra'}>Ranking <ArrowDropDownIcon/></MenuItem>
-                            <MenuItem value={'rd'}>Ranking <ArrowDropUpIcon/></MenuItem>
+                            <MenuItem value={'pd'}>Popularity <ArrowDropDownIcon/> </MenuItem>
+                            <MenuItem value={'pa'}>Popularity <ArrowDropUpIcon/> </MenuItem>
+                            <MenuItem value={'rd'}>Ranking <ArrowDropDownIcon/></MenuItem>
+                            <MenuItem value={'ra'}>Ranking <ArrowDropUpIcon/></MenuItem>
                             <MenuItem value={'na'}>Name <ArrowDropDownIcon/></MenuItem>
                             <MenuItem value={'nd'}>Name <ArrowDropUpIcon/></MenuItem>
                             {/*<MenuItem value={'ta'}>Time <ArrowDropDownIcon/> </MenuItem>*/}
