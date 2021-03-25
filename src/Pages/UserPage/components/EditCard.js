@@ -135,8 +135,47 @@ const fetchDelete = async (token) => {
     }
 }
 
+const checkFieldsFormat = (body) => {
+    const name = body.first_name
+    const surname = body.last_name
+    const email = body.email
+    const username = body.username
+
+    if(!/^[a-zA-z]+$/.test(name)){
+        throw "Wrong name format."
+    }
+
+    if(!/^[a-zA-z]+$/.test(surname)){
+        throw "Wrong surname format."
+    }
+
+    if( !/\S+@\S+\.\S+/.test(email)){
+        throw "Wrong email format."
+    }
+
+    if(!/^[\w.@+-]+$/.test(username)){
+        throw "Wrong username format."
+    }
+}
+
+const fetchEditUser = async (body, token) => {
+    const url = be.PLAIN + "profile/";
+    const headers = getCORSHeaders(token);
+
+    const res = await fetch(url, {
+        headers,
+        method: "PUT",
+        body: JSON.stringify(body)
+    });
+
+    if (res.status !== 200) {
+        throw "Couldn't edit your account."
+    }
+}
+
 export default function EditCard() {
     const classes = useStyles();
+    const user = useContext((UserContext))
     const [oldPass, setOldPass] = useState("")
     const [newPass, setNewPass] = useState("")
     const [newPassR, setNewPassR] = useState("")
@@ -144,7 +183,11 @@ export default function EditCard() {
     const [open, setOpen] = React.useState(false);
     const [redirect, setRedirect] = useState(undefined);
     const [usernameD, setUsernameD] = useState("");
-    const user = useContext((UserContext))
+    const [name, setName] = useState(user.data.first_name)
+    const [surname, setSurname] = useState(user.data.last_name)
+    const [email, setEmail] = useState(user.data.email)
+    const [username, setUsername] = useState(user.data.username)
+
 
     const handleSubmitPass = async (e) => {
         e.preventDefault()
@@ -166,6 +209,23 @@ export default function EditCard() {
             alertC.current.showAlert("Successfully deleted account.", "success")
             user.logout()
             setRedirect(path_list.LOGIN.route)
+        } catch (err) {
+            alertC.current.showAlert(err, "error")
+        }
+    }
+
+    const handleEditUser = async (e) =>{
+        e.preventDefault()
+        try{
+            let body = {username: username, "first_name": name, "last_name": surname, email: email}
+            checkFieldsFormat(body)
+            await fetchEditUser(body, user.token)
+            alertC.current.showAlert("Successfully edited account.", "success")
+            let data = user.data;
+            data.email = email;
+            data.first_name = name;
+            data.last_name = surname;
+            user.login(user.token, data);
         } catch (err) {
             alertC.current.showAlert(err, "error")
         }
@@ -227,17 +287,20 @@ export default function EditCard() {
 
                         </div>
                         <div className={classes.detailsDiv}>
-                            <TextField className={classes.textField} label="Name" defaultValue={user?.data?.name}
+                            <TextField className={classes.textField} label="Name" defaultValue={user?.data?.first_name}
+                                       onChange={(e) => setName(e.target.value)}
                             />
-                            <TextField className={classes.textField} label="Surname" defaultValue={user?.data?.surname}
+                            <TextField className={classes.textField} label="Surname" defaultValue={user?.data?.last_name}
+                                       onChange={(e) => setSurname(e.target.value)}
                             />
                             <TextField className={classes.textField} label="Email" defaultValue={user?.data?.email}
+                                       onChange={(e) => setEmail(e.target.value)}
                             />
                             <TextField className={classes.textField} label="Username"
-                                       defaultValue={user?.data?.username}
+                                       defaultValue={user?.data?.username} disabled
                             />
                             <div className={classes.submitBtn}>
-                                <Button variant="contained" color="primary" endIcon={<Icon>send</Icon>}>Submit</Button>
+                                <Button variant="contained" color="primary" endIcon={<Icon>send</Icon>} onClick={handleEditUser}>Submit</Button>
                             </div>
                             <h2>CHANGE PASSWORD</h2>
                             <TextField className={classes.textField} label="Current password" type="password"
