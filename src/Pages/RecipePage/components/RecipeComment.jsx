@@ -70,7 +70,7 @@ const RecipeComment = (id, token) => {
                     <ListItem>
                         <ListItemAvatar>
                             <Avatar>
-                                {/*{details.author_name.charAt(0).toUpperCase()}*/}
+                                {details?.author_name?.charAt(0).toUpperCase()}
                             </Avatar>
                         </ListItemAvatar>
                         <ListItemText
