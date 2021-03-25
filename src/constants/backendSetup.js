@@ -9,8 +9,8 @@ export const be = {
     LOGIN: `${backend_path}/login/`,
     LOGOUT: `${backend_path}/logout/`,
     REGISTER: `${backend_path}/register/`,
+    PROFILE: `${backend_path}/profile/`,
     RECIPE: `${backend_path}/recipes/`,
-    PROFILE: `${backend_path}/profile/`
 };
 
 export const off_API = `${product_api}/product/`;
