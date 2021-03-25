@@ -4,7 +4,6 @@ import ProductsList from "../Pages/ProductsList/ProductsList"
 import UserPage from "../Pages/UserPage/UserPage";
 import LoginPage from "Pages/LoginPage/LoginPage";
 import RegisterPage from "../Pages/RegisterPage/RegisterPage";
-import * as path from "path";
 import NewRecipe from "../Pages/NewRecipe/NewRecipe";
 import RecipePage from "../Pages/RecipePage/RecipePage";
 import RecipesList from "../Pages/RecipesList/RecipesList";
