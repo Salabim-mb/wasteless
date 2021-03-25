@@ -1,21 +1,25 @@
 import {path_list} from "./routes";
 import HowToRegIcon from '@material-ui/icons/HowToReg';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import SettingsIcon from '@material-ui/icons/Settings';
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import KitchenIcon from '@material-ui/icons/Kitchen';
 import React from "react";
-import {handleLogout} from "../Pages/MenuBar/components/Logout";
+import {handleLogout} from "Pages/MenuBar/components/Logout";
 
 export const mainOptions = [
     {
-
-    }
+        name: "My fridges",
+        icon: <KitchenIcon />,
+        path: path_list.FRIDGE_LIST,
+        requiresLogin: true,
+    },
 ];
 
 export const accountOptions = [
     {
-        name: "Settings",
-        icon: <SettingsIcon />,
-        path: path_list.SETTINGS,
+        name: "My profile",
+        icon: <AccountCircleIcon />,
+        path: path_list.PROFILE,
         requiresLogin: true
     },
     {
