@@ -73,33 +73,37 @@ export default function RecipesList() {
     const [previous, setPrevious] = useState(null);
     const [recipes, setRecipes] = useState([]);
     const [redirect, setRedirect] = useState(undefined);
+    const [page, setPage] = useState(1);
+    const [page_size, setPageSize] = useState(9);
+
+    const loadRecipes = async (token) => {
+        setLoading(true);
+        try {
+            let res = await getRecipes(token);
+            if (res !== null) {
+                await setRecipes(res.results);
+                await setCount(res.count);
+                await setNext(res.next);
+                await setPrevious(res.previous);
+            } else {
+                setRedirect(path_list.LOGIN.route);
+            }
+        } catch (e) {
+            console.log(e);
+            alertC.current.showAlert("Something went wrong while trying to fetch recipes list", "error");
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
-        const loadRecipes = async (token) => {
-            setLoading(true);
-            try {
-                let res = await getRecipes(token);
-                if (res !== null) {
-                    await setRecipes(res.results);
-                    await setCount(res.count);
-                    await setNext(res.next);
-                    await setPrevious(res.previous);
-                } else {
-                    setRedirect(path_list.LOGIN.route);
-                }
-            } catch (e) {
-                console.log(e);
-                alertC.current.showAlert("Something went wrong while trying to fetch recipes list", "error");
-            } finally {
-                setLoading(false);
-            }
-        };
         loadRecipes(user.token);
-    }, [user.token]);
+    }, [user.token, page]);
 
     const getRecipes = async (token) => {
         const headers = getCORSHeaders(token);
-        const url = be.RECIPE;
+        // http://wasteless-backend.herokuapp.com/recipes/?page=5&page_size=1
+        const url = be.RECIPE + "?page=" + page + "&page_size=" + page_size;
         let res = await fetch(url, {
             headers,
             method: "GET"
@@ -247,7 +251,7 @@ export default function RecipesList() {
                                     Back
                                 </Button>
                             ) : (
-                                <Link onClick={() => setRedirect(previous)}>
+                                <Link onClick={() => setPage(page - 1)}>
                                     <Button variant="contained" color="primary">
                                         Back
                                     </Button>
@@ -261,7 +265,7 @@ export default function RecipesList() {
                                     Next
                                 </Button>
                             ) : (
-                                <Link onClick={() => setRedirect(next)}>
+                                <Link onClick={() =>  setPage(page + 1)}>
                                     <Button variant="contained" color="primary">
                                         Next
                                     </Button>

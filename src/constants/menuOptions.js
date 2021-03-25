@@ -5,12 +5,19 @@ import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import KitchenIcon from '@material-ui/icons/Kitchen';
 import React from "react";
 import {handleLogout} from "Pages/MenuBar/components/Logout";
+import DashboardIcon from '@material-ui/icons/Dashboard';
 
 export const mainOptions = [
     {
         name: "My fridges",
         icon: <KitchenIcon />,
         path: path_list.FRIDGE_LIST,
+        requiresLogin: true,
+    },
+    {
+        name: "Recipes",
+        icon: <DashboardIcon />,
+        path: path_list.RECIPES_LIST,
         requiresLogin: true,
     },
 ];
