@@ -5,7 +5,9 @@ import UserPage from "../Pages/UserPage/UserPage";
 import LoginPage from "Pages/LoginPage/LoginPage";
 import RegisterPage from "../Pages/RegisterPage/RegisterPage";
 import NewRecipe from "../Pages/NewRecipe/NewRecipe";
+import RecipePage from "../Pages/RecipePage/RecipePage";
 import RecipesList from "../Pages/RecipesList/RecipesList";
+
 
 export const path_list = {
     DASHBOARD: {
@@ -39,16 +41,16 @@ export const path_list = {
     },
     FRIDGE_NEW_PRODUCT: {
         route: "/user/fridge/:fridge_id/new-product",
-        redirect: (fridge_id) => `/user/fridge/${fridge_id}/new-product`,
+        redirect: (fridge_id) => `/user/${fridge_id}/new-product`,
         name: "Add product"
-    },
-    NEW_RECIPE: {
-        route: "/user/recipe/new-recipe",
-        name: "Add recipe"
     },
     RECIPES_LIST: {
         route: "/recipes",
         name: "Recipes list"
+    },
+    NEW_RECIPE: {
+        route: "/user/recipe/new-recipe",
+        name: "Add recipe"
     },
     RECIPE_PAGE: {
         route: "/recipes/:recipe_id",
@@ -94,12 +96,13 @@ export default [
         exact: true
     },
     {
-        path: path_list.RECIPES_LIST.route,
-        component: RecipesList,
+        path: path_list.RECIPE_PAGE.route,
+        component: RecipePage,
         exact: true
     },
     {
-        path: path_list.RECIPE_PAGE.route,
+        path: path_list.RECIPES_LIST.route,
+        component: RecipesList,
         exact: true
     },
 ];

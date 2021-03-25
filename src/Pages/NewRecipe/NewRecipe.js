@@ -3,6 +3,7 @@ import React, {useContext, useRef, useState} from "react";
 import {AlertContext, UserContext} from "../../context";
 import {
     Button,
+    Chip,
     Container,
     CssBaseline,
     FormControl,
@@ -42,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
         width: "80%",
         margin: theme.spacing(1)
     },
-    ingredientsDiv: {
+    horizontalDiv: {
         display: "flex"
     },
     ingredientsList: {
@@ -56,11 +57,22 @@ const useStyles = makeStyles((theme) => ({
     },
     imageDiv: {
         margin: theme.spacing(1)
+    },
+    tag: {
+        margin: theme.spacing(0.5),
+    },
+    tagsDiv: {
+        display: 'flex',
+        justifyContent: 'center',
+        flexWrap: 'wrap',
+        listStyle: 'none',
+        padding: theme.spacing(0.5),
+        margin: 0,
     }
 }))
 
 const fetchCreateRecipe = async (body, token) => {
-    const url = be.RECIPE;
+    const url = be.PROFILE + "recipes/";
     const headers = getCORSHeaders(token);
 
     const res = await fetch(url, {
@@ -83,6 +95,8 @@ export default function NewRecipe() {
     const [quantity, setQuantity] = React.useState("0");
     const [ingredient, setIngredient] = React.useState('');
     const [unit, setUnit] = React.useState('g');
+    const [timeUnit, setTimeUnit] = React.useState('min');
+    const [time, setTime] = React.useState('1');
     const [mealType, setMealType] = React.useState('BF');
     const [ingredients, setIngredients] = React.useState([]);
     const [description, setDescription] = React.useState("")
@@ -90,6 +104,8 @@ export default function NewRecipe() {
     const [redirect, setRedirect] = useState(undefined);
     const [isVisible, setVisible] = useState(false);
     const [photoData, setPhotoData] = useState("");
+    const [tag, setTag] = useState("");
+    const [tags, setTags] = React.useState([]);
 
 
     const handleChangeDifficulty = (event) => {
@@ -103,6 +119,14 @@ export default function NewRecipe() {
     const handleChangeUnit = (event) => {
         setUnit(event.target.value)
     }
+
+    const handleChangeTimeUnit = (event) => {
+        setTimeUnit(event.target.value)
+    }
+
+    const handleTagDelete = (tagToDelete) => () => {
+        setTags((tags) => tags.filter((tag) => tag.key !== tagToDelete.key));
+    };
 
     function generate() {
         return ingredients.map((value) => {
@@ -133,16 +157,26 @@ export default function NewRecipe() {
         );
     }
 
-    const prepareIngredients = () => {
-        let prepared = []
-        ingredients.forEach((element) => {
-            const unit = element.unit !== "None" ? element.unit : ""
-            const text = element.quantity + " " + unit + " " + element.ingredient;
-            prepared.push(text);
-        })
-        if (prepared.length == 0)
-            throw "You have to add ingredients"
-        return prepared;
+    const handleAddTag = (e) => {
+        e.preventDefault()
+        try {
+            if (!/^[A-Za-zżźćńółęąśŻŹĆĄŚĘŁÓŃ\d\s.,?!-()]+$/.test(tag)) {
+                throw "Wrong tag format"
+            }
+            if (tags.filter((e) => e.label === tag).length !== 0) {
+                throw "Tag already added"
+            }
+            let last_element = tags[tags.length - 1]
+            let key_to_add = last_element === undefined ? -1 : last_element.key
+            let element = {
+                key: key_to_add + 1,
+                label: tag
+            }
+            setTags([...tags, element])
+            setTag("")
+        } catch (err) {
+            alertC.current.showAlert(err, "error")
+        }
     }
 
     const handleAddIngredient = (e) => {
@@ -151,7 +185,7 @@ export default function NewRecipe() {
             if (!/^[\d.,]+$/.test(quantity)) {
                 throw "Wrong quantity format"
             }
-            if (!/^[A-Za-z\s]+$/.test(ingredient)) {
+            if (!/^[A-Za-zżźćńółęąśŻŹĆĄŚĘŁÓŃ\s]+$/.test(ingredient)) {
                 throw "Wrong ingredient format"
             }
 
@@ -177,20 +211,54 @@ export default function NewRecipe() {
 
     }
 
+    const prepareIngredients = () => {
+        let prepared = []
+        ingredients.forEach((element) => {
+            const unit = element.unit !== "None" ? element.unit : ""
+            const text = element.quantity + " " + unit + " " + element.ingredient;
+            prepared.push(text);
+        })
+        if (prepared.length === 0)
+            throw "You have to add ingredients"
+        return prepared;
+    }
+
+    const preparePrepTime = () => {
+        if (time === "0") {
+            throw "Time value can not be 0"
+        }
+        if (!/^[\d]+$/.test(time)) {
+            throw "Wrong time value"
+        }
+        let day_format = time === "1" ? "day" : "days"
+        let unit_format = timeUnit === "days" ? day_format : timeUnit
+        return time + " " + unit_format
+    }
+
+    const prepareTags = () => {
+        let prepared = []
+        tags.forEach((e) => {
+            prepared.push(e.label)
+        })
+        return prepared
+    }
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
             const pre_ingredients = prepareIngredients()
+            const pre_prep_time = preparePrepTime()
+            const pre_tags = prepareTags()
             let body = {
                 recipe_name: recipeName,
                 difficulty: difficulty,
-                tags: [],
+                tags: pre_tags,
                 ingredients: pre_ingredients,
                 description: description,
                 instructions: instruction,
                 image_url: photoData,
                 meal: mealType,
-                rating: "0"
+                prep_time: pre_prep_time
             }
             validateFields(body)
             await fetchCreateRecipe(body, user.token)
@@ -225,23 +293,26 @@ export default function NewRecipe() {
     }
 
     const validateFields = (body) => {
-        if (!/^[A-Za-zżźćńółęąśŻŹĆĄŚĘŁÓŃ\s.,?!-()]+$/.test(body.recipe_name)) {
+        if (!/^[A-Za-zżźćńółęąśŻŹĆĄŚĘŁÓŃ\d\s.,?!-()]+$/.test(body.recipe_name)) {
             throw "Wrong recipe name format"
         }
-        if (!/^[A-Za-zżźćńółęąśŻŹĆĄŚĘŁÓŃ\s]+$/.test(body.difficulty)) {
+        if (!/^[A-Za-zżźćńółęąśŻŹĆĄŚĘŁÓŃ\d\s]+$/.test(body.difficulty)) {
             throw "Wrong difficulty format"
         }
-        if (!/^[A-Za-zżźćńółęąśŻŹĆĄŚĘŁÓŃ\s.,?!-()]+$/.test(body.description)) {
+        if (!/^[A-Za-zżźćńółęąśŻŹĆĄŚĘŁÓŃ\d\t\s.,?!-()]+$/.test(body.description)) {
             throw "Wrong description format"
         }
-        if (!/^[A-Za-zżźćńółęąśŻŹĆĄŚĘŁÓŃ\s\d.,?!-()]+$/.test(body.instructions)) {
+        if (!/^[A-Za-zżźćńółęąśŻŹĆĄŚĘŁÓŃ\d\t\s.,?!-()]+$/.test(body.instructions)) {
             throw "Wrong instruction format"
         }
-        if (!/^[A-Za-zżźćńółęąśŻŹĆĄŚĘŁÓŃ\s]+$/.test(body.meal)) {
+        if (!/^[A-Za-zżźćńółęąśŻŹĆĄŚĘŁÓŃ\d\s]+$/.test(body.meal)) {
             throw "Wrong meal type format"
         }
-        if (body.image_url.length == 0) {
+        if (body.image_url.length === 0) {
             throw "You need to attach photo"
+        }
+        if (body.tags.length === 0){
+            throw "You need to attach tags"
         }
     }
 
@@ -277,9 +348,26 @@ export default function NewRecipe() {
                                 <MenuItem value={'BF'}>Breakfast</MenuItem>
                                 <MenuItem value={'LU'}>Lunch</MenuItem>
                                 <MenuItem value={'DN'}>Dinner</MenuItem>
-                                <MenuItem value={'SP'}>Supper</MenuItem>
+                                <MenuItem value={'SU'}>Supper</MenuItem>
                             </Select>
                         </FormControl>
+                        <div className={classes.horizontalDiv}>
+                            <TextField className={classes.textField} label="Time" value={time}
+                                       onChange={(e) => setTime(e.target.value)}></TextField>
+                            <FormControl className={classes.textField}>
+                                <InputLabel id="demo-simple-select-label">Unit</InputLabel>
+                                <Select
+                                    labelId="demo-simple-select-label"
+                                    id="demo-simple-select"
+                                    value={timeUnit}
+                                    onChange={handleChangeTimeUnit}
+                                >
+                                    <MenuItem value={'min'}>Minutes</MenuItem>
+                                    <MenuItem value={'h'}>Hours</MenuItem>
+                                    <MenuItem value={'days'}>Days</MenuItem>
+                                </Select>
+                            </FormControl>
+                        </div>
                         <div className={classes.ingredientsList}>
                             <Typography variant="h6" className={classes.title}>
                                 INGREDIENTS
@@ -288,7 +376,7 @@ export default function NewRecipe() {
                                 {generate()}
                             </List>
                         </div>
-                        <div className={classes.ingredientsDiv}>
+                        <div className={classes.horizontalDiv}>
                             <TextField className={classes.textField} label="Quantity" value={quantity}
                                        onChange={(e) => setQuantity(e.target.value)}></TextField>
                             <FormControl className={classes.textField}>
@@ -318,14 +406,42 @@ export default function NewRecipe() {
                                 <AddIcon/>
                             </Fab>
                         </div>
-                        <TextField className={classes.textField} label="Description" multiline
+                        <TextField className={classes.textField} label="Description" multiline rows={4}
                                    onChange={(e) => setDescription(e.target.value)}></TextField>
-                        <TextField className={classes.textField} label="Instructions" multiline
+                        <TextField className={classes.textField} label="Instructions" multiline rows={4}
                                    onChange={(e) => setInstruction(e.target.value)}></TextField>
                         <div>
                             {
-                                isVisible ? <div className={classes.imageDiv}><img id="barcodeImg" height="200"/></div> : <div></div>
+                                isVisible ?
+                                    <div className={classes.imageDiv}><img id="barcodeImg" height="200" alt=""/></div> :
+                                    <div></div>
                             }
+                        </div>
+                        <div className={classes.horizontalDiv}>
+                            <TextField className={classes.textField} label="Tag" value={tag}
+                                       onChange={(e) => setTag(e.target.value)}></TextField>
+                            <div className={classes.floatingButton}>
+                                <Fab size="small" color="secondary" aria-label="add" className={classes.margin}
+                                     onClick={handleAddTag}>
+                                    <AddIcon/>
+                                </Fab>
+                            </div>
+                        </div>
+                        <div className={classes.tagsDiv}>
+                            {tags.map((data) => {
+                                let icon;
+
+                                return (
+                                    <li key={data.key}>
+                                        <Chip
+                                            icon={icon}
+                                            label={data.label}
+                                            onDelete={handleTagDelete(data)}
+                                            className={classes.tag}
+                                        />
+                                    </li>
+                                );
+                            })}
                         </div>
                         <div>
                             <input
