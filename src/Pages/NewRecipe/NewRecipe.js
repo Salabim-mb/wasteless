@@ -293,16 +293,16 @@ export default function NewRecipe() {
     }
 
     const validateFields = (body) => {
-        if (!/^[A-Za-zżźćńółęąśŻŹĆĄŚĘŁÓŃ\d\s.,?!-()]+$/.test(body.recipe_name)) {
+        if (!/^[A-Za-zżźćńółęąśŻŹĆĄŚĘŁÓŃ\d\s:.,?!-()]+$/.test(body.recipe_name)) {
             throw "Wrong recipe name format"
         }
         if (!/^[A-Za-zżźćńółęąśŻŹĆĄŚĘŁÓŃ\d\s]+$/.test(body.difficulty)) {
             throw "Wrong difficulty format"
         }
-        if (!/^[A-Za-zżźćńółęąśŻŹĆĄŚĘŁÓŃ\d\t\s.,?!-()]+$/.test(body.description)) {
+        if (!/^[A-Za-zżźćńółęąśŻŹĆĄŚĘŁÓŃ\d\t\s:.,?!-()]+$/.test(body.description)) {
             throw "Wrong description format"
         }
-        if (!/^[A-Za-zżźćńółęąśŻŹĆĄŚĘŁÓŃ\d\t\s.,?!-()]+$/.test(body.instructions)) {
+        if (!/^[A-Za-zżźćńółęąśŻŹĆĄŚĘŁÓŃ\d\t\s:.,?!-()]+$/.test(body.instructions)) {
             throw "Wrong instruction format"
         }
         if (!/^[A-Za-zżźćńółęąśŻŹĆĄŚĘŁÓŃ\d\s]+$/.test(body.meal)) {
