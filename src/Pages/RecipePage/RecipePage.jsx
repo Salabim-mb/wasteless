@@ -5,7 +5,6 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-import exampleRecipe from "./exampleRecipe";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Typography from "@material-ui/core/Typography";
 import SignalCellular1BarIcon from '@material-ui/icons/SignalCellular1Bar';
@@ -25,16 +24,14 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
 import {be} from "../../constants/backendSetup";
-import {useParams} from "react-router-dom";
+import {Redirect, useParams} from "react-router-dom";
 import {AlertContext} from "context/AlertContext";
 import {getCORSHeaders} from "../../utils/fetchTools";
 import {UserContext} from "../../context";
 import NewComment from "./components/NewComment";
+import {path_list as paths_list} from "../../constants/routes";
 
 const useStyles = makeStyles((theme) => ({
-    root: {
-        display: 'flex',
-    },
     container: {
         paddingTop: theme.spacing(4),
         paddingBottom: theme.spacing(4),
@@ -81,7 +78,8 @@ export default function RecipePage() {
     const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
     const user = useContext(UserContext);
     const [loading, setLoading] = useState(false);
-    const [recipe, setRecipe] = useState(exampleRecipe);
+    const [redirect, setRedirect] = useState(undefined);
+    const [recipe, setRecipe] = useState([]);
     const {recipe_id} = useParams();
     const recipeId = recipe_id;
     const alertC = useRef(useContext(AlertContext));
@@ -113,7 +111,10 @@ export default function RecipePage() {
 
         if (res.status === 200) {
             return await res.json();
-        } else {
+        } else if (res.status === 401) {
+            alertC.current.showAlert("You have to be logged in to see recipe details", "error");
+            setRedirect(paths_list.LOGIN.route);
+        } else  {
             alertC.current.showAlert("Something went wrong while trying to fetch recipe details", "error");
             throw res.status;
 
@@ -139,51 +140,51 @@ export default function RecipePage() {
                                         <Grid item xs={12} md={6} lg={6}>
                                             <Paper className={fixedHeightPaper}>
                                                 <Typography variant="h4">
-                                                    {recipe.recipe_name}
+                                                    {recipe?.recipe_name}
                                                 </Typography>
                                                 <Grid container spacing={3} className={classes.centered}>
                                                     <Grid item xs={2} sm={2}>
                                                         <Typography component={'span'}>
-                                                            {recipe.difficulty === "BG" ? <h5>Beginner</h5>   : recipe.difficulty === "IT" ? <h5>Intermediate</h5>  : <h5>Advanced</h5>}
+                                                            {recipe?.difficulty === "BG" ? <h5>Beginner</h5>   : recipe?.difficulty === "IT" ? <h5>Intermediate</h5>  : <h5>Advanced</h5>}
                                                         </Typography>
                                                         <Typography>
-                                                            {recipe.difficulty === "BG" ? <SignalCellular1BarIcon /> : recipe.difficulty === "IT" ? <SignalCellular3BarIcon/> : <SignalCellular4BarIcon/>}
+                                                            {recipe?.difficulty === "BG" ? <SignalCellular1BarIcon /> : recipe?.difficulty === "IT" ? <SignalCellular3BarIcon/> : <SignalCellular4BarIcon/>}
                                                         </Typography>
                                                     </Grid>
                                                     <Grid item xs={4} sm={4}>
                                                         <Typography component={'span'}>
-                                                            <h5>{recipe.ratings_num}</h5>
+                                                            <h5>{recipe?.ratings_num}</h5>
                                                         </Typography>
                                                         <Typography>
-                                                            {parseFloat(recipe.rating,10) < parseFloat("0.25",10) ? <StarBorderIcon/> :
-                                                                parseFloat(recipe.rating,10) < parseFloat("0.75",10) ? <StarHalfIcon/> :
+                                                            {parseFloat(recipe?.rating,10) < parseFloat("0.25",10) ? <StarBorderIcon/> :
+                                                                parseFloat(recipe?.rating,10) < parseFloat("0.75",10) ? <StarHalfIcon/> :
                                                                     <StarIcon/>}
-                                                            {parseFloat(recipe.rating,10) < parseFloat("1.25",10) ? <StarBorderIcon/> :
-                                                                parseFloat(recipe.rating,10) < parseFloat("1.75",10) ? <StarHalfIcon/> :
+                                                            {parseFloat(recipe?.rating,10) < parseFloat("1.25",10) ? <StarBorderIcon/> :
+                                                                parseFloat(recipe?.rating,10) < parseFloat("1.75",10) ? <StarHalfIcon/> :
                                                                     <StarIcon/>}
-                                                            {parseFloat(recipe.rating,10) < parseFloat("2.25",10) ? <StarBorderIcon/> :
-                                                                parseFloat(recipe.rating,10) < parseFloat("2.75",10) ? <StarHalfIcon/> :
+                                                            {parseFloat(recipe?.rating,10) < parseFloat("2.25",10) ? <StarBorderIcon/> :
+                                                                parseFloat(recipe?.rating,10) < parseFloat("2.75",10) ? <StarHalfIcon/> :
                                                                     <StarIcon/>}
-                                                            {parseFloat(recipe.rating,10) < parseFloat("3.25",10) ? <StarBorderIcon/> :
-                                                                parseFloat(recipe.rating,10) < parseFloat("3.75",10) ? <StarHalfIcon/> :
+                                                            {parseFloat(recipe?.rating,10) < parseFloat("3.25",10) ? <StarBorderIcon/> :
+                                                                parseFloat(recipe?.rating,10) < parseFloat("3.75",10) ? <StarHalfIcon/> :
                                                                     <StarIcon/>}
-                                                            {parseFloat(recipe.rating,10) < parseFloat("4.25",10) ? <StarBorderIcon/> :
-                                                                parseFloat(recipe.rating,10) < parseFloat("4.75",10) ? <StarHalfIcon/> :
+                                                            {parseFloat(recipe?.rating,10) < parseFloat("4.25",10) ? <StarBorderIcon/> :
+                                                                parseFloat(recipe?.rating,10) < parseFloat("4.75",10) ? <StarHalfIcon/> :
                                                                     <StarIcon/>}
 
                                                         </Typography>
                                                     </Grid>
                                                     <Grid item xs={2} sm={2}>
                                                         <Typography component={'span'}>
-                                                            {recipe.meal === "BF" ? <h5>Breakfast</h5>   : recipe.meal === "LU" ? <h5>Lunch</h5>  : recipe.meal === "DN" ? <h5>Dinner</h5> : <h5>Supper</h5>}
+                                                            {recipe?.meal === "BF" ? <h5>Breakfast</h5>   : recipe?.meal === "LU" ? <h5>Lunch</h5>  : recipe?.meal === "DN" ? <h5>Dinner</h5> : <h5>Supper</h5>}
                                                         </Typography>
                                                         <Typography>
-                                                            {recipe.meal === "BF" ? <FreeBreakfastIcon/>   : recipe.meal === "LU" ?  <WorkIcon/> : recipe.meal === "DN" ? <RestaurantIcon/> : <EmojiFoodBeverageIcon/>}
+                                                            {recipe?.meal === "BF" ? <FreeBreakfastIcon/>   : recipe?.meal === "LU" ?  <WorkIcon/> : recipe?.meal === "DN" ? <RestaurantIcon/> : <EmojiFoodBeverageIcon/>}
                                                         </Typography>
                                                     </Grid>
                                                     <Grid item xs={4} sm={4}>
                                                         <Typography component={'span'}>
-                                                        <h5> {recipe.prep_time}</h5>
+                                                        <h5> {recipe?.prep_time}</h5>
                                                     </Typography>
                                                         <Typography>
                                                             <AccessTimeIcon/>
@@ -195,7 +196,7 @@ export default function RecipePage() {
                                         </Grid>
                                         <Grid item xs={12} md={5} lg={5}>
                                             <div className={classes.centered}>
-                                                <img src={recipe.image_url} className={classes.fixedHeight} />
+                                                <img src={recipe?.image_url} className={classes.fixedHeight} />
                                             </div>
                                         </Grid>
                                         <Grid item xs={12}  md={5}>
@@ -204,23 +205,24 @@ export default function RecipePage() {
                                                 <React.Fragment>
                                                         <Table >
                                                             <TableBody>
-                                                                {/*{recipe.ingredients.map((value, index) => (*/}
-                                                                {/*    <StyledTableRow  key={index}>*/}
-                                                                {/*        <StyledTableCell >{value}</StyledTableCell >*/}
+                                                                {recipe?.ingredients.map((value, index) => (
+                                                                    <StyledTableRow  key={index}>
+                                                                        <StyledTableCell >{value}</StyledTableCell >
 
-                                                                {/*    </StyledTableRow>*/}
-                                                                {/*))}*/}
+                                                                    </StyledTableRow>
+                                                                ))}
                                                             </TableBody>
                                                         </Table>
                                                 </React.Fragment>
                                                 <h5> </h5>
                                             </Paper>
                                         </Grid>
+                                        {redirect && <Redirect to={redirect}/>}
                                         <Grid item xs={12}  md={7}>
                                             <Paper className={classes.paper}>
 
                                                 <Title>Preparation details</Title>
-                                                <Typography>{recipe.instructions}</Typography>
+                                                <Typography>{recipe?.instructions}</Typography>
                                             </Paper>
                                         </Grid>
                                         <Grid item xs={12}>

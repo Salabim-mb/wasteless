@@ -1,12 +1,10 @@
 import {makeStyles} from "@material-ui/core/styles";
 import React, {useContext, useRef} from "react";
-import {Box, Button, Container, CssBaseline, Icon, Paper, TextField, Typography} from "@material-ui/core";
-import {Label} from "@material-ui/icons";
+import {Box, Button, Icon, Paper, TextField} from "@material-ui/core";
 import {Rating} from "@material-ui/lab";
 import {AlertContext, UserContext} from "../../../context";
 import {be} from "../../../constants/backendSetup";
 import {getCORSHeaders} from "../../../utils/fetchTools";
-import {validate} from "@material-ui/pickers";
 
 const useStyles = makeStyles((theme) => ({
     mainDiv: {
@@ -97,7 +95,7 @@ export default function NewComment({id}) {
                 rating: rating,
                 recipe_id: id,
             }
-            validateRating()
+            validateRating();
             await fetchRating(bodyRating, user.token)
             validateComment(comment);
             let bodyComment = {
@@ -106,10 +104,12 @@ export default function NewComment({id}) {
                 recipe_id: id,
                 author_name: user.data.username
             }
-            await fetchComment(bodyComment, user.token)
-            alertC.current.showAlert("Successfully created comment.", "success")
+            await fetchComment(bodyComment, user.token);
+            alertC.current.showAlert("Successfully created comment.", "success");
+            setComment("");
+            setRating(0);
         } catch (err){
-            alertC.current.showAlert(err, "error")
+            alertC.current.showAlert(err, "error");
         }
     }
 
@@ -131,7 +131,7 @@ export default function NewComment({id}) {
                     />
                     {rating !== null && <Box ml={2}>{labels[hover !== -1 ? hover : rating]}</Box>}
                 </div>
-                <TextField className={classes.textField} label="Comment" multiline rows={3} onChange={(e) => setComment(e.target.value)}></TextField>
+                <TextField className={classes.textField} label="Comment" multiline rows={3} value={comment} onChange={(e) => setComment(e.target.value)}></TextField>
                 <div className={classes.publishBtn}>
                     <Button variant="contained" color="primary" endIcon={<Icon>send</Icon>} onClick={handlePublish}>Publish</Button>
                 </div>
