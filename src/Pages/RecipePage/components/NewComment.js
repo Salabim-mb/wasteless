@@ -76,39 +76,38 @@ export default function NewComment({id}) {
         if (!/^[A-Za-zżźćńółęąśŻŹĆĄŚĘŁÓŃ\s.,?!-()]+$/.test(comment)) {
             throw "Wrong comment format"
         }
-        if (user.data?.username === null)
-        {
+        if (user.data?.username === null) {
             throw "You must be logged in"
         }
     }
 
     function validateRating() {
-        if(rating === 0 || rating === null){
+        if (rating === 0 || rating === null) {
             throw "You must add rating"
         }
     }
 
     const handlePublish = async (e) => {
         e.preventDefault();
-        try{
+        try {
             let bodyRating = {
                 rating: rating,
                 recipe_id: id,
             }
-            validateRating();
-            await fetchRating(bodyRating, user.token)
-            validateComment(comment);
             let bodyComment = {
                 date_added: (new Date()).toISOString(),
                 content: comment,
                 recipe_id: id,
                 author_name: user.data.username
             }
+            validateRating();
+            validateComment(comment);
+            await fetchRating(bodyRating, user.token)
             await fetchComment(bodyComment, user.token);
             alertC.current.showAlert("Successfully created comment.", "success");
             setComment("");
             setRating(0);
-        } catch (err){
+        } catch (err) {
             alertC.current.showAlert(err, "error");
         }
     }
@@ -131,9 +130,11 @@ export default function NewComment({id}) {
                     />
                     {rating !== null && <Box ml={2}>{labels[hover !== -1 ? hover : rating]}</Box>}
                 </div>
-                <TextField className={classes.textField} label="Comment" multiline rows={3} value={comment} onChange={(e) => setComment(e.target.value)}></TextField>
+                <TextField className={classes.textField} label="Comment" multiline rows={3} value={comment}
+                           onChange={(e) => setComment(e.target.value)}></TextField>
                 <div className={classes.publishBtn}>
-                    <Button variant="contained" color="primary" endIcon={<Icon>send</Icon>} onClick={handlePublish}>Publish</Button>
+                    <Button variant="contained" color="primary" endIcon={<Icon>send</Icon>}
+                            onClick={handlePublish}>Publish</Button>
                 </div>
             </div>
         </Paper>
