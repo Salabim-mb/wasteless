@@ -7,6 +7,8 @@ import RegisterPage from "../Pages/RegisterPage/RegisterPage";
 import * as path from "path";
 import NewRecipe from "../Pages/NewRecipe/NewRecipe";
 import RecipePage from "../Pages/RecipePage/RecipePage";
+import RecipesList from "../Pages/RecipesList/RecipesList";
+
 
 export const path_list = {
     DASHBOARD: {
@@ -42,6 +44,10 @@ export const path_list = {
         route: "/user/fridge/:fridge_id/new-product",
         redirect: (fridge_id) => `/user/${fridge_id}/new-product`,
         name: "Add product"
+    },
+    RECIPES_LIST: {
+        route: "/recipes",
+        name: "Recipes list"
     },
     NEW_RECIPE: {
         route: "/user/recipe/new-recipe",
@@ -93,6 +99,11 @@ export default [
     {
         path: path_list.RECIPE_PAGE.route,
         component: RecipePage,
+        exact: true
+    },
+    {
+        path: path_list.RECIPES_LIST.route,
+        component: RecipesList,
         exact: true
     },
 ];

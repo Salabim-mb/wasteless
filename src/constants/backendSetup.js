@@ -12,6 +12,7 @@ export const be = {
     RECIPE: `${backend_path}/recipes/`,
     COMMENTS: `${backend_path}/comments/`,
     PROFILE: `${backend_path}/profile/`,
+    RECIPES_LIST: `${backend_path}/recipes`,
 };
 
 export const off_API = `${product_api}/product/`;
