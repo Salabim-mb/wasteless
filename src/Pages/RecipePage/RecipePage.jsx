@@ -80,6 +80,7 @@ export default function RecipePage() {
     const user = useContext(UserContext);
     const [loading, setLoading] = useState(false);
     const [redirect, setRedirect] = useState(undefined);
+    const [reload, setReload] = useState(false);
     const [recipe, setRecipe] = useState([]);
     const {recipe_id} = useParams();
     const recipeId = recipe_id;
@@ -100,7 +101,7 @@ export default function RecipePage() {
             }
         };
         loadRecipe(user.token);
-    }, [user.token]);
+    }, [user.token, reload]);
 
     const getRecipe = async (token) => {
         const headers = getCORSHeaders(token);
@@ -233,7 +234,7 @@ export default function RecipePage() {
                                                 {recipe.comments.map((id) => (
                                                     <RecipeComment key={id} id={id} token={user.token}/>
                                                 ))}
-                                                <NewComment id={recipe_id}/>
+                                                <NewComment id={recipe_id} reload={reload} setReload={setReload}/>
                                             </Paper>
                                         </Grid>
                                     </Grid>

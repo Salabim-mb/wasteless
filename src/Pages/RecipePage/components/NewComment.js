@@ -33,7 +33,7 @@ const labels = {
     5: 'Delicious',
 };
 
-export default function NewComment({id}) {
+export default function NewComment({id, setReload, reload}) {
     const classes = useStyles();
     const user = useContext((UserContext))
     const alertC = useRef(useContext(AlertContext));
@@ -107,6 +107,7 @@ export default function NewComment({id}) {
             alertC.current.showAlert("Successfully created comment.", "success");
             setComment("");
             setRating(0);
+            setReload(!reload);
         } catch (err) {
             alertC.current.showAlert(err, "error");
         }
