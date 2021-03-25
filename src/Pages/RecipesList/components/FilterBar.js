@@ -158,7 +158,7 @@ export default function FilterBar(props) {
     };
 
     function createParams() {
-        let returnValue = "?"
+        let returnValue = "&"
         if (searchValue !== "") {
             returnValue += "name=" + searchValue + "&";
         }
@@ -227,16 +227,19 @@ export default function FilterBar(props) {
     const filterList = async () => {
         props.setLoading(true);
         try {
-            validateParams()
-            let res = await fetchFiltered(user.token);
-            if (res !== null) {
-                await props.setRecipes(res.results);
-                await props.setCount(res.count);
-                await props.setNext(res.next);
-                await props.setPrevious(res.previous);
-            } else {
-                props.setRedirect(path_list.LOGIN.route);
-            }
+            validateParams();
+            console.log("Im in filterbar")
+            let params = createParams();
+            props.setFilterParams(params);
+            // let res = await fetchFiltered(user.token);
+            // if (res !== null) {
+            //     await props.setRecipes(res.results);
+            //     await props.setCount(res.count);
+            //     await props.setNext(res.next);
+            //     await props.setPrevious(res.previous);
+            // } else {
+            //     props.setRedirect(path_list.LOGIN.route);
+            // }
         } catch (err) {
             alertC.current.showAlert(err, "error");
         } finally {

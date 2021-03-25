@@ -73,13 +73,16 @@ export default function RecipesList() {
     const [previous, setPrevious] = useState(null);
     const [recipes, setRecipes] = useState([]);
     const [redirect, setRedirect] = useState(undefined);
+    const [filterParams, setFilterParams] = useState("");
     const [page, setPage] = useState(1);
     const [page_size, setPageSize] = useState(9);
+    const [url, setUrl] = useState((`${be.RECIPE}?page=${page}&page_size=${page_size}`));
 
-    const loadRecipes = async (token) => {
+
+    const loadRecipes = async (token, url) => {
         setLoading(true);
         try {
-            let res = await getRecipes(token);
+            let res = await getRecipes(token, url);
             if (res !== null) {
                 await setRecipes(res.results);
                 await setCount(res.count);
@@ -97,13 +100,16 @@ export default function RecipesList() {
     };
 
     useEffect(() => {
-        loadRecipes(user.token);
-    }, [user.token, page]);
+        setUrl(url + filterParams);
+    }, [filterParams]);
 
-    const getRecipes = async (token) => {
+    useEffect(() => {
+        console.log("qjiofqw");
+        loadRecipes(user.token, url + filterParams);
+    }, [user.token, url]);
+
+    const getRecipes = async (token, url) => {
         const headers = getCORSHeaders(token);
-        // http://wasteless-backend.herokuapp.com/recipes/?page=5&page_size=1
-        const url = be.RECIPE + "?page=" + page + "&page_size=" + page_size;
         let res = await fetch(url, {
             headers,
             method: "GET"
@@ -124,7 +130,7 @@ export default function RecipesList() {
             <CssBaseline/>
             <main>
                 <Container className={classes.cardGrid} maxWidth="md">
-                    <FilterBar setLoading={setLoading} setRecipes={setRecipes} setCount={setCount} setNext={setNext} setPrevious={setPrevious} setRedirect={setRedirect}/>
+                    <FilterBar setLoading={setLoading} setRecipes={setRecipes} setCount={setCount} setNext={setNext} setPrevious={setPrevious} setRedirect={setRedirect} setFilterParams={setFilterParams}/>
                     {
                         loading ? (
                             <div className={classes.centered}>
@@ -251,7 +257,7 @@ export default function RecipesList() {
                                     Back
                                 </Button>
                             ) : (
-                                <Link onClick={() => setPage(page - 1)}>
+                                <Link onClick={() => setUrl(previous)}>
                                     <Button variant="contained" color="primary">
                                         Back
                                     </Button>
@@ -265,7 +271,7 @@ export default function RecipesList() {
                                     Next
                                 </Button>
                             ) : (
-                                <Link onClick={() =>  setPage(page + 1)}>
+                                <Link onClick={() =>  setUrl(next)}>
                                     <Button variant="contained" color="primary">
                                         Next
                                     </Button>
