@@ -2,8 +2,8 @@
 const exampleRecipe = [{
     id: 1,
     recipe_name: "Tost z kurczakiem i jajkiem",
-    ingredients: null,
-    // ingredients: ["pierś z kurczaka", "przyprawa do kurczaka Knorr", "kromka pieczywa tostowego", "sałata lodowa", "majonez", "bekon", "ogórek konserwowy", "pomidor", "jajo", "olej"],
+    //ingredients: null,
+    ingredients: ["pierś z kurczaka", "przyprawa do kurczaka Knorr", "kromka pieczywa tostowego", "sałata lodowa", "majonez", "bekon", "ogórek konserwowy", "pomidor", "jajo", "olej"],
     tags: ["pierś z kurczaka", "przyprawa do kurczaka Knorr", "kromka pieczywa tostowego", "sałata lodowa", "majonez", "bekon", "ogórek konserwowy", "pomidor", "jajo", "olej"],
     difficulty: "BG",
     description: "Idealny zestaw dla porannego głodomora i dla miłośników jajek z bekonem, ale w niecodzienny sposób. Pokochasz to!",

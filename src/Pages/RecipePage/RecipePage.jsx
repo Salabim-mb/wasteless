@@ -29,6 +29,7 @@ import {useParams} from "react-router-dom";
 import {AlertContext} from "context/AlertContext";
 import {getCORSHeaders} from "../../utils/fetchTools";
 import {UserContext} from "../../context";
+import RecipeComment from "./components/RecipeComment";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -207,12 +208,12 @@ export default function RecipePage() {
                                                 <React.Fragment>
                                                         <Table >
                                                             <TableBody>
-                                                                {/*{recipe.ingredients.map((value, index) => (*/}
-                                                                {/*    <StyledTableRow  key={index}>*/}
-                                                                {/*        <StyledTableCell >{value}</StyledTableCell >*/}
+                                                                {recipe.ingredients.map((value, index) => (
+                                                                    <StyledTableRow  key={index}>
+                                                                        <StyledTableCell >{value}</StyledTableCell >
 
-                                                                {/*    </StyledTableRow>*/}
-                                                                {/*))}*/}
+                                                                    </StyledTableRow>
+                                                                ))}
                                                             </TableBody>
                                                         </Table>
                                                 </React.Fragment>
@@ -230,7 +231,9 @@ export default function RecipePage() {
                                             <Paper className={classes.paper}>
 
                                                 <Title>Comments</Title>
-                                                <Typography> </Typography>
+                                                {recipe.comments.map((id) => (
+                                                    <RecipeComment key={id} id={id} token={user.token}/>
+                                                ))}
                                             </Paper>
                                         </Grid>
                                     </Grid>
