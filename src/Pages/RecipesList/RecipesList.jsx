@@ -10,7 +10,6 @@ import {Button, CircularProgress} from "@material-ui/core";
 import {AlertContext, UserContext} from "context";
 import {Redirect} from "react-router-dom";
 import {be} from "../../constants/backendSetup";
-import tileData from './tileData';
 import CardMedia from "@material-ui/core/CardMedia";
 import SignalCellular1BarIcon from '@material-ui/icons/SignalCellular1Bar';
 import SignalCellular3BarIcon from '@material-ui/icons/SignalCellular3Bar';
