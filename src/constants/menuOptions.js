@@ -6,6 +6,7 @@ import KitchenIcon from '@material-ui/icons/Kitchen';
 import React from "react";
 import {handleLogout} from "Pages/MenuBar/components/Logout";
 import DashboardIcon from '@material-ui/icons/Dashboard';
+import PostAddIcon from '@material-ui/icons/PostAdd';
 
 export const mainOptions = [
     {
@@ -18,6 +19,12 @@ export const mainOptions = [
         name: "Recipes",
         icon: <DashboardIcon />,
         path: path_list.RECIPES_LIST,
+        requiresLogin: true,
+    },
+    {
+        name: "Add new recipe",
+        icon: <PostAddIcon />,
+        path: path_list.NEW_RECIPE,
         requiresLogin: true,
     },
 ];
