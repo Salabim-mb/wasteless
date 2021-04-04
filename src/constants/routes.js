@@ -7,6 +7,7 @@ import RegisterPage from "../Pages/RegisterPage/RegisterPage";
 import NewRecipe from "../Pages/NewRecipe/NewRecipe";
 import RecipePage from "../Pages/RecipePage/RecipePage";
 import RecipesList from "../Pages/RecipesList/RecipesList";
+import ResetPassword from "../Pages/ResetPassword/ResetPassword";
 
 
 export const path_list = {
@@ -57,6 +58,10 @@ export const path_list = {
         redirect: (recipe_id) => `/recipes/${recipe_id}`,
         name: "Recipe details"
     },
+    RESET_PASSWORD: {
+        route: "/reset_password",
+        name: "Reset password"
+    },
 }
 
 export default [
@@ -103,6 +108,11 @@ export default [
     {
         path: path_list.RECIPES_LIST.route,
         component: RecipesList,
+        exact: true
+    },
+    {
+        path: path_list.RESET_PASSWORD.route,
+        component: ResetPassword,
         exact: true
     },
 ];

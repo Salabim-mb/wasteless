@@ -13,6 +13,7 @@ export const be = {
     COMMENTS: `${backend_path}/comments/`,
     PROFILE: `${backend_path}/profile/`,
     RECIPES_LIST: `${backend_path}/recipes`,
+    RESET_PASSWORD: `${backend_path}/reset_password`,
 };
 
 export const off_API = `${product_api}/product/`;
