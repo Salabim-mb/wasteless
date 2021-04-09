@@ -1,5 +1,5 @@
 import {makeStyles} from "@material-ui/core/styles";
-import React, {useContext, useRef, useState} from "react";
+import React, {useContext, useEffect, useRef, useState} from "react";
 import {AlertContext, UserContext} from "../../context";
 import {
     Button,
@@ -31,6 +31,7 @@ import {path_list} from "../../constants/routes";
 import {Redirect} from "react-router-dom";
 import {fileToBase64} from "../../utils/fileToBase64";
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
+import Autocomplete from '@material-ui/lab/Autocomplete';
 
 const useStyles = makeStyles((theme) => ({
     mainDiv: {
@@ -86,6 +87,22 @@ const fetchCreateRecipe = async (body, token) => {
     }
 }
 
+async function fetchIngredientsList(token) {
+    const url = be.INGREDIENTS;
+    const headers = getCORSHeaders(token);
+
+    const res = await fetch(url, {
+        headers,
+        method: "GET"
+    });
+
+    if (res.status !== 200) {
+        throw "Couldn't create recipe."
+    }
+
+    return await res.json()
+}
+
 export default function NewRecipe() {
     const classes = useStyles();
     const user = useContext((UserContext))
@@ -106,7 +123,21 @@ export default function NewRecipe() {
     const [photoData, setPhotoData] = useState("");
     const [tag, setTag] = useState("");
     const [tags, setTags] = React.useState([]);
+    const [ingredientsList, setIngredientsList] = useState([]);
 
+    useEffect(() => {
+        loadIngredientList()
+    }, [])
+
+    const loadIngredientList = async () => {
+        try {
+            let res = await fetchIngredientsList(user.token);
+            setIngredientsList(res)
+        } catch(err) {
+            alertC.current.showAlert(err, "error")
+        }
+
+    }
 
     const handleChangeDifficulty = (event) => {
         setDifficulty(event.target.value);
@@ -214,9 +245,12 @@ export default function NewRecipe() {
     const prepareIngredients = () => {
         let prepared = []
         ingredients.forEach((element) => {
-            const unit = element.unit !== "None" ? element.unit : ""
-            const text = element.quantity + " " + unit + " " + element.ingredient;
-            prepared.push(text);
+            const unit = element.unit !== "None" ? element.unit : "";
+            let ingredientList = [];
+            ingredientList.push(element.ingredient);
+            ingredientList.push(element.quantity);
+            ingredientList.push(unit);
+            prepared.push(ingredientList);
         })
         if (prepared.length === 0)
             throw "You have to add ingredients"
@@ -397,8 +431,13 @@ export default function NewRecipe() {
                                     <MenuItem value={'l'}>Liter</MenuItem>
                                 </Select>
                             </FormControl>
-                            <TextField className={classes.textField} label="Ingredient" value={ingredient}
-                                       onChange={(e) => setIngredient(e.target.value)}></TextField>
+                            <Autocomplete
+                                id="combo-box-demo"
+                                options={ingredientsList}
+                                getOptionLabel={(option) => option.ingredient_name}
+                                style={{ width: 300 }}
+                                renderInput={(params) => <TextField {...params} label="Ingredient" variant="outlined" />}
+                            />
                         </div>
                         <div className={classes.floatingButton}>
                             <Fab size="small" color="secondary" aria-label="add" className={classes.margin}
