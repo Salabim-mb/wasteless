@@ -7,7 +7,7 @@ import RegisterPage from "../Pages/RegisterPage/RegisterPage";
 import NewRecipe from "../Pages/NewRecipe/NewRecipe";
 import RecipePage from "../Pages/RecipePage/RecipePage";
 import RecipesList from "../Pages/RecipesList/RecipesList";
-import ResetPassword from "../Pages/ResetPassword/ResetPassword";
+import SendResetEmail from "../Pages/ResetPassword/SendResetEmail";
 
 
 export const path_list = {
@@ -112,7 +112,7 @@ export default [
     },
     {
         path: path_list.RESET_PASSWORD.route,
-        component: ResetPassword,
+        component: SendResetEmail,
         exact: true
     },
 ];

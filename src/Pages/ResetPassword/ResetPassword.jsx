@@ -1,40 +1,88 @@
-import React, {useContext, useState, useRef} from 'react';
+import React, {useContext, useRef, useState} from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
-import Link from '@material-ui/core/Link';
-import Grid from '@material-ui/core/Grid';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import PersonIcon from '@material-ui/icons/Person';
 import Typography from '@material-ui/core/Typography';
 import {makeStyles} from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Card from "@material-ui/core/Card";
-import {be} from "constants/backendSetup.js";
-import {getCORSHeaders} from "utils/fetchTools";
 import {Redirect} from "react-router-dom";
-import {path_list as paths_list} from "constants/routes";
+import {path_list} from "constants/routes";
 import {AlertContext} from "context/AlertContext";
+import {getCORSHeaders} from "../../utils/fetchTools";
+import {UserContext} from "../../context";
+import {be} from "../../constants/backendSetup";
 
+const validatePassword = (password) => {
+    if (password.length < 8  || !/^[a-zA-Z0-9!@#$%&*]+$/.test(password) ) {
+        throw "Password must be at least 8 characters long and contain only letters, numbers, and !/@/#/$/%/&/* characters."
+    }
+}
+const validateUsername = (username) => {
+    if (!/^[\w.@+-]+$/.test(username)){
+        throw "Username may only contain letters, numbers, and @/./+/-/_ characters"
+    }
+}
 
-const requestSendingEmail = async (data) => {
-    let url = `${be.RESET_PASSWORD}`;
-    let headers = getCORSHeaders();
+function validateEmail(email)
+{
+    if( !/\S+@\S+\.\S+/.test(email)){
+        throw "Invalid email address"
+    }
+}
 
-    let res = await fetch(url, {
-        method: "POST",
+function validateInput(username, email, password, repeatPassword){
+    if( username === ""){
+        throw "Please enter a username"
+    }
+    if( email === ""){
+        throw "Please enter an email"
+    }
+    if( password !== repeatPassword){
+        throw "Passwords are not identical"
+    }
+    validateEmail(email)
+    validateUsername(username)
+    validatePassword(password)
+}
+
+const register = async (data) => {
+    const url = `${be.REGISTER}`;
+    const headers = getCORSHeaders()
+
+    const res = await fetch(url, {
         headers,
-        body: JSON.stringify({
-            "email": data.email,
-        })
+        method: "POST",
+        body: JSON.stringify(data)
     });
-    if (res.status === 200 || res.status === 201) {
+
+    if (res.status === 201) {
+        return await res.json();
+    } else {
+        let response = await res.text()
+        console.log(response)
+        
+        throw "An unexpected error occured"
+    }
+}
+
+const log_in = async (credentials) => {
+    const url = `${be.LOGIN}`;
+    const headers = getCORSHeaders()
+    const res = await fetch(url, {
+        headers,
+        method: "POST",
+        body: JSON.stringify(credentials)
+    });
+
+    if (res.status === 200) {
         return await res.json();
     } else {
         throw res.status;
     }
-};
-
+}
 
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -56,41 +104,48 @@ const useStyles = makeStyles((theme) => ({
         margin: theme.spacing(3, 0, 2),
     },
     card: {
-        boxShadow: '0 1px 1px 1px lightblue',
-        marginTop: theme.spacing(5),
+        boxShadow: '0 1px 1px 1px lightblue'
     },
 }));
 
-export default function ResetPassword() {
-
-    const [data, setData] = useState({
-        email: "",
-    });
+const ResetPassword = () => {
     const classes = useStyles();
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const [repeatPassword, setRepeatPassword] = useState("");
+    const [redirect, setRedirect] = useState(undefined);
     const [disabled, setDisabled] = useState(false);
     const [validated, setValidated] = useState("false");
-    const [redirect, setRedirect] = useState(undefined);
     const alertC = useRef(useContext(AlertContext));
+    const user = useContext(UserContext);
 
-    const submitForm = async (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        setValidated("true");
-        if (e.currentTarget.checkValidity() === false) {
-            e.stopPropagation();
-        } else {
-            setDisabled(true);
+        try {
+            validateInput(password,repeatPassword);
+            let response = await register({username: username, password: password});
+            alertC.current.showAlert("Password changed successfully!", "success");
             try {
-                await requestSendingEmail(data);
-                alertC.current.showAlert("If given adress is correct, reset email have been sent to your mailbox", "success");
+                let {token, first_name, last_name} = await log_in({username: username, password: password});
+                user.login(token, {
+                    first_name: first_name,
+                    last_name: last_name,
+                    email: email,
+                    username: username
+                });
+                setRedirect(path_list.PROFILE.route);
             } catch(e) {
-                console.log(e);
-                alertC.current.showAlert("Something went wrong while trying to send reset email. Try again", "error");
+                alertC.current.showAlert("Something went wrong while trying to reset password", "error");
             } finally {
-                setDisabled(false);
-            }
-        }
-    }
 
+            }
+
+        } catch(e) {
+            alertC.current.showAlert(e, "error");
+        } finally {
+
+        }
+    };
 
     return (
         <Container component="main" maxWidth="xs">
@@ -98,24 +153,37 @@ export default function ResetPassword() {
                 <CssBaseline/>
                 <div className={classes.paper}>
                     <Avatar className={classes.avatar}>
-                        <LockOutlinedIcon />
+                        <PersonIcon />
                     </Avatar>
                     <Typography component="h1" variant="h5">
                         Reset your password
                     </Typography>
-                    <form className={classes.form} noValidate validated={validated} onSubmit={submitForm}>
+                    <form className={classes.form} noValidate validated={validated} onSubmit={handleSubmit}>
                         <TextField
                             variant="outlined"
                             margin="normal"
                             required
                             fullWidth
-                            id="email"
-                            label="Email"
-                            name="email"
-                            autoComplete="email"
-                            autoFocus
-                            value={data.email}
-                            onChange={e => setData({...data, email: e.target.value})}
+                            name="password"
+                            label="Password"
+                            type="password"
+                            id="password"
+                            autoComplete="current-password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                        />
+                        <TextField
+                            variant="outlined"
+                            margin="normal"
+                            required
+                            fullWidth
+                            name="repeat_password"
+                            label="Repeat password"
+                            type="password"
+                            id="repeat_password"
+                            autoComplete="repeat-password"
+                            value={repeatPassword}
+                            onChange={(e) => setRepeatPassword(e.target.value)}
                         />
                         {redirect && <Redirect to={redirect}/>}
                         <Button
@@ -126,24 +194,13 @@ export default function ResetPassword() {
                             className={classes.submit}
                             disabled={disabled}
                         >
-                            {disabled ? "Loading..." : "Send reset email"}
+                            {disabled ? "Loading..." : "Reset password"}
                         </Button>
-                        <Grid container>
-                            <Grid item xs>
-                                <Link variant="body2" onClick={() => setRedirect(paths_list.LOGIN.route)}>
-                                    Login page
-                                </Link>
-                            </Grid>
-                            <Grid item>
-                                <Link variant="body2" onClick={() => setRedirect(paths_list.REGISTER.route)}>
-                                    Don't have an account? Sign Up
-                                </Link>
-
-                            </Grid>
-                        </Grid>
                     </form>
                 </div>
             </Card>
         </Container>
     );
-}
+};
+
+export default ResetPassword;
