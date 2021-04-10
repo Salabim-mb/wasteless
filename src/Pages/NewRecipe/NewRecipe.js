@@ -248,7 +248,7 @@ export default function NewRecipe() {
                 throw "Wrong quantity format"
             }
             if (!/^[A-Za-zżźćńółęąśŻŹĆĄŚĘŁÓŃ\s]+$/.test(ingredient)) {
-                throw "Wrong ingredient format"
+                throw "Wrong ingredient format. Remember to add ingredient if it isn't on list."
             }
 
             const formula = {
