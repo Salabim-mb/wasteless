@@ -305,6 +305,9 @@ export default function NewRecipe() {
         tags.forEach((e) => {
             prepared.push(e.label)
         })
+        if (parseInt(time) < 20 && timeUnit === "min" && !prepared.includes("quick")){
+            prepared.push("quick")
+        }
         return prepared
     }
 
@@ -475,14 +478,17 @@ export default function NewRecipe() {
                                         // timeout to avoid instant validation of the dialog's form.
                                         setIngredient(newValue.ingredient_name)
                                     } else if (newValue) {
-                                        try{
+                                        try {
                                             if (!/^[A-Za-zżźćńółęąśŻŹĆĄŚĘŁÓŃ\s]+$/.test(newValue.ingredient_name)) {
                                                 throw "Wrong ingredient format"
                                             }
-                                            await fetchNewIngredient(user.token, newValue.ingredient_name)
-                                            setIngredient(newValue.ingredient_name)
+                                            if (ingredientsList.filter((e) => e.ingredient_name === newValue.ingredient_name.toLowerCase()).length !== 0) {
+                                                throw "Ingredient already on list"
+                                            }
+                                            await fetchNewIngredient(user.token, newValue.ingredient_name.toLowerCase())
+                                            setIngredient(newValue.ingredient_name.toLowerCase())
                                             loadIngredientList();
-                                        } catch (err){
+                                        } catch (err) {
                                             alertC.current.showAlert(err, "error")
                                         }
                                     } else {
