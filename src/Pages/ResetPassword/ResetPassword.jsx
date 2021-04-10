@@ -1,4 +1,4 @@
-import React, {useContext, useRef, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -8,48 +8,34 @@ import Typography from '@material-ui/core/Typography';
 import {makeStyles} from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Card from "@material-ui/core/Card";
-import {Redirect} from "react-router-dom";
-import {path_list} from "constants/routes";
+import {Redirect, useParams} from "react-router-dom";
+import {path_list as paths_list, path_list} from "constants/routes";
 import {AlertContext} from "context/AlertContext";
 import {getCORSHeaders} from "../../utils/fetchTools";
-import {UserContext} from "../../context";
 import {be} from "../../constants/backendSetup";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 const validatePassword = (password) => {
-    if (password.length < 8  || !/^[a-zA-Z0-9!@#$%&*]+$/.test(password) ) {
+    if (password.length < 8 || !/^[a-zA-Z0-9!@#$%&*]+$/.test(password)) {
         throw "Password must be at least 8 characters long and contain only letters, numbers, and !/@/#/$/%/&/* characters."
     }
 }
-const validateUsername = (username) => {
-    if (!/^[\w.@+-]+$/.test(username)){
-        throw "Username may only contain letters, numbers, and @/./+/-/_ characters"
-    }
-}
 
-function validateEmail(email)
-{
-    if( !/\S+@\S+\.\S+/.test(email)){
-        throw "Invalid email address"
-    }
-}
 
-function validateInput(username, email, password, repeatPassword){
-    if( username === ""){
-        throw "Please enter a username"
-    }
-    if( email === ""){
-        throw "Please enter an email"
-    }
-    if( password !== repeatPassword){
+function validateInput(password, repeatPassword) {
+    if (password !== repeatPassword) {
         throw "Passwords are not identical"
     }
-    validateEmail(email)
-    validateUsername(username)
-    validatePassword(password)
+    try {
+        validatePassword(password);
+    } catch (e) {
+        throw e;
+    }
+
 }
 
-const register = async (data) => {
-    const url = `${be.REGISTER}`;
+const resetPassword = async (data) => {
+    const url = `${be.RESET_PASSWORD}`;
     const headers = getCORSHeaders()
 
     const res = await fetch(url, {
@@ -61,28 +47,13 @@ const register = async (data) => {
     if (res.status === 201) {
         return await res.json();
     } else {
-        let response = await res.text()
-        console.log(response)
-        
+        let response = await res.text();
+        console.log(response);
+
         throw "An unexpected error occured"
     }
 }
 
-const log_in = async (credentials) => {
-    const url = `${be.LOGIN}`;
-    const headers = getCORSHeaders()
-    const res = await fetch(url, {
-        headers,
-        method: "POST",
-        body: JSON.stringify(credentials)
-    });
-
-    if (res.status === 200) {
-        return await res.json();
-    } else {
-        throw res.status;
-    }
-}
 
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -106,42 +77,75 @@ const useStyles = makeStyles((theme) => ({
     card: {
         boxShadow: '0 1px 1px 1px lightblue'
     },
+    centered: {
+        justifyContent: 'center',
+        textAlign: 'center',
+    },
 }));
 
-const ResetPassword = () => {
+export default function ResetPassword() {
     const classes = useStyles();
-    const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [repeatPassword, setRepeatPassword] = useState("");
     const [redirect, setRedirect] = useState(undefined);
     const [disabled, setDisabled] = useState(false);
     const [validated, setValidated] = useState("false");
     const alertC = useRef(useContext(AlertContext));
-    const user = useContext(UserContext);
+    const {reset_token} = useParams();
+    const resetToken = reset_token;
+    const [isTokenValid, setIsTokenValid] = useState(false);
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        const validateToken = async (resetToken) => {
+            setLoading(true);
+            try {
+                let res = await fetchValidateToken(resetToken);
+            } catch (e) {
+                alertC.current.showAlert("Wrong address, redirecting to dashboard...", "error");
+                setRedirect(paths_list.DASHBOARD.route);
+            } finally {
+                setLoading(false);
+            }
+        };
+        validateToken(resetToken);
+    }, [reset_token]);
+
+
+    const fetchValidateToken = async (resetToken) => {
+        const url = `${be.VALIDATE_RESET_TOKEN}`;
+        const headers = getCORSHeaders()
+
+        const res = await fetch(url, {
+            headers,
+            method: "POST",
+            body: JSON.stringify({
+                "token": resetToken,
+            })
+        });
+
+        if (res.status === 200) {
+            setIsTokenValid(true);
+        } else {
+            setIsTokenValid(false);
+            throw res.body;
+        }
+        return isTokenValid;
+    }
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        try {
-            validateInput(password,repeatPassword);
-            let response = await register({username: username, password: password});
-            alertC.current.showAlert("Password changed successfully!", "success");
-            try {
-                let {token, first_name, last_name} = await log_in({username: username, password: password});
-                user.login(token, {
-                    first_name: first_name,
-                    last_name: last_name,
-                    email: email,
-                    username: username
-                });
-                setRedirect(path_list.PROFILE.route);
-            } catch(e) {
-                alertC.current.showAlert("Something went wrong while trying to reset password", "error");
-            } finally {
-
-            }
-
-        } catch(e) {
+        try{
+            validateInput(password, repeatPassword);
+        } catch (e) {
             alertC.current.showAlert(e, "error");
+        }
+        try {
+            let res = await resetPassword({token: resetToken, password: password});
+            alertC.current.showAlert("Password changed successfully!", "success");
+            setRedirect(path_list.LOGIN.route);
+        } catch (e) {
+            alertC.current.showAlert("Something went wrong while trying to reset password. Try generate new reset link", "error");
         } finally {
 
         }
@@ -149,58 +153,70 @@ const ResetPassword = () => {
 
     return (
         <Container component="main" maxWidth="xs">
-            <Card className={classes.card}>
-                <CssBaseline/>
-                <div className={classes.paper}>
-                    <Avatar className={classes.avatar}>
-                        <PersonIcon />
-                    </Avatar>
-                    <Typography component="h1" variant="h5">
-                        Reset your password
-                    </Typography>
-                    <form className={classes.form} noValidate validated={validated} onSubmit={handleSubmit}>
-                        <TextField
-                            variant="outlined"
-                            margin="normal"
-                            required
-                            fullWidth
-                            name="password"
-                            label="Password"
-                            type="password"
-                            id="password"
-                            autoComplete="current-password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                        />
-                        <TextField
-                            variant="outlined"
-                            margin="normal"
-                            required
-                            fullWidth
-                            name="repeat_password"
-                            label="Repeat password"
-                            type="password"
-                            id="repeat_password"
-                            autoComplete="repeat-password"
-                            value={repeatPassword}
-                            onChange={(e) => setRepeatPassword(e.target.value)}
-                        />
-                        {redirect && <Redirect to={redirect}/>}
-                        <Button
-                            type="submit"
-                            fullWidth
-                            variant="contained"
-                            color="primary"
-                            className={classes.submit}
-                            disabled={disabled}
-                        >
-                            {disabled ? "Loading..." : "Reset password"}
-                        </Button>
-                    </form>
-                </div>
-            </Card>
+            {
+                loading ? (
+                    <div className={classes.centered}>
+                        <CircularProgress/>
+                    </div>
+                ) : (
+                    isTokenValid ? (
+                        <Card className={classes.card}>
+                            <CssBaseline/>
+                            <div className={classes.paper}>
+                                <Avatar className={classes.avatar}>
+                                    <PersonIcon/>
+                                </Avatar>
+                                <Typography component="h1" variant="h5">
+                                    Reset your password
+                                </Typography>
+                                <form className={classes.form} noValidate validated={validated} onSubmit={handleSubmit}>
+                                    <TextField
+                                        variant="outlined"
+                                        margin="normal"
+                                        required
+                                        fullWidth
+                                        name="password"
+                                        label="Password"
+                                        type="password"
+                                        id="password"
+                                        autoComplete="current-password"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                    />
+                                    <TextField
+                                        variant="outlined"
+                                        margin="normal"
+                                        required
+                                        fullWidth
+                                        name="repeat_password"
+                                        label="Repeat password"
+                                        type="password"
+                                        id="repeat_password"
+                                        autoComplete="repeat-password"
+                                        value={repeatPassword}
+                                        onChange={(e) => setRepeatPassword(e.target.value)}
+                                    />
+                                    {redirect && <Redirect to={redirect}/>}
+                                    <Button
+                                        type="submit"
+                                        fullWidth
+                                        variant="contained"
+                                        color="primary"
+                                        className={classes.submit}
+                                        disabled={disabled}
+                                    >
+                                        {disabled ? "Loading..." : "Reset password"}
+                                    </Button>
+                                </form>
+                            </div>
+                        </Card>
+                    ) : (
+                        <div>
+                            {redirect && <Redirect to={redirect}/>}
+                        </div>
+
+                    )
+                )}
         </Container>
     );
 };
-
-export default ResetPassword;

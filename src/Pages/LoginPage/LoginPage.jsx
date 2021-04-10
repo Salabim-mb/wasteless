@@ -154,7 +154,7 @@ export default function LoginPage() {
                         </Button>
                         <Grid container>
                             <Grid item xs>
-                                <Link variant="body2" onClick={() => setRedirect(paths_list.RESET_PASSWORD.route)}>
+                                <Link variant="body2" onClick={() => setRedirect(paths_list.RESET_PASSWORD_REQUEST.route)}>
                                     Forgot password?
                                 </Link>
                             </Grid>

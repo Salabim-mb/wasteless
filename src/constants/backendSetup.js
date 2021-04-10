@@ -13,7 +13,9 @@ export const be = {
     COMMENTS: `${backend_path}/comments/`,
     PROFILE: `${backend_path}/profile/`,
     RECIPES_LIST: `${backend_path}/recipes`,
-    RESET_PASSWORD: `${backend_path}/reset_password`,
+    REQUEST_RESET_EMAIL: `${backend_path}/password-reset`,
+    VALIDATE_RESET_TOKEN: `${backend_path}/password-reset/validate_token`,
+    RESET_PASSWORD: `${backend_path}/password-reset/confirm`,
 };
 
 export const off_API = `${product_api}/product/`;

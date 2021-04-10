@@ -18,7 +18,7 @@ import {AlertContext} from "context/AlertContext";
 
 
 const requestSendingEmail = async (data) => {
-    let url = `${be.RESET_PASSWORD}`;
+    let url = `${be.REQUEST_RESET_EMAIL}`;
     let headers = getCORSHeaders();
 
     let res = await fetch(url, {
@@ -81,7 +81,7 @@ export default function SendResetEmail() {
             setDisabled(true);
             try {
                 await requestSendingEmail(data);
-                alertC.current.showAlert("If given adress is correct, reset email have been sent to your mailbox", "success");
+                alertC.current.showAlert("If given address is correct, reset email have been sent to your mailbox", "success");
             } catch(e) {
                 console.log(e);
                 alertC.current.showAlert("Something went wrong while trying to send reset email. Try again", "error");

@@ -8,6 +8,7 @@ import NewRecipe from "../Pages/NewRecipe/NewRecipe";
 import RecipePage from "../Pages/RecipePage/RecipePage";
 import RecipesList from "../Pages/RecipesList/RecipesList";
 import SendResetEmail from "../Pages/ResetPassword/SendResetEmail";
+import ResetPassword from "../Pages/ResetPassword/ResetPassword";
 
 
 export const path_list = {
@@ -58,10 +59,15 @@ export const path_list = {
         redirect: (recipe_id) => `/recipes/${recipe_id}`,
         name: "Recipe details"
     },
-    RESET_PASSWORD: {
+    RESET_PASSWORD_REQUEST: {
         route: "/reset_password",
-        name: "Reset password"
+        name: "Send reset password email"
     },
+    RESET_PASSWORD: {
+        route: "/reset_password/:reset_token",
+        redirect: (reset_token) => `/reset_password/${reset_token}`,
+        name: "Reset password"
+    }
 }
 
 export default [
@@ -111,8 +117,13 @@ export default [
         exact: true
     },
     {
-        path: path_list.RESET_PASSWORD.route,
+        path: path_list.RESET_PASSWORD_REQUEST.route,
         component: SendResetEmail,
+        exact: true
+    },
+    {
+        path: path_list.RESET_PASSWORD.route,
+        component: ResetPassword,
         exact: true
     },
 ];
