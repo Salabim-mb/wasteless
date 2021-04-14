@@ -114,14 +114,14 @@ const ProductDataForm = ({data, setData, barcode}) => {
     }, [barcode]);
 
     useEffect(() => {
-        loadIngredientList();
+        loadCategoryList();
     }, [])
 
     useEffect(()=>{
         setData({...data, category: category})
     },[category])
 
-    const loadIngredientList = async () => {
+    const loadCategoryList = async () => {
         try {
             let res = await fetchCategoryList(user.token);
             res.forEach((e) => e.title = e.ingredient_name)
@@ -246,7 +246,7 @@ const ProductDataForm = ({data, setData, barcode}) => {
                                     }
                                     await fetchNewCategory(user.token, newValue?.ingredient_name?.toLowerCase())
                                     setCategory(newValue?.ingredient_name?.toLowerCase())
-                                    loadIngredientList();
+                                    loadCategoryList();
                                 } catch (err) {
                                     alertC.current.showAlert(err, "error")
                                 }
