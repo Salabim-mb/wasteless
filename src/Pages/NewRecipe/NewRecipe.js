@@ -474,19 +474,19 @@ export default function NewRecipe() {
                             <Autocomplete
                                 freeSolo
                                 onChange={async (event, newValue) => {
-                                    if (newValue && newValue.id) {
+                                    if (newValue && newValue?.id) {
                                         // timeout to avoid instant validation of the dialog's form.
-                                        setIngredient(newValue.ingredient_name)
+                                        setIngredient(newValue?.ingredient_name)
                                     } else if (newValue) {
                                         try {
-                                            if (!/^[A-Za-zżźćńółęąśŻŹĆĄŚĘŁÓŃ\s]+$/.test(newValue.ingredient_name)) {
+                                            if (!/^[A-Za-zżźćńółęąśŻŹĆĄŚĘŁÓŃ\s]+$/.test(newValue?.ingredient_name)) {
                                                 throw "Wrong ingredient format"
                                             }
-                                            if (ingredientsList.filter((e) => e.ingredient_name === newValue.ingredient_name.toLowerCase()).length !== 0) {
+                                            if (ingredientsList.filter((e) => e.ingredient_name === newValue?.ingredient_name?.toLowerCase()).length !== 0) {
                                                 throw "Ingredient already on list"
                                             }
-                                            await fetchNewIngredient(user.token, newValue.ingredient_name.toLowerCase())
-                                            setIngredient(newValue.ingredient_name.toLowerCase())
+                                            await fetchNewIngredient(user.token, newValue?.ingredient_name?.toLowerCase())
+                                            setIngredient(newValue?.ingredient_name?.toLowerCase())
                                             loadIngredientList();
                                         } catch (err) {
                                             alertC.current.showAlert(err, "error")
@@ -509,7 +509,13 @@ export default function NewRecipe() {
                                     return filtered;
                                 }}
                                 options={ingredientsList}
-                                getOptionLabel={(option) => option.title}
+                                getOptionLabel={(option) => {
+                                    try {
+                                        return option.title
+                                    } catch (e) {
+                                        console.log(e)
+                                    }
+                                }}
                                 className={classes.textField}
                                 renderInput={(params) => <TextField {...params} label="Ingredient" variant="outlined"/>}
                             />
