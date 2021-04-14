@@ -52,7 +52,7 @@ const useStyles = makeStyles((theme) => ({
         margin: theme.spacing(1),
         marginLeft: theme.spacing(3)
     },
-    modalPaper: {
+    modalPaper1: {
         position: 'absolute',
         width: "60%",
         backgroundColor: theme.palette.background.paper,
@@ -62,6 +62,12 @@ const useStyles = makeStyles((theme) => ({
         top: "25%",
         left: "35%",
         transform: `translate(-20%, -40%)`,
+    },
+    modalPaper: {
+        margin: theme.spacing(4),
+        padding: theme.spacing(3),
+        justifyContent: "center",
+        textAlign: "center"
     },
     searchDiv: {
         justifyContent: "center",
@@ -84,9 +90,6 @@ const useStyles = makeStyles((theme) => ({
         padding: theme.spacing(0.5),
         margin: 0,
     },
-    flex: {
-        margin: theme.spacing(3)
-    },
     mainGrid: {
         justifyContent: "center",
         textAlign: "center",
@@ -95,7 +98,7 @@ const useStyles = makeStyles((theme) => ({
     },
     itemGrid: {
         margin: theme.spacing(1)
-    }
+    },
 }))
 
 export default function FilterBar(props) {
@@ -132,7 +135,6 @@ export default function FilterBar(props) {
             firstUpdate.current = false;
             return;
         }
-        console.log(quickFilter)
         filterList();
     }, [sort, open, quickFilter])
 
@@ -299,9 +301,9 @@ export default function FilterBar(props) {
     }
 
     const body = (
-        <div className={classes.modalPaper}>
-            <div className={classes.flex}>
-                <div className={classes.modalDiv}>
+        <Paper className={classes.modalPaper}>
+            <Grid container className={classes.mainGrid}>
+                <Grid item xs={12} sm={4} className={classes.itemGrid}>
                     <Typography variant="h6" className={classes.title}>
                         DIFFICULTY
                     </Typography>
@@ -319,8 +321,8 @@ export default function FilterBar(props) {
                             <MenuItem value={'AD'}>Advanced</MenuItem>
                         </Select>
                     </FormControl>
-                </div>
-                <div className={classes.modalDiv}>
+                </Grid>
+                <Grid item xs={12} sm={4} className={classes.itemGrid}>
                     <Typography variant="h6" className={classes.title}>
                         TAGS
                     </Typography>
@@ -350,8 +352,8 @@ export default function FilterBar(props) {
                             );
                         })}
                     </div>
-                </div>
-                <div className={classes.modalDiv}>
+                </Grid>
+                <Grid item xs={12} sm={4} className={classes.itemGrid}>
                     <Typography variant="h6" className={classes.title}>
                         INGREDIENTS
                     </Typography>
@@ -381,8 +383,8 @@ export default function FilterBar(props) {
                             );
                         })}
                     </div>
-                </div>
-                <div className={classes.modalDiv}>
+                </Grid>
+                <Grid item xs={12} sm={4} className={classes.itemGrid}>
                     <Typography variant="h6" className={classes.title}>
                         TYPE
                     </Typography>
@@ -401,13 +403,13 @@ export default function FilterBar(props) {
                             <MenuItem value={'SP'}>Supper</MenuItem>
                         </Select>
                     </FormControl>
-                </div>
-            </div>
-            <div className={classes.filterBtn}>
-                <Button variant="contained" color="primary" endIcon={<Icon>save</Icon>}
-                        onClick={handleSave}>Save</Button>
-            </div>
-        </div>
+                </Grid>
+            </Grid>
+            {/*<div className={classes.filterBtn}>*/}
+            {/*    <Button variant="contained" color="primary" endIcon={<Icon>save</Icon>}*/}
+            {/*            onClick={handleSave}>Save</Button>*/}
+            {/*</div>*/}
+        </Paper>
     );
 
     const addTag = async (e) => {
