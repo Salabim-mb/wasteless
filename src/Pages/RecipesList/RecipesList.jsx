@@ -178,7 +178,50 @@ export default function RecipesList() {
             <main>
                 <Container className={classes.cardGrid} maxWidth="md">
                     <FilterBar setLoading={setLoading} setFilterParams={setFilterParams}/>
-
+                    <Paper>
+                        <BottomNavigation
+                            value={navValue}
+                            onChange={(event, newValue) => {
+                                setNavValue(newValue);
+                                if (newValue === 'all') {
+                                    setRecommendation(false);
+                                    setUrl(`${be.RECIPE}?page=${page}&page_size=${page_size}`);
+                                } else if(newValue === 'urgent_recommend') {
+                                    setChosenRecommendationWay('urgent/');
+                                    setRecommendation(true);
+                                    setUrl(`${be.PROFILE}urgent/${fridges[tabValue].id}?page=${page}&page_size=${page_size}`);
+                                } else {
+                                    setChosenRecommendationWay('recommend/');
+                                    setRecommendation(true);
+                                    setUrl(`${be.PROFILE}recommend/${fridges[tabValue].id}?page=${page}&page_size=${page_size}`);
+                                }
+                            }}
+                            showLabels
+                            className={recommendation ? classes.root : classes.tabs}
+                        >
+                            <BottomNavigationAction label="All recipes" value="all" icon={<ReceiptIcon />} />
+                            <BottomNavigationAction label="Urgent recipes" value="urgent_recommend" icon={<HourglassEmptyIcon />} />
+                            <BottomNavigationAction label="Recommended recipes" value="recommend" icon={<TimerIcon />} />
+                        </BottomNavigation>
+                        {
+                            recommendation ? (<Paper>
+                                    <Tabs
+                                        value={tabValue}
+                                        indicatorColor="primary"
+                                        textColor="primary"
+                                        onChange={(event, newValue) => {
+                                            setTabValue(newValue);
+                                            setUrl(`${be.PROFILE}${chosenRecommendationWay}${fridges[newValue].id}?page=${page}&page_size=${page_size}`);
+                                        }}
+                                        className={classes.tabs}
+                                    >
+                                        {fridges.map((fridge, idxFridge) => (
+                                            <Tab label={fridge.fridge_name} value={idxFridge}/>
+                                            ))}
+                                    </Tabs>
+                            </Paper> ): (<Paper> </Paper>)
+                        }
+                    </Paper>
                     {
                         loading ? (
                             <div className={classes.progress}>
