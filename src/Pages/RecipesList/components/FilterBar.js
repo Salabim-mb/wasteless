@@ -26,7 +26,7 @@ import {path_list} from "../../../constants/routes";
 const useStyles = makeStyles((theme) => ({
     mainDiv: {
         margin: theme.spacing(3),
-        marginBottom: theme.spacing(8),
+        marginBottom: theme.spacing(4),
         paddingBottom: theme.spacing(1),
         textAlign: "left",
         display: "flex"
