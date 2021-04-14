@@ -46,9 +46,9 @@ const useStyles = makeStyles((theme) => ({
         flexGrow: 1,
     },
     fab: {
-        position: "absolute",
-        bottom: theme.spacing(2),
-        right: theme.spacing(2),
+        position: "fixed",
+        bottom: theme.spacing(1.5),
+        right: theme.spacing(8),
     },
     extendedIcon: {
         marginRight: theme.spacing(1),
@@ -205,7 +205,7 @@ export default function Album() {
                                 </Grid>
                                 <Fab onClick={() => setRedirect(true)} className={classes.fab} variant="extended" color="secondary">
                                    <AddIcon className={classes.extendedIcon} />
-                                   Add product
+                                   Add
                                 </Fab>
                             </>
                         )
