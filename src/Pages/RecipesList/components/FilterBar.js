@@ -29,22 +29,8 @@ import FastfoodIcon from '@material-ui/icons/Fastfood';
 import ClearIcon from '@material-ui/icons/Clear';
 
 const useStyles = makeStyles((theme) => ({
-    mainDiv: {
-        margin: theme.spacing(3),
-        marginBottom: theme.spacing(8),
-        paddingBottom: theme.spacing(1),
-        textAlign: "left",
-        display: "block"
-    },
     textField: {
         width: "100%",
-    },
-    iconButton: {
-        padding: 10,
-    },
-    sorting: {
-        width: "40%",
-        justifyContent: "center"
     },
     filterBtn: {
         textAlign: "center",
@@ -52,32 +38,11 @@ const useStyles = makeStyles((theme) => ({
         margin: theme.spacing(1),
         marginLeft: theme.spacing(3)
     },
-    modalPaper1: {
-        position: 'absolute',
-        width: "60%",
-        backgroundColor: theme.palette.background.paper,
-        border: '2px solid #000',
-        boxShadow: theme.shadows[5],
-        padding: theme.spacing(2, 4, 3),
-        top: "25%",
-        left: "35%",
-        transform: `translate(-20%, -40%)`,
-    },
     modalPaper: {
         margin: theme.spacing(4),
         padding: theme.spacing(3),
         justifyContent: "center",
         textAlign: "center"
-    },
-    searchDiv: {
-        justifyContent: "center",
-        margin: theme.spacing(1),
-    },
-    modalDiv: {
-        flex: 1,
-        justifyContent: "center",
-        textAlign: "center",
-        margin: theme.spacing(1)
     },
     horizontalDiv: {
         display: "flex"
@@ -156,8 +121,14 @@ export default function FilterBar(props) {
             if (!/^[A-Za-zżźćńółęąśŻŹĆĄŚĘŁÓŃ\d\s.,?!-()]+$/.test(tag)) {
                 throw "Wrong tag format"
             }
+            if (tag.length > 15) {
+                throw "Wrong tag format"
+            }
             if (tags.filter((e) => e.label === tag).length !== 0) {
                 throw "Tag already added"
+            }
+            if (tags.length > 10) {
+                throw "Too many tags"
             }
             let last_element = tags[tags.length - 1]
             let key_to_add = last_element === undefined ? -1 : last_element.key
