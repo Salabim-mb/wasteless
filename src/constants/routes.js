@@ -64,8 +64,8 @@ export const path_list = {
         name: "Send reset password email"
     },
     RESET_PASSWORD: {
-        route: "/reset_password/:reset_token",
-        redirect: (reset_token) => `/reset_password/${reset_token}`,
+        route: "/password-reset/:reset_token",
+        redirect: (reset_token) => `/password-reset/${reset_token}`,
         name: "Reset password"
     }
 }
@@ -124,7 +124,7 @@ export default [
     {
         path: path_list.RESET_PASSWORD.route,
         component: ResetPassword,
-        exact: true
+        exact: false
     },
 ];
 

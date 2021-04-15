@@ -82,9 +82,10 @@ export default function SendResetEmail() {
             try {
                 await requestSendingEmail(data);
                 alertC.current.showAlert("If given address is correct, reset email have been sent to your mailbox", "success");
+                setRedirect(paths_list.LOGIN.route);
             } catch(e) {
                 console.log(e);
-                alertC.current.showAlert("Something went wrong while trying to send reset email. Try again", "error");
+                alertC.current.showAlert("Wrong email format", "error");
             } finally {
                 setDisabled(false);
             }

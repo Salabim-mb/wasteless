@@ -14,6 +14,7 @@ import {AlertContext} from "context/AlertContext";
 import {getCORSHeaders} from "../../utils/fetchTools";
 import {be} from "../../constants/backendSetup";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import LockOpenIcon from '@material-ui/icons/LockOpen';
 
 const validatePassword = (password) => {
     if (password.length < 8 || !/^[a-zA-Z0-9!@#$%&*]+$/.test(password)) {
@@ -44,7 +45,7 @@ const resetPassword = async (data) => {
         body: JSON.stringify(data)
     });
 
-    if (res.status === 201) {
+    if (res.status === 200) {
         return await res.json();
     } else {
         let response = await res.text();
@@ -57,7 +58,7 @@ const resetPassword = async (data) => {
 
 const useStyles = makeStyles((theme) => ({
     paper: {
-        marginTop: theme.spacing(8),
+        marginTop: theme.spacing(4),
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -69,17 +70,26 @@ const useStyles = makeStyles((theme) => ({
     form: {
         width: '100%', // Fix IE 11 issue.
         marginTop: theme.spacing(1),
-        padding: '7%'
+        paddingLeft: '7%',
+        paddingRight: '7%',
     },
     submit: {
         margin: theme.spacing(3, 0, 2),
     },
     card: {
-        boxShadow: '0 1px 1px 1px lightblue'
+        boxShadow: '0 1px 1px 1px lightblue',
+        marginTop: theme.spacing(5),
     },
     centered: {
         justifyContent: 'center',
         textAlign: 'center',
+    },
+    text: {
+        marginLeft: theme.spacing(3),
+        marginRight: theme.spacing(3),
+        marginTop: theme.spacing(3),
+        textAlign: "justify",
+        textIndent: "20px"
     },
 }));
 
@@ -137,18 +147,19 @@ export default function ResetPassword() {
         e.preventDefault();
         try{
             validateInput(password, repeatPassword);
+            try {
+                let res = await resetPassword({"password": password, "token": resetToken});
+                alertC.current.showAlert("Password changed successfully!", "success");
+                setRedirect(path_list.LOGIN.route);
+            } catch (e) {
+                alertC.current.showAlert("Something went wrong while trying to reset password. Try generate new reset link", "error");
+            } finally {
+
+            }
         } catch (e) {
             alertC.current.showAlert(e, "error");
         }
-        try {
-            let res = await resetPassword({token: resetToken, password: password});
-            alertC.current.showAlert("Password changed successfully!", "success");
-            setRedirect(path_list.LOGIN.route);
-        } catch (e) {
-            alertC.current.showAlert("Something went wrong while trying to reset password. Try generate new reset link", "error");
-        } finally {
 
-        }
     };
 
     return (
@@ -164,11 +175,16 @@ export default function ResetPassword() {
                             <CssBaseline/>
                             <div className={classes.paper}>
                                 <Avatar className={classes.avatar}>
-                                    <PersonIcon/>
+                                    <LockOpenIcon />
                                 </Avatar>
                                 <Typography component="h1" variant="h5">
                                     Reset your password
                                 </Typography>
+                                <Card className={classes.text}>
+                                    <p className={classes.text}>
+                                        Please type and retype your password. Make sure your new password meets our secure standard (one lower and uppercase, one digit and one special character). And make sure to write it down somewhere ;)
+                                    </p>
+                                </Card>
                                 <form className={classes.form} noValidate validated={validated} onSubmit={handleSubmit}>
                                     <TextField
                                         variant="outlined"
