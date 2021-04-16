@@ -64,6 +64,9 @@ const useStyles = makeStyles((theme) => ({
     itemGrid: {
         margin: theme.spacing(1)
     },
+    modalClass: {
+        overflow: "scroll"
+    }
 }))
 
 export default function FilterBar(props) {
@@ -121,14 +124,11 @@ export default function FilterBar(props) {
             if (!/^[A-Za-zżźćńółęąśŻŹĆĄŚĘŁÓŃ\d\s.,?!-()]+$/.test(tag)) {
                 throw "Wrong tag format"
             }
-            if (tag.length > 15) {
+            if (tag.length > 20) {
                 throw "Wrong tag format"
             }
             if (tags.filter((e) => e.label === tag).length !== 0) {
                 throw "Tag already added"
-            }
-            if (tags.length > 10) {
-                throw "Too many tags"
             }
             let last_element = tags[tags.length - 1]
             let key_to_add = last_element === undefined ? -1 : last_element.key
@@ -448,6 +448,7 @@ export default function FilterBar(props) {
 
             </Paper>
             <Modal
+                className={classes.modalClass}
                 open={open}
                 onClose={handleClose}
                 aria-labelledby="simple-modal-title"
