@@ -66,7 +66,8 @@ const useStyles = makeStyles((theme) => ({
     },
     appName: {
         fontFamily: "monospace",
-        paddingTop: theme.spacing(0.5)
+        paddingTop: theme.spacing(0.5),
+        fontWeight: "bold"
     },
     logoDiv: {
         display: "flex",
@@ -133,7 +134,7 @@ const MenuBar = (props) => {
                     <div className={classes.logoGraphDiv}>
                         <Logo/>
                     </div>
-                    <Typography variant="h4" component="h4" className={classes.appName} aria-label="tu bedzie logo apki">
+                    <Typography variant="h4" component="h4" className={classes.appName}>
                         WASTELESS
                     </Typography>
                 </div>
