@@ -231,7 +231,7 @@ export default function RecipePage() {
                                             <Paper className={classes.paper}>
 
                                                 <Title>Comments</Title>
-                                                {recipe.comments.map((id) => (
+                                                {recipe?.comments.map((id) => (
                                                     <RecipeComment key={id} id={id} token={user.token}/>
                                                 ))}
                                                 <NewComment id={recipe_id} reload={reload} setReload={setReload}/>
