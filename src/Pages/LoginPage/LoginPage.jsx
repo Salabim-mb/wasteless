@@ -16,6 +16,8 @@ import {UserContext} from "context";
 import {Redirect} from "react-router-dom";
 import {path_list as paths_list} from "constants/routes";
 import {AlertContext} from "context/AlertContext";
+import NotificationPopup from "../../context/components/NotificationPopup";
+
 
 
 const loginUser = async (data) => {
@@ -166,6 +168,9 @@ export default function LoginPage() {
                             </Grid>
                         </Grid>
                     </form>
+                    <div>
+                        <NotificationPopup/>
+                    </div>
                 </div>
             </Card>
         </Container>
