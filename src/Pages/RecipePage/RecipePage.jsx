@@ -207,10 +207,10 @@ export default function RecipePage() {
                                                 <React.Fragment>
                                                         <Table >
                                                             <TableBody>
-                                                                {recipe?.ingredients.map((value, index) => (
+                                                                {recipe?.ingredients.map((row, index) => (
                                                                     <StyledTableRow  key={index}>
-                                                                        <StyledTableCell >{value}</StyledTableCell >
-
+                                                                        <StyledTableCell>{row[0]}</StyledTableCell >
+                                                                        <StyledTableCell align="right">{row[1] + " " + row[2]}</StyledTableCell >
                                                                     </StyledTableRow>
                                                                 ))}
                                                             </TableBody>
