@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useRef, useState} from 'react';
-import {useHistory} from 'react-router-dom';
+import {Redirect, useHistory} from 'react-router-dom';
 import AppBar from '@material-ui/core/AppBar';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Divider from '@material-ui/core/Divider';
@@ -17,13 +17,16 @@ import Fab from "@material-ui/core/Fab";
 import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
 import SwipeableDrawer from "@material-ui/core/SwipeableDrawer";
 import Slide from "@material-ui/core/Slide";
-import {path_list} from "constants/routes";
+import {path_list as paths_list, path_list} from "constants/routes";
 import {AlertContext, UserContext} from "../../context";
 import { ReactComponent as Logo } from '../../assets/logo.svg';
 import Badge from "@material-ui/core/Badge";
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import {be} from "../../constants/backendSetup";
 import {getCORSHeaders} from "../../utils/fetchTools";
+import Menu from "@material-ui/core/Menu";
+import MenuItem from "@material-ui/core/MenuItem";
+import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 
 
 const drawerWidth = 240;
@@ -130,6 +133,30 @@ const MenuBar = (props) => {
     const [hideNotification, setHideNotification] = useState(true);
     const [fridgesUrl, setFridgesUrl] = useState( be.PROFILE + 'fridges/');
     const [fridges, setFridges] = useState([]);
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const open = Boolean(anchorEl);
+    const [redirect, setRedirect] = useState(undefined);
+
+    const handleMenu = (event) => {
+        setAnchorEl(event.currentTarget);
+        setRedirect(undefined);
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null);
+
+    };
+
+    const handleRedirect = () => {
+        setAnchorEl(null);
+        setRedirect(paths_list.FRIDGE_LIST.route);
+        setHideNotification(true);
+    }
+
+    const handleBack = async () => {
+        history.goBack();
+        setBarName( "");
+    }
 
 
     const redirectToPath = (path) => {
@@ -145,7 +172,10 @@ const MenuBar = (props) => {
             if (res !== undefined){
                 if (res.length > 0) {
                     for (let i = 0; i < res.length; i++) {
-                        chceckNotifications(res[i]);
+                        let response = await chceckNotifications(res[i]);
+                        if(response.length !== 0) {
+                            setHideNotification(false);
+                        }
                     }
                 }
             }
@@ -163,9 +193,7 @@ const MenuBar = (props) => {
             method: "GET"
         });
         if (res.status === 200) {
-            if (res.body !== "[]") {
-                setHideNotification(false);
-            }
+            return res.json();
         } else if (res.status === 401) {
             // alertC.current.showAlert("You have to be logged in to see your fridges", "error");
             return null;
@@ -185,7 +213,6 @@ const MenuBar = (props) => {
                 // setRedirect(path_list.LOGIN.route);
             }
         } catch (e) {
-            console.log(e);
             // alertC.current.showAlert("Something went wrong while trying to fetch fridges list", "error");
         }
     }
@@ -241,16 +268,54 @@ const MenuBar = (props) => {
                         >
                             <MenuIcon />
                         </IconButton>
+                        <IconButton
+                            color="inherit"
+                            aria-label="account of current user"
+                            aria-controls="menu-appbar"
+                            aria-haspopup="true"
+                            onClick={handleBack}>
+                            <ArrowBackIosIcon/>
+                        </IconButton>
                         <Typography variant="h6" noWrap>
                             {barName}
                         </Typography>
-                        <IconButton color="inherit" className={classes.right}>
-                            <Badge variant="dot" invisible={hideNotification} color="secondary" >
-                                <NotificationsIcon />
-                            </Badge>
-                        </IconButton>
-                    </Toolbar>
+                        {
+                            user?.token !== undefined && (
+                                <IconButton
+                                    color="inherit"
+                                    className={classes.right}
+                                    aria-label="account of current user"
+                                    aria-controls="menu-appbar"
+                                    aria-haspopup="true"
+                                    onClick={handleMenu}>
+                                    <Badge variant="dot" invisible={hideNotification} color="secondary">
+                                        <NotificationsIcon/>
+                                    </Badge>
+                                </IconButton>
 
+                            )
+
+                        }
+                        <Menu
+                            id="menu-appbar"
+                            anchorEl={anchorEl}
+                            keepMounted
+                            open={open}
+                            onClose={handleClose}
+
+                        >
+                            {
+                                !hideNotification && (
+                                    <MenuItem onClick={handleRedirect}>You have some products with short expiration date</MenuItem>
+                                )
+                            }
+                            { hideNotification && (
+                                <MenuItem onClick={handleClose}>No new notifications</MenuItem>
+                            )}
+
+                        </Menu>
+                    </Toolbar>
+                    {redirect && <Redirect to={redirect}/>}
                 </AppBar>
             </HideOnScroll>
             <nav className={classes.drawer} aria-label="mailbox folders">
