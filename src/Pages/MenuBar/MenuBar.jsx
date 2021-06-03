@@ -86,10 +86,6 @@ const useStyles = makeStyles((theme) => ({
     logoGraphDiv:{
         padding: theme.spacing(1)
     },
-    right: {
-        display: "flex",
-        justifyContent: 'center',
-    }
 }));
 
 const ScrollToTop = (props) => {
