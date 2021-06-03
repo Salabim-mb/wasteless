@@ -1,4 +1,4 @@
-import React, {useContext, useRef, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import {useHistory} from 'react-router-dom';
 import AppBar from '@material-ui/core/AppBar';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -20,6 +20,10 @@ import Slide from "@material-ui/core/Slide";
 import {path_list} from "constants/routes";
 import {AlertContext, UserContext} from "../../context";
 import { ReactComponent as Logo } from '../../assets/logo.svg';
+import Badge from "@material-ui/core/Badge";
+import NotificationsIcon from '@material-ui/icons/Notifications';
+import {be} from "../../constants/backendSetup";
+import {getCORSHeaders} from "../../utils/fetchTools";
 
 
 const drawerWidth = 240;
@@ -78,6 +82,10 @@ const useStyles = makeStyles((theme) => ({
     },
     logoGraphDiv:{
         padding: theme.spacing(1)
+    },
+    right: {
+        display: "flex",
+        justifyContent: 'center',
     }
 }));
 
@@ -119,6 +127,9 @@ const MenuBar = (props) => {
     const [barName, setBarName] = useState(Object.values(path_list).filter((pathObject) => pathObject.route === history.location.pathname)[0]?.name || "");
     const user = useContext(UserContext);
     const alertC = useRef(useContext(AlertContext));
+    const [hideNotification, setHideNotification] = useState(true);
+    const [fridgesUrl, setFridgesUrl] = useState( be.PROFILE + 'fridges/');
+    const [fridges, setFridges] = useState([]);
 
 
     const redirectToPath = (path) => {
@@ -126,6 +137,75 @@ const MenuBar = (props) => {
         setMobileOpen(false);
         history.push(path.route);
     };
+
+    useEffect(() => {
+        const loadNotifications = async () => {
+            let res = await countFridges(user.token);
+            setHideNotification(true);
+            if (res !== undefined){
+                if (res.length > 0) {
+                    for (let i = 0; i < res.length; i++) {
+                        chceckNotifications(res[i]);
+                    }
+                }
+            }
+
+        };
+        loadNotifications();
+    }, [user.token]);
+
+
+    const chceckNotifications = async (item, index) => {
+        let url = be.NOTIFICATION + item.id;
+        const headers = getCORSHeaders(user.token);
+        let res = await fetch(url, {
+            headers,
+            method: "GET"
+        });
+        if (res.status === 200) {
+            if (res.body !== "[]") {
+                setHideNotification(false);
+            }
+        } else if (res.status === 401) {
+            // alertC.current.showAlert("You have to be logged in to see your fridges", "error");
+            return null;
+        } else {
+            // alertC.current.showAlert("Something went wrong while trying to fetch fridge list", "error");
+            throw res.status;
+        }
+    }
+
+    const countFridges = async (token) => {
+        try {
+            let res = await getFridges(token, fridgesUrl);
+            if (res !== null) {
+                await setFridges(res);
+                return res;
+            } else {
+                // setRedirect(path_list.LOGIN.route);
+            }
+        } catch (e) {
+            console.log(e);
+            // alertC.current.showAlert("Something went wrong while trying to fetch fridges list", "error");
+        }
+    }
+
+    const getFridges = async (token, url) => {
+        const headers = getCORSHeaders(token);
+        let res = await fetch(url, {
+            headers,
+            method: "GET"
+        });
+        if (res.status === 200) {
+            return await res.json();
+        } else if (res.status === 401) {
+            // alertC.current.showAlert("You have to be logged in to see your fridges", "error");
+            return null;
+        } else {
+            // alertC.current.showAlert("Something went wrong while trying to fetch fridge list", "error");
+            throw res.status;
+        }
+    }
 
     const drawer = (
         <>
@@ -164,7 +244,13 @@ const MenuBar = (props) => {
                         <Typography variant="h6" noWrap>
                             {barName}
                         </Typography>
+                        <IconButton color="inherit" className={classes.right}>
+                            <Badge variant="dot" invisible={hideNotification} color="secondary" >
+                                <NotificationsIcon />
+                            </Badge>
+                        </IconButton>
                     </Toolbar>
+
                 </AppBar>
             </HideOnScroll>
             <nav className={classes.drawer} aria-label="mailbox folders">
